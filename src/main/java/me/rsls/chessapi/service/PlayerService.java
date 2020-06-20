@@ -23,4 +23,18 @@ public class PlayerService {
     public void addPlayer(String nickName){
         playerArrayList.add(new Player(nickName, sessionService.getHttpSessionId()));
     }
+
+    public Player getPlayer(){
+        for(Player p : playerArrayList){
+            if(p.getSessionId().equals(sessionService.getHttpSessionId())) return p;
+        }
+        return null;
+    }
+
+    public Bot getBot(){
+        //TODO
+        return (Bot) playerArrayList.get(0);
+    }
 }
+
+

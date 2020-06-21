@@ -2,7 +2,7 @@ package me.rsls.chessapi.controller;
 
 
 import me.rsls.chessapi.exception.model.ApiException;
-import me.rsls.chessapi.model.Board;
+import me.rsls.chessapi.model.Game;
 import me.rsls.chessapi.model.Player;
 import me.rsls.chessapi.service.GameService;
 import me.rsls.chessapi.service.PlayerService;
@@ -25,7 +25,7 @@ public class GameController {
 
 
     @RequestMapping(value = "getGamePicture", method = RequestMethod.GET)
-    public ResponseEntity<Board> getGamePicture() {
+    public ResponseEntity<Game> getGamePicture() {
         Player tempPlayer = playerService.getPlayer();
         if (gameService.getGamePicture(tempPlayer) != null) {
             return new ResponseEntity<>(gameService.getGamePicture(tempPlayer), HttpStatus.OK);

@@ -4,10 +4,20 @@ public class Player {
 
     private String nickName;
     private final String sessionId;
+    private Color playingColor;
 
     public Player(String nickName, String sessionId) {
         this.nickName = nickName;
         this.sessionId = sessionId;
+        this.playingColor = null;
+    }
+
+    public Color getPlayingColor() {
+        return playingColor;
+    }
+
+    public void setPlayingColor(Color playingColor) {
+        this.playingColor = playingColor;
     }
 
     public String getNickName() {

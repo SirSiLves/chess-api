@@ -3,10 +3,10 @@ package me.rsls.chessapi.model;
 public class Field {
 
     private final Color fieldColor;
-    private final char[][] fieldDesignation;
+    private final String[] fieldDesignation;
     private Figure figure;
 
-    public Field(Color fieldColor, char[][] fieldDesignation) {
+    public Field(Color fieldColor, String[] fieldDesignation) {
         this.fieldColor = fieldColor;
         this.fieldDesignation = fieldDesignation;
     }
@@ -15,7 +15,7 @@ public class Field {
         return fieldColor;
     }
 
-    public char[][] getFieldDesignation() {
+    public String[] getFieldDesignation() {
         return fieldDesignation;
     }
 
@@ -26,6 +26,7 @@ public class Field {
     public void setFigure(Figure figure) {
         this.figure = figure;
     }
+
 }
 
 

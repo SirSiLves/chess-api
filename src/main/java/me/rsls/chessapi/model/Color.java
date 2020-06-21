@@ -1,5 +1,5 @@
 package me.rsls.chessapi.model;
 
-enum Color {
+public enum Color {
     BROWN, SANDYBROWN, WHITE, BLACK
 }

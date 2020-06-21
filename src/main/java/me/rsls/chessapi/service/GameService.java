@@ -12,19 +12,19 @@ public class GameService {
 
     private final ArrayList<Game> gameArrayList;
 
-    public GameService(){
+    public GameService() {
         gameArrayList = new ArrayList<>();
     }
 
-    public void createGame(Player[] players){
-        gameArrayList.add(new Game(players));
+    public void createGame(Player[] players, Board board) {
+        gameArrayList.add(new Game(players, board));
     }
 
-    public Board getGamePicture(Player player){
-        for(Game g : gameArrayList){
-            for(Player p : g.getPlayers()){
-                if(p.getSessionId().equals(player.getSessionId())){
-                    return g.getBoard();
+    public Game getGamePicture(Player player) {
+        for (Game g : gameArrayList) {
+            for (Player p : g.getPlayers()) {
+                if (p.getSessionId().equals(player.getSessionId())) {
+                    return g;
                 }
             }
         }

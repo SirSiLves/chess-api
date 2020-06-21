@@ -36,19 +36,19 @@ public class BoardService {
     public HashMap<Integer, Field> createFieldRow(String rowPosition, Color startColor) {
         HashMap<Integer, Field> rowMap = new HashMap<>();
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 1; i <= 8; i++) {
             String[] fieldDesignation = new String[2];
             fieldDesignation[0] = rowPosition;
             fieldDesignation[1] = "" + (i);
 
             if (startColor.equals(Color.SANDYBROWN)) {
-                if (i % 2 == 0) {
+                if (i % 2 != 0) {
                     rowMap.put(i, new Field(Color.SANDYBROWN, fieldDesignation));
                 } else {
                     rowMap.put(i, new Field(Color.BROWN, fieldDesignation));
                 }
             } else {
-                if (i % 2 == 0) {
+                if (i % 2 != 0) {
                     rowMap.put(i, new Field(Color.BROWN, fieldDesignation));
                 } else {
                     rowMap.put(i, new Field(Color.SANDYBROWN, fieldDesignation));

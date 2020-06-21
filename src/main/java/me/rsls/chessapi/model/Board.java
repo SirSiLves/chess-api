@@ -17,6 +17,10 @@ public class Board {
         return fieldMatrix;
     }
 
+    public void addFigureArrayList(Figure figure){
+        figureArrayList.add(figure);
+    }
+
     public ArrayList<Figure> getFigureArrayList() {
         return figureArrayList;
     }

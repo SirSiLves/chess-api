@@ -30,7 +30,7 @@ public class GameController {
         if (gameService.getGamePicture(tempPlayer) != null) {
             return new ResponseEntity<>(gameService.getGamePicture(tempPlayer), HttpStatus.OK);
         } else {
-            throw new ApiException("The game is not yet initialized", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ApiException("The game is not yet initialized", HttpStatus.OK);
         }
     }
 }

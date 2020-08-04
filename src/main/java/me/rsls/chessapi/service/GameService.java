@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+
 @Service
 public class GameService {
 
@@ -21,13 +22,17 @@ public class GameService {
     }
 
     public Game getGamePicture(Player player) {
+        Game tempGame = null;
+
         for (Game g : gameArrayList) {
             for (Player p : g.getPlayers()) {
                 if (p.getSessionId().equals(player.getSessionId())) {
-                    return g;
+                    if(tempGame == null || (g.getCreateDate().compareTo(tempGame.getCreateDate()) > 0)){
+                        tempGame = g;
+                    }
                 }
             }
         }
-        return null;
+        return tempGame;
     }
 }

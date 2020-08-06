@@ -7,10 +7,14 @@ public class Board {
 
     private final HashMap<String, HashMap<Integer, Field>> fieldMatrix;
     private final ArrayList<Figure> figureArrayList;
+    private Color lastPlayed;
+    private final HashMap<Integer, Move> moveHistory; // 1,2,3,4.. <Move Count, Move Object>
 
     public Board() {
         this.fieldMatrix = new HashMap<>();
         this.figureArrayList = new ArrayList<>();
+        this.lastPlayed = null;
+        this.moveHistory = new HashMap<>();
     }
 
     public HashMap<String, HashMap<Integer, Field>> getFieldMatrix() {
@@ -23,5 +27,22 @@ public class Board {
 
     public ArrayList<Figure> getFigureArrayList() {
         return figureArrayList;
+    }
+
+    public Color getLastPlayed() {
+        return lastPlayed;
+    }
+
+    public void setLastPlayed(Color playerTurn) {
+        this.lastPlayed = playerTurn;
+    }
+
+    public void addMoveToHistory(Move move){
+        moveHistory.put(moveHistory.size(), move);
+
+    }
+
+    public HashMap<Integer, Move> getMoveHistory() {
+        return moveHistory;
     }
 }

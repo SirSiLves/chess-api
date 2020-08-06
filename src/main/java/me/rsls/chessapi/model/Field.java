@@ -9,6 +9,7 @@ public class Field {
     public Field(Color fieldColor, String[] fieldDesignation) {
         this.fieldColor = fieldColor;
         this.fieldDesignation = fieldDesignation;
+        this.figure = null;
     }
 
     public Color getFieldColor() {
@@ -17,6 +18,14 @@ public class Field {
 
     public String[] getFieldDesignation() {
         return fieldDesignation;
+    }
+
+    public String getVertical(){
+        return fieldDesignation[0];
+    }
+
+    public int getHorizontalNumber(){
+        return Integer.parseInt(this.fieldDesignation[1]);
     }
 
     public Figure getFigure() {

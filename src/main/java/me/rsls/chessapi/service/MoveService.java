@@ -2,7 +2,6 @@ package me.rsls.chessapi.service;
 
 
 import me.rsls.chessapi.model.*;
-import me.rsls.chessapi.service.validation.ValidateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +22,12 @@ public class MoveService {
     private ValidateService validateService;
 
 
-    public Validation handleMove(ClickedFields clickedFields){
+    public Validation handleMove(String[] sourceDesignation, String[] targetDesignation){
 
         Board tempBoard = gameService.getGamePicture(playerService.getPlayer()).getBoard();
 
-        Field sourceField = boardService.getField(tempBoard, clickedFields.getSourceField());
-        Field targetField = boardService.getField(tempBoard, clickedFields.getTargetField());
-
+        Field sourceField = boardService.getField(tempBoard, sourceDesignation);
+        Field targetField = boardService.getField(tempBoard, targetDesignation);
 
         Validation validation = validateService.validateMove(tempBoard, sourceField, targetField);
 

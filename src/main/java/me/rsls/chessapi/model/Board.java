@@ -45,4 +45,8 @@ public class Board {
     public HashMap<Integer, Move> getMoveHistory() {
         return moveHistory;
     }
+
+    public Field getFieldFromMatrix(String verticalValue, int horizontalValue){
+        return this.getFieldMatrix().get(verticalValue).get(horizontalValue);
+    }
 }

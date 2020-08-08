@@ -22,7 +22,8 @@ public class MoveController {
 
     @RequestMapping(value = "doMove", method = RequestMethod.POST)
     public ResponseEntity<Validation> doMove(@RequestBody ClickedFields clickedFields) {
-        Validation validation = moveService.handleMove(clickedFields);
+
+        Validation validation = moveService.handleMove(clickedFields.getSourceField(), clickedFields.getTargetField());
 
         return new ResponseEntity<>(validation, HttpStatus.OK);
     }

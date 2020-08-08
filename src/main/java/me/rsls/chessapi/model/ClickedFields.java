@@ -6,6 +6,13 @@ import org.springframework.validation.annotation.Validated;
 public class ClickedFields {
     String[] sourceField, targetField;
 
+    public ClickedFields(){ }
+
+    public ClickedFields(String[] sourceField, String[] targetField){
+        this.sourceField = sourceField;
+        this.targetField = targetField;
+    }
+
     @JsonProperty("sourceField")
     private void setSourceField(@Validated String[] sourceField) {
         this.sourceField = sourceField;

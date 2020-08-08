@@ -3,18 +3,19 @@ package me.rsls.chessapi.service;
 import me.rsls.chessapi.model.Board;
 import me.rsls.chessapi.model.Field;
 import me.rsls.chessapi.model.Color;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import java.util.HashMap;
 
+
 @Service
 public class BoardService {
 
+    public static final String VERTICAL_DESIGNATION = "abcdefgh";
+
 
     public Field getField(Board board, String[] fieldDesignation){
-
         return board.getFieldMatrix().get(fieldDesignation[0]).get(Integer.parseInt(fieldDesignation[1]));
     }
 

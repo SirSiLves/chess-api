@@ -1,22 +1,18 @@
-package me.rsls.chessapi.service.validation;
+package me.rsls.chessapi.service;
 
 
 import me.rsls.chessapi.model.Board;
 import me.rsls.chessapi.model.Field;
 import me.rsls.chessapi.model.FigureType;
 import me.rsls.chessapi.model.Validation;
-import me.rsls.chessapi.service.BoardService;
-import me.rsls.chessapi.service.GameService;
-import org.springframework.beans.factory.annotation.Autowired;
+import me.rsls.chessapi.model.validation.ValidatePawn;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class ValidateService {
-
 
     private static final Map<Integer, String> RULE_TEXTS = new HashMap<>() {
         {
@@ -38,8 +34,8 @@ public class ValidateService {
         }
 
         else if (sourceField.getFigure().getFigureType() == FigureType.PAWN){
-             ValidatePawn vPawn = new ValidatePawn();
-             vPawn.checkPossibleFields(board, sourceField, targetField);
+             ValidatePawn vPawn = new ValidatePawn(board, sourceField, targetField);
+             vPawn.verifyMove();
 
              if(vPawn.isValid()){
                  validation.setState(true);
@@ -53,5 +49,6 @@ public class ValidateService {
 
         return validation;
     }
+
 
 }

@@ -1,7 +1,7 @@
 package me.rsls.chessapi.controller;
 
 import me.rsls.chessapi.model.ClickedFields;
-import me.rsls.chessapi.model.Validation;
+import me.rsls.chessapi.model.validation.Validation;
 import me.rsls.chessapi.service.MoveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

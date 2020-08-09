@@ -4,9 +4,9 @@ import me.rsls.chessapi.model.Board;
 import me.rsls.chessapi.model.Color;
 import me.rsls.chessapi.model.Field;
 import me.rsls.chessapi.service.BoardService;
-import me.rsls.chessapi.service.ValidateService;
 
-public class ValidatePawn {
+
+public class ValidatePawn implements IValidate {
 
     private boolean isValid;
     private final Field sourceField, targetField;
@@ -20,14 +20,17 @@ public class ValidatePawn {
         this.targetField = targetField;
     }
 
+    @Override
     public boolean isValid() {
         return isValid;
     }
 
+    @Override
     public void setValid(boolean valid) {
         isValid = valid;
     }
 
+    @Override
     public void verifyMove() {
         int sourceNumber = sourceField.getHorizontalNumber();
         int targetNumber = targetField.getHorizontalNumber();

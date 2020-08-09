@@ -4,7 +4,8 @@ package me.rsls.chessapi.service;
 import me.rsls.chessapi.model.Board;
 import me.rsls.chessapi.model.Field;
 import me.rsls.chessapi.model.FigureType;
-import me.rsls.chessapi.model.Validation;
+import me.rsls.chessapi.model.validation.ValidateRook;
+import me.rsls.chessapi.model.validation.Validation;
 import me.rsls.chessapi.model.validation.ValidatePawn;
 import org.springframework.stereotype.Service;
 
@@ -24,28 +25,31 @@ public class ValidateService {
     };
 
     public Validation validateMove(Board board, Field sourceField, Field targetField){
+        Validation validation = new Validation(null);
 
-        Validation validation = new Validation();
-
-        if(sourceField.getFigure() == null) validation.setText(RULE_TEXTS.get(2));
-
+        if(sourceField.getFigure() == null) {
+            validation.setText(RULE_TEXTS.get(2));
+        }
         else if(sourceField.getFigure().getFigureColor().equals(board.getLastPlayed())){
             validation.setText(RULE_TEXTS.get(3));
         }
 
-        else if (sourceField.getFigure().getFigureType() == FigureType.PAWN){
-             ValidatePawn vPawn = new ValidatePawn(board, sourceField, targetField);
-             vPawn.verifyMove();
+        else if(sourceField.getFigure() != null){
 
-             if(vPawn.isValid()){
-                 validation.setState(true);
-                 validation.setText(RULE_TEXTS.get(1));
-             }
-             else validation.setText(RULE_TEXTS.get(4));
+            FigureType figureType = sourceField.getFigure().getFigureType();
+
+            //strategy pattern for move validation
+            switch (figureType) {
+                case PAWN -> validation = new Validation(new ValidatePawn(board, sourceField, targetField));
+                case ROOK -> validation = new Validation(new ValidateRook(board, sourceField, targetField));
+            }
+            validation.executeValidation();
+
+
+            if(validation.isState()) validation.setText(RULE_TEXTS.get(1));
+            else validation.setText(RULE_TEXTS.get(4));
+
         }
-
-
-
 
         return validation;
     }

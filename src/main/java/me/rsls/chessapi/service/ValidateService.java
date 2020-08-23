@@ -4,6 +4,7 @@ package me.rsls.chessapi.service;
 import me.rsls.chessapi.model.Board;
 import me.rsls.chessapi.model.Field;
 import me.rsls.chessapi.model.FigureType;
+import me.rsls.chessapi.model.validation.ValidateBishop;
 import me.rsls.chessapi.model.validation.ValidateRook;
 import me.rsls.chessapi.model.validation.Validation;
 import me.rsls.chessapi.model.validation.ValidatePawn;
@@ -42,6 +43,9 @@ public class ValidateService {
             switch (figureType) {
                 case PAWN -> validation = new Validation(new ValidatePawn(board, sourceField, targetField));
                 case ROOK -> validation = new Validation(new ValidateRook(board, sourceField, targetField));
+                case BISHOP -> validation = new Validation(new ValidateBishop(board, sourceField, targetField));
+
+                default -> validation.setState(true);
             }
             validation.executeValidation();
 

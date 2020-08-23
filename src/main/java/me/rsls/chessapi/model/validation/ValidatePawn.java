@@ -22,12 +22,7 @@ public class ValidatePawn implements IValidate {
 
     @Override
     public boolean isValid() {
-        return isValid;
-    }
-
-    @Override
-    public void setValid(boolean valid) {
-        isValid = valid;
+        return this.isValid;
     }
 
     @Override
@@ -54,7 +49,7 @@ public class ValidatePawn implements IValidate {
         int difference = sourceIndex - targetIndex;
 
         if (Math.abs(difference) == 1 && !sourceField.getFigure().getFigureColor().equals(targetField.getFigure().getFigureColor())) {
-            this.setValid(true);
+            this.isValid = true;
         }
     }
 
@@ -64,7 +59,7 @@ public class ValidatePawn implements IValidate {
 
         if (sourceField.getVertical().equals(targetField.getVertical())) {
             if (Math.abs(sourceNumber - targetNumber) == 1) {
-                this.setValid(true);
+                this.isValid = true;
 
             } else if (Math.abs(sourceNumber - targetNumber) == 2
                     && (sourceField.getHorizontalNumber() == 7 || sourceField.getHorizontalNumber() == 2)) {
@@ -73,11 +68,11 @@ public class ValidatePawn implements IValidate {
                 if (sourceField.getFigure().getFigureColor().equals(Color.WHITE)
                         && board.getFieldFromMatrix(sourceField.getVertical(), sourceNumber - 1).getFigure() == null) {
 
-                    this.setValid(true);
+                    this.isValid = true;
                 } else if (sourceField.getFigure().getFigureColor().equals(Color.BLACK)
                         && board.getFieldFromMatrix(sourceField.getVertical(), targetNumber - 1).getFigure() == null) {
 
-                    this.setValid(true);
+                    this.isValid = true;
                 }
             }
         }

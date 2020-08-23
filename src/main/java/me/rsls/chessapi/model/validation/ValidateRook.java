@@ -1,9 +1,9 @@
 package me.rsls.chessapi.model.validation;
 
 import me.rsls.chessapi.model.Board;
-import me.rsls.chessapi.model.Color;
 import me.rsls.chessapi.model.Field;
 import me.rsls.chessapi.service.BoardService;
+
 
 public class ValidateRook implements IValidate {
 
@@ -21,12 +21,7 @@ public class ValidateRook implements IValidate {
 
     @Override
     public boolean isValid() {
-        return isValid;
-    }
-
-    @Override
-    public void setValid(boolean valid) {
-        isValid = valid;
+        return this.isValid;
     }
 
     @Override
@@ -36,45 +31,64 @@ public class ValidateRook implements IValidate {
         String sourceVertical = sourceField.getVertical();
         String targetVertical = targetField.getVertical();
 
+        if (sourceNumber == targetNumber && !sourceVertical.equals(targetVertical)) {
 
-        if((sourceNumber == targetNumber && !sourceVertical.equals(targetVertical))
-                || (sourceNumber != targetNumber && sourceVertical.equals(targetVertical))){
+            int sourceIndex = BoardService.VERTICAL_DESIGNATION.indexOf(sourceField.getVertical());
+            int targetIndex = BoardService.VERTICAL_DESIGNATION.indexOf(targetField.getVertical());
 
-            if(targetField.getFigure() != null){
+            if (sourceIndex > targetIndex) {
+                this.checkVerticalMove(targetIndex, sourceIndex, targetField);
+            } else if (targetIndex > sourceIndex) {
+                this.checkVerticalMove(sourceIndex, targetIndex, sourceField);
+            }
+
+        } else if (sourceNumber != targetNumber && sourceVertical.equals(targetVertical)) {
+            if (sourceNumber > targetNumber) {
+                this.checkHorizontalMove(targetNumber, sourceNumber, targetField);
+            } else {
+                this.checkHorizontalMove(sourceNumber, targetNumber, sourceField);
+            }
+        }
+    }
+
+    private void checkVerticalMove(int sourceIndex, int targetIndex, Field sourceField) {
+        for (int i = targetIndex; i > sourceIndex; i--) {
+            String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(i - 1, i);
+            Field nextField = this.board.getFieldFromMatrix(verticalValue, sourceField.getHorizontalNumber());
+
+            if (nextField.getVertical().equals(sourceField.getVertical())) {
                 this.checkDestroy();
-            }
-            else{
-                this.checkStraightMove();
-            }
 
-//            this.setValid(true);
+            } else if (nextField.getFigure() != null) {
+                break; // there is a figure between, wrong move
+            }
+        }
+    }
+
+
+    private void checkHorizontalMove(int sourceNumber, int targetNumber, Field tempSourceField) {
+        for (int i = targetNumber; i > sourceNumber; i--) {
+
+            Field nextField = this.board.getFieldFromMatrix(tempSourceField.getVertical(), i - 1);
+
+            if (nextField.getHorizontalNumber() == tempSourceField.getHorizontalNumber()) {
+                this.checkDestroy();
+
+            } else if (nextField.getFigure() != null) {
+                break; // there is a figure between, wrong move
+            }
         }
 
     }
 
 
-    public void checkDestroy(){
+    public void checkDestroy() {
 
-        if(!sourceField.getFigure().getFigureColor().equals(targetField.getFigure().getFigureColor())){
-            this.setValid(true);
+        if (targetField.getFigure() == null) {
+            this.isValid = true;
+        } else if (!sourceField.getFigure().getFigureColor().equals(targetField.getFigure().getFigureColor())) {
+            this.isValid = true;
         }
-
-    }
-
-    public void checkStraightMove(){
-
-    }
-
-    public void checkFigureBetween(){
-
-        int sourceIndex = BoardService.VERTICAL_DESIGNATION.indexOf(sourceField.getVertical()); //7
-        int targetIndex = BoardService.VERTICAL_DESIGNATION.indexOf(targetField.getVertical()); //6 oder 8
-
-
-
-
-
-
     }
 
 

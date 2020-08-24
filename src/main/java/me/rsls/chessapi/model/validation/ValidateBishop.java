@@ -43,29 +43,43 @@ public class ValidateBishop implements IValidate {
         else {
             this.checkDownToUp(tempSourceNumber, tempTargetNumber, sourceIndex, targetIndex);
         }
+
     }
+
+    private boolean checkField(int sourceIndex, int targetIndex, int i, int direction) {
+
+        int index = sourceIndex;
+        int startIndex, endIndex;
+
+        if (sourceIndex < targetIndex) {
+            startIndex = 1;
+            endIndex = 2;
+        } else {
+            startIndex = -1;
+            endIndex = 0;
+        }
+
+        String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index + startIndex, index + endIndex);
+        Field nextField = this.board.getFieldFromMatrix(verticalValue, i + direction);
+
+        if (nextField.getFieldDesignation() == targetField.getFieldDesignation()) {
+            return this.checkDestroy();
+        }
+        else return false;
+
+    }
+
 
     private void checkDownToUp(int tempSourceNumber, int tempTargetNumber,
                                int sourceIndex, int targetIndex) {
 
         int index = sourceIndex;
-        int startIndex, endIndex;
-
-        if (sourceIndex < targetIndex) {
-            startIndex = 1;
-            endIndex = 2;
-        } else {
-            startIndex = -1;
-            endIndex = 0;
-        }
 
         for (int i = tempSourceNumber; i > tempTargetNumber; i--) {
 
-            String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index + startIndex, index + endIndex);
-            Field nextField = this.board.getFieldFromMatrix(verticalValue, i - 1);
-
-            if (nextField.getFieldDesignation() == targetField.getFieldDesignation()) {
-                this.checkDestroy();
+            if(this.checkField(sourceIndex, targetIndex, i, -1)){
+                this.isValid = true;
+                break;
             }
 
             if (sourceIndex < targetIndex) index++;
@@ -73,28 +87,18 @@ public class ValidateBishop implements IValidate {
         }
 
     }
+
 
     private void checkUpToDown(int tempSourceNumber, int tempTargetNumber,
                                int sourceIndex, int targetIndex) {
 
         int index = sourceIndex;
-        int startIndex, endIndex;
-
-        if (sourceIndex < targetIndex) {
-            startIndex = 1;
-            endIndex = 2;
-        } else {
-            startIndex = -1;
-            endIndex = 0;
-        }
 
         for (int i = tempSourceNumber; i < tempTargetNumber; i++) {
 
-            String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index + startIndex, index + endIndex);
-            Field nextField = this.board.getFieldFromMatrix(verticalValue, i + 1);
-
-            if (nextField.getFieldDesignation() == targetField.getFieldDesignation()) {
-                this.checkDestroy();
+            if(this.checkField(sourceIndex, targetIndex, i, 1)){
+                this.isValid = true;
+                break;
             }
 
             if (sourceIndex < targetIndex) index++;
@@ -103,13 +107,16 @@ public class ValidateBishop implements IValidate {
     }
 
 
-    private void checkDestroy() {
+    private boolean checkDestroy() {
 
         if (targetField.getFigure() == null) {
-            this.isValid = true;
+            return true;
         } else if (!sourceField.getFigure().getFigureColor().equals(targetField.getFigure().getFigureColor())) {
-            this.isValid = true;
+            return true;
+        } else {
+            return false;
         }
+
     }
 
 

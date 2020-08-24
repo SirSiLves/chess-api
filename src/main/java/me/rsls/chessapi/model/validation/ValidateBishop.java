@@ -1,7 +1,6 @@
 package me.rsls.chessapi.model.validation;
 
 import me.rsls.chessapi.model.Board;
-import me.rsls.chessapi.model.Color;
 import me.rsls.chessapi.model.Field;
 import me.rsls.chessapi.service.BoardService;
 
@@ -31,48 +30,80 @@ public class ValidateBishop implements IValidate {
         int targetIndex = BoardService.VERTICAL_DESIGNATION.indexOf(targetField.getVertical());
 
         if (sourceNumber != targetNumber && sourceIndex != targetIndex) {
-
-            if (sourceNumber > targetNumber) {
-                this.checkDiagonal(targetNumber, sourceNumber, sourceIndex, targetIndex, targetField, false);
-            } else {
-                this.checkDiagonal(sourceNumber, targetNumber, sourceIndex, targetIndex, sourceField, true);
-            }
+            this.checkDiagonal(sourceNumber, targetNumber, sourceIndex, targetIndex);
         }
     }
 
 
-    public void checkDiagonal(int sourceNumber, int targetNumber,
-                              int sourceIndex, int targetIndex,
-                              Field tempSourceField, boolean reverse) {
+    private void checkDiagonal(int tempSourceNumber, int tempTargetNumber,
+                               int sourceIndex, int targetIndex) {
 
+        if (tempSourceNumber < tempTargetNumber)
+            this.checkUpToDown(tempSourceNumber, tempTargetNumber, sourceIndex, targetIndex);
+        else {
+            this.checkDownToUp(tempSourceNumber, tempTargetNumber, sourceIndex, targetIndex);
+        }
+    }
 
-        int index;
-        if (sourceIndex < targetIndex && !reverse) index = sourceNumber;
-        else index = targetNumber - 1;
+    private void checkDownToUp(int tempSourceNumber, int tempTargetNumber,
+                               int sourceIndex, int targetIndex) {
 
+        int index = sourceIndex;
+        int startIndex, endIndex;
 
-        for (int i = targetNumber; i > sourceNumber; i--) {
+        if (sourceIndex < targetIndex) {
+            startIndex = 1;
+            endIndex = 2;
+        } else {
+            startIndex = -1;
+            endIndex = 0;
+        }
 
-            String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index, index + 1);
+        for (int i = tempSourceNumber; i > tempTargetNumber; i--) {
+
+            String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index + startIndex, index + endIndex);
             Field nextField = this.board.getFieldFromMatrix(verticalValue, i - 1);
 
-            if (nextField.getHorizontalNumber() == tempSourceField.getHorizontalNumber()) {
+            if (nextField.getFieldDesignation() == targetField.getFieldDesignation()) {
                 this.checkDestroy();
-
-            } else if (nextField.getFigure() != null) {
-                break; // there is a figure between, wrong move
             }
 
-            if (sourceIndex < targetIndex && !reverse) {
-                index++;
-            } else index--;
-
-
+            if (sourceIndex < targetIndex) index++;
+            else index--;
         }
 
     }
 
-    public void checkDestroy() {
+    private void checkUpToDown(int tempSourceNumber, int tempTargetNumber,
+                               int sourceIndex, int targetIndex) {
+
+        int index = sourceIndex;
+        int startIndex, endIndex;
+
+        if (sourceIndex < targetIndex) {
+            startIndex = 1;
+            endIndex = 2;
+        } else {
+            startIndex = -1;
+            endIndex = 0;
+        }
+
+        for (int i = tempSourceNumber; i < tempTargetNumber; i++) {
+
+            String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index + startIndex, index + endIndex);
+            Field nextField = this.board.getFieldFromMatrix(verticalValue, i + 1);
+
+            if (nextField.getFieldDesignation() == targetField.getFieldDesignation()) {
+                this.checkDestroy();
+            }
+
+            if (sourceIndex < targetIndex) index++;
+            else index--;
+        }
+    }
+
+
+    private void checkDestroy() {
 
         if (targetField.getFigure() == null) {
             this.isValid = true;

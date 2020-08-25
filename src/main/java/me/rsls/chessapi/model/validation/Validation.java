@@ -34,9 +34,5 @@ public class Validation {
         return text;
     }
 
-    //@TODO remove after all validates
-    public void setState(boolean state) {
-        this.state = state;
-    }
 
 }

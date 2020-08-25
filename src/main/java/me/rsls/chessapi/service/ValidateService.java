@@ -44,9 +44,8 @@ public class ValidateService {
                 case QUEEN -> validation = new Validation(new ValidateQueen(board, sourceField, targetField));
                 case KNIGHT -> validation = new Validation(new ValidateKnight(board, sourceField, targetField));
                 case KING -> validation = new Validation(new ValidateKing(board, sourceField, targetField));
-
-                default -> validation.setState(true);
             }
+
             validation.executeValidation();
 
 

@@ -46,9 +46,10 @@ public class ValidateBishop implements IValidate {
 
     }
 
-    private boolean checkField(int sourceIndex, int targetIndex, int i, int direction) {
 
-        int index = sourceIndex;
+    private boolean checkNextField(int index, int sourceIndex,
+                                   int targetIndex, int i, int direction) {
+
         int startIndex, endIndex;
 
         if (sourceIndex < targetIndex) {
@@ -62,10 +63,12 @@ public class ValidateBishop implements IValidate {
         String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index + startIndex, index + endIndex);
         Field nextField = this.board.getFieldFromMatrix(verticalValue, i + direction);
 
-        if (nextField.getFieldDesignation() == targetField.getFieldDesignation()) {
-            return this.checkDestroy();
+        if (targetField.getFieldDesignation() == nextField.getFieldDesignation() && this.checkDestroy()) {
+            this.isValid = true;
+            return true;
+        } else {
+            return nextField.getFigure() != null;
         }
-        else return false;
 
     }
 
@@ -77,15 +80,12 @@ public class ValidateBishop implements IValidate {
 
         for (int i = tempSourceNumber; i > tempTargetNumber; i--) {
 
-            if(this.checkField(sourceIndex, targetIndex, i, -1)){
-                this.isValid = true;
-                break;
+            if (this.checkNextField(index, sourceIndex, targetIndex, i, -1)) break;
+            else {
+                if (sourceIndex < targetIndex) index++;
+                else index--;
             }
-
-            if (sourceIndex < targetIndex) index++;
-            else index--;
         }
-
     }
 
 
@@ -96,13 +96,11 @@ public class ValidateBishop implements IValidate {
 
         for (int i = tempSourceNumber; i < tempTargetNumber; i++) {
 
-            if(this.checkField(sourceIndex, targetIndex, i, 1)){
-                this.isValid = true;
-                break;
+            if (this.checkNextField(index, sourceIndex, targetIndex, i, 1)) break;
+            else {
+                if (sourceIndex < targetIndex) index++;
+                else index--;
             }
-
-            if (sourceIndex < targetIndex) index++;
-            else index--;
         }
     }
 
@@ -111,10 +109,8 @@ public class ValidateBishop implements IValidate {
 
         if (targetField.getFigure() == null) {
             return true;
-        } else if (!sourceField.getFigure().getFigureColor().equals(targetField.getFigure().getFigureColor())) {
-            return true;
         } else {
-            return false;
+            return !sourceField.getFigure().getFigureColor().equals(targetField.getFigure().getFigureColor());
         }
 
     }

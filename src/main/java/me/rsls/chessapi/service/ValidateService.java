@@ -4,10 +4,7 @@ package me.rsls.chessapi.service;
 import me.rsls.chessapi.model.Board;
 import me.rsls.chessapi.model.Field;
 import me.rsls.chessapi.model.FigureType;
-import me.rsls.chessapi.model.validation.ValidateBishop;
-import me.rsls.chessapi.model.validation.ValidateRook;
-import me.rsls.chessapi.model.validation.Validation;
-import me.rsls.chessapi.model.validation.ValidatePawn;
+import me.rsls.chessapi.model.validation.*;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -44,6 +41,7 @@ public class ValidateService {
                 case PAWN -> validation = new Validation(new ValidatePawn(board, sourceField, targetField));
                 case ROOK -> validation = new Validation(new ValidateRook(board, sourceField, targetField));
                 case BISHOP -> validation = new Validation(new ValidateBishop(board, sourceField, targetField));
+                case QUEEN -> validation = new Validation(new ValidateQueen(board, sourceField, targetField));
 
                 default -> validation.setState(true);
             }

@@ -23,7 +23,6 @@ public class ValidateQueen implements IValidate {
 
     @Override
     public void verifyMove() {
-
         ValidateBishop validateBishop = new ValidateBishop(board, sourceField, targetField);
         validateBishop.verifyMove();
 

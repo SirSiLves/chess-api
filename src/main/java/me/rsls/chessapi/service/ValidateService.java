@@ -42,6 +42,7 @@ public class ValidateService {
                 case ROOK -> validation = new Validation(new ValidateRook(board, sourceField, targetField));
                 case BISHOP -> validation = new Validation(new ValidateBishop(board, sourceField, targetField));
                 case QUEEN -> validation = new Validation(new ValidateQueen(board, sourceField, targetField));
+                case KNIGHT -> validation = new Validation(new ValidateKnight(board, sourceField, targetField));
 
                 default -> validation.setState(true);
             }

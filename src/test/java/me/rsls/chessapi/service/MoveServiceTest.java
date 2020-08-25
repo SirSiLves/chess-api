@@ -246,4 +246,72 @@ public class MoveServiceTest extends ChessApiApplicationTests {
         assertFalse(moveService.handleMove(new String[]{"a", "2"}, new String[]{"f", "7"}).isState());
 
     }
+
+    @Test
+    public void testValidKnightMoves(){
+        assertTrue(moveService.handleMove(new String[]{"b", "8"}, new String[]{"c", "6"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"b", "1"}, new String[]{"c", "3"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"c", "6"}, new String[]{"b", "4"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"g", "1"}, new String[]{"f", "3"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"g", "8"}, new String[]{"f", "6"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"c", "3"}, new String[]{"d", "5"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"f", "6"}, new String[]{"e", "4"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"d", "5"}, new String[]{"c", "3"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"b", "4"}, new String[]{"d", "5"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"f", "3"}, new String[]{"e", "5"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"d", "5"}, new String[]{"e", "3"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"c", "3"}, new String[]{"d", "5"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"e", "4"}, new String[]{"g", "5"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"e", "5"}, new String[]{"f", "3"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"e", "3"}, new String[]{"f", "5"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"d", "5"}, new String[]{"e", "3"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"g", "5"}, new String[]{"h", "3"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"f", "3"}, new String[]{"g", "5"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"f", "5"}, new String[]{"d", "6"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"e", "3"}, new String[]{"c", "4"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"d", "6"}, new String[]{"e", "4"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"c", "4"}, new String[]{"a", "5"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"e", "4"}, new String[]{"g", "5"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"a", "5"}, new String[]{"c", "4"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"g", "5"}, new String[]{"e", "4"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"c", "4"}, new String[]{"d", "6"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"h", "3"}, new String[]{"g", "5"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"d", "6"}, new String[]{"e", "4"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"g", "5"}, new String[]{"e", "4"}).isState());
+
+    }
+
+    @Test
+    public void testInvalidKnightMoves(){
+        assertFalse(moveService.handleMove(new String[]{"g", "8"}, new String[]{"e", "7"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"g", "8"}, new String[]{"g", "6"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"g", "8"}, new String[]{"d", "7"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"g", "8"}, new String[]{"e", "8"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"g", "1"}, new String[]{"h", "5"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"g", "1"}, new String[]{"f", "4"}).isState());
+
+        assertTrue(moveService.handleMove(new String[]{"b", "8"}, new String[]{"c", "6"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"b", "1"}, new String[]{"c", "3"}).isState());
+
+        assertFalse(moveService.handleMove(new String[]{"c", "3"}, new String[]{"d", "4"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"c", "6"}, new String[]{"c", "4"}).isState());
+
+        assertTrue(moveService.handleMove(new String[]{"c", "6"}, new String[]{"b", "4"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"c", "3"}, new String[]{"b", "5"}).isState());
+
+        assertFalse(moveService.handleMove(new String[]{"b", "4"}, new String[]{"a", "5"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"b", "4"}, new String[]{"h", "5"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"b", "4"}, new String[]{"h", "3"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"b", "4"}, new String[]{"h", "4"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"b", "4"}, new String[]{"g", "5"}).isState());
+
+        assertTrue(moveService.handleMove(new String[]{"b", "4"}, new String[]{"a", "2"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"b", "5"}, new String[]{"c", "3"}).isState());
+        assertTrue(moveService.handleMove(new String[]{"a", "2"}, new String[]{"c", "1"}).isState());
+
+        assertFalse(moveService.handleMove(new String[]{"c", "3"}, new String[]{"c", "1"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"c", "3"}, new String[]{"b", "8"}).isState());
+        assertFalse(moveService.handleMove(new String[]{"g", "1"}, new String[]{"a", "3"}).isState());
+
+    }
 }

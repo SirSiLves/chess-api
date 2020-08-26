@@ -6,7 +6,7 @@ public class Game {
 
     private final Board board;
     private final Player[] players;
-    private Player winnerPlayer;
+    private Color winnerPlayer;
     private final Date createDate;
 
     public Game(Player[] players, Board board) {
@@ -24,12 +24,12 @@ public class Game {
         return board;
     }
 
-    public Player getWinner() {
+    public Color getWinner() {
         return winnerPlayer;
     }
 
-    public void setWinner(Player winner) {
-        this.winnerPlayer = winner;
+    public void setWinner(Color winnerColor) {
+        this.winnerPlayer = winnerColor;
     }
 
     public Date getCreateDate() {

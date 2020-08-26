@@ -33,7 +33,9 @@ public class MoveService {
         Validation validation = validateService.validateMove(tempBoard, sourceField, targetField);
 
         //if validation = true -> execute move
-        if(validation.isState()) this.setMove(tempBoard, sourceField, targetField);
+        if(validation.isState()) {
+            this.setMove(tempBoard, sourceField, targetField);
+        }
 
         return validation;
     }
@@ -52,6 +54,11 @@ public class MoveService {
 
         //set last played
         board.setLastPlayed(movedFigure.getFigureColor());
+
+        //set winner
+        if(board.getCheck().isCheckMate()) {
+            gameService.getGamePicture(playerService.getPlayer()).setWinner(movedFigure.getFigureColor());
+        }
     }
 
 }

@@ -9,12 +9,14 @@ public class Board {
     private final ArrayList<Figure> figureArrayList;
     private Color lastPlayed;
     private final HashMap<Integer, Move> moveHistory; // 1,2,3,4.. <Move Count, Move Object>
+    private final CheckState checkState;
 
     public Board() {
         this.fieldMatrix = new HashMap<>();
         this.figureArrayList = new ArrayList<>();
         this.lastPlayed = null;
         this.moveHistory = new HashMap<>();
+        this.checkState = new CheckState();
     }
 
     public HashMap<String, HashMap<Integer, Field>> getFieldMatrix() {
@@ -48,5 +50,9 @@ public class Board {
 
     public Field getFieldFromMatrix(String verticalValue, int horizontalValue){
         return this.getFieldMatrix().get(verticalValue).get(horizontalValue);
+    }
+
+    public CheckState getCheck() {
+        return checkState;
     }
 }

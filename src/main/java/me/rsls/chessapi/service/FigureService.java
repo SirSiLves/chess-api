@@ -10,9 +10,24 @@ import java.util.HashMap;
 public class FigureService {
 
 
+    public Field getFieldWithFigure(Board board, Figure figure) {
+
+        final Field[] field = {null};
+
+        board.getFieldMatrix().forEach((columnKey, columnValue) -> columnValue.forEach((rowKey, rowValue) -> {
+            if (rowValue.getFigure() != null
+                    && rowValue.getFigure().equals(figure)) {
+                field[0] = rowValue;
+            }
+        }));
+
+        return field[0];
+    }
+
+
     public void createFigures(Board board) {
         HashMap<String, HashMap<Integer, Field>> tempMatrix = board.getFieldMatrix();
-        
+
         tempMatrix.get("a").get(1).setFigure(new Figure(FigureType.ROOK, Color.BLACK));
         tempMatrix.get("b").get(1).setFigure(new Figure(FigureType.KNIGHT, Color.BLACK));
         tempMatrix.get("c").get(1).setFigure(new Figure(FigureType.BISHOP, Color.BLACK));
@@ -35,8 +50,8 @@ public class FigureService {
         this.addCreatedFiguresToArrayList(tempMatrix, board.getFigureArrayList());
     }
 
-    public void createPawns(HashMap<String, HashMap<Integer, Field>> figuresMatrix){
-        for(HashMap<Integer, Field> r : figuresMatrix.values()){
+    public void createPawns(HashMap<String, HashMap<Integer, Field>> figuresMatrix) {
+        for (HashMap<Integer, Field> r : figuresMatrix.values()) {
             r.get(2).setFigure(new Figure(FigureType.PAWN, Color.BLACK));
             r.get(7).setFigure(new Figure(FigureType.PAWN, Color.WHITE));
         }
@@ -45,8 +60,8 @@ public class FigureService {
     public void addCreatedFiguresToArrayList(HashMap<String, HashMap<Integer, Field>> figuresMatrix, ArrayList<Figure> figureArrayList) {
 
         for (HashMap<Integer, Field> r : figuresMatrix.values()) {
-            for(Field f : r.values()){
-                if(f.getFigure() !=null){
+            for (Field f : r.values()) {
+                if (f.getFigure() != null) {
                     figureArrayList.add(f.getFigure());
                 }
             }

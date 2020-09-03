@@ -60,6 +60,7 @@ public class ValidateBishop implements IValidate {
             endIndex = 0;
         }
 
+        //TODO EXCEPTION
         String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index + startIndex, index + endIndex);
         Field nextField = this.board.getFieldFromMatrix(verticalValue, i + direction);
 

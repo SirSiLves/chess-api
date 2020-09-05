@@ -60,7 +60,6 @@ public class ValidateBishop implements IValidate {
             endIndex = 0;
         }
 
-        //TODO EXCEPTION
         String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index + startIndex, index + endIndex);
         Field nextField = this.board.getFieldFromMatrix(verticalValue, i + direction);
 
@@ -81,10 +80,13 @@ public class ValidateBishop implements IValidate {
 
         for (int i = tempSourceNumber; i > tempTargetNumber; i--) {
 
-            if (this.checkNextField(index, sourceIndex, targetIndex, i, -1)) break;
+            if (this.checkNextField(index, sourceIndex, targetIndex, i, -1)) {
+                //dont check more fields
+                break;
+            }
             else {
-                if (sourceIndex < targetIndex) index++;
-                else index--;
+                if (index > targetIndex) index--;
+                else index++;
             }
         }
     }
@@ -102,7 +104,7 @@ public class ValidateBishop implements IValidate {
                 break;
             }
             else {
-                if (sourceIndex < targetIndex) index++;
+                if (index < targetIndex) index++;
                 else index--;
             }
         }

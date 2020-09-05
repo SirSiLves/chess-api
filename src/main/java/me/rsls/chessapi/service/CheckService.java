@@ -5,54 +5,53 @@ import me.rsls.chessapi.model.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.ArrayList;
 
 
 @Service
 public class CheckService {
 
-    //TODO - Ranking System gegen BOT. Kein player vs player system
-
     @Autowired
     private FigureService figureService;
 
 
-    public void validateCheck(Board board) {
+    public void validateCheck(Board board, Field sourceField, Field targetField) {
+        //execute move, to check the new situation
+        Figure movedFigure = sourceField.getFigure();
+        Figure killedFigure = targetField.getFigure();
+        this.preExecuteMove(sourceField, targetField, movedFigure, killedFigure);
 
-//        board.getCheck().setCheck(true);
-
-//        if (board.getFieldFromMatrix("a", 5).getFigure() != null &&
-//                board.getFieldFromMatrix("a", 5).getFigure().getFigureType().equals(FigureType.QUEEN)) {
-//            board.getCheck().setCheck(true);
-//        }
-
-
+        //reset last state
+        board.getCheck().setCheck(false);
         CheckState currentCheckState = board.getCheck();
 
         Color lastPlayed = board.getLastPlayed();
 
-        List<Figure> figureList = board.getFigureArrayList();
-        Figure king = figureList.stream()
+        ArrayList<Figure> figureArrayList = board.getFigureArrayList();
+        Figure king = figureArrayList.stream()
                 .filter(f -> f.getFigureType().equals(FigureType.KING) && !f.getFigureColor().equals(lastPlayed))
                 .findAny()
                 .get();
 
         Field kingField = figureService.getFieldWithFigure(board, king);
 
-
-        board.getFigureArrayList().stream()
-                .filter(f -> f.isAlive())
+        figureArrayList.stream()
+                .filter(Figure::isAlive)
                 .filter(f -> !f.getFigureColor().equals(king.getFigureColor()))
                 .forEach(f -> {
+
             Field currentField = figureService.getFieldWithFigure(board, f);
             if (isCheck(board, currentField, kingField)) {
                 currentCheckState.setCheck(true);
             }
         });
 
+        //no possible move found -> its check mate
+        if(currentCheckState.isCheck()){
+            currentCheckState.setCheckMate(true);
+        }
 
-
-
+        this.revertExecuteMove(sourceField, targetField, movedFigure, killedFigure);
     }
 
 
@@ -71,10 +70,26 @@ public class CheckService {
 
         validation.executeValidation();
 
-//        System.out.println(validation);
-
         return validation.isState();
     }
 
+
+    private void preExecuteMove(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure) {
+        //set eliminated figure
+        if(killedFigure != null) killedFigure.setAlive(false);
+
+        //set moved figure
+        targetField.setFigure(movedFigure);
+        sourceField.setFigure(null);
+    }
+
+    private void revertExecuteMove(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure) {
+        //set eliminated figure
+        if(killedFigure != null) killedFigure.setAlive(true);
+
+        //set moved figure
+        targetField.setFigure(killedFigure);
+        sourceField.setFigure(movedFigure);
+    }
 
 }

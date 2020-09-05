@@ -25,6 +25,7 @@ public class ValidateService {
             put(3, "The other player's turn");
             put(4, "Invalid move");
             put(5, "Your figure is in a check state");
+            put(6, "Checkmate!");
         }
     };
 
@@ -53,19 +54,19 @@ public class ValidateService {
 
 
             if (validation.isState()) {
-                checkService.validateCheck(board);
 
-                if (board.getCheck().isCheck()) {
+                checkService.validateCheck(board, sourceField, targetField);
+                CheckState checkState = board.getCheck();
+
+                if (checkState.isCheck()) {
                     validation = new Validation(null);
-                    validation.setText(RULE_TEXTS.get(5));
+
+                    if (checkState.isCheckMate()) validation.setText(RULE_TEXTS.get(6));
+                    else validation.setText(RULE_TEXTS.get(5));
+
                 }
-                else {
-                    validation.setText(RULE_TEXTS.get(1));
-                }
-            }
-            else {
-                validation.setText(RULE_TEXTS.get(4));
-            }
+                else validation.setText(RULE_TEXTS.get(1));
+            } else validation.setText(RULE_TEXTS.get(4));
 
         }
 

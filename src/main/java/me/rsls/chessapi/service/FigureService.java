@@ -6,22 +6,21 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 @Service
 public class FigureService {
 
-
     public Field getFieldWithFigure(Board board, Figure figure) {
 
-        final Field[] field = {null};
-
-        board.getFieldMatrix().forEach((columnKey, columnValue) -> columnValue.forEach((rowKey, rowValue) -> {
-            if (rowValue.getFigure() != null
-                    && rowValue.getFigure().equals(figure)) {
-                field[0] = rowValue;
+        for(HashMap<Integer, Field> column : board.getFieldMatrix().values()){
+            for(Field f : column.values()){
+                if (f.getFigure() != null && f.getFigure().equals(figure)) {
+                    return f;
+                }
             }
-        }));
+        }
 
-        return field[0];
+        throw new RuntimeException("Each alive figure must exist on the board!");
     }
 
 

@@ -42,15 +42,17 @@ public class MoveService {
 
     public void setMove(Board board, Field sourceField, Field targetField){
 
+        //set eliminated figure
+        if(targetField.getFigure() != null) targetField.getFigure().setAlive(false);
+
+        //set moved figure
         Figure movedFigure = sourceField.getFigure();
+        targetField.setFigure(movedFigure);
+        sourceField.setFigure(null);
 
         //create history entry
         Move historyEntry = new Move(sourceField, targetField, movedFigure);
         board.addMoveToHistory(historyEntry);
-
-        //set moved figure
-        targetField.setFigure(movedFigure);
-        sourceField.setFigure(null);
 
         //set last played
         board.setLastPlayed(movedFigure.getFigureColor());

@@ -1,11 +1,13 @@
 package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.model.*;
-import me.rsls.chessapi.model.validation.*;
+import me.rsls.chessapi.model.validation.ValidFields;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -14,69 +16,67 @@ public class CheckService {
     @Autowired
     private FigureService figureService;
 
+    @Autowired
+    private ValidFieldService validFieldService;
 
-    public void validateCheck(Board board, Field sourceField, Field targetField) {
+
+    public CheckState validateCheck(Board board, Field sourceField, Field targetField) {
+        //reset check state
+        CheckState checkState = board.getCheck();
+        this.resetCheckState(checkState);
+
+        processCheckValidation(board, sourceField, targetField, Color.BLACK);
+
+        if(!checkState.isCheck()){
+            processCheckValidation(board, sourceField, targetField, Color.WHITE);
+        }
+
+        return checkState;
+    }
+
+    private void resetCheckState(CheckState checkState){
+        checkState.setCheck(false);
+        checkState.setCheckColor(null);
+    }
+
+    private void processCheckValidation(Board board, Field sourceField, Field targetField, Color kingColor) {
+
         //execute move, to check the new situation
         Figure movedFigure = sourceField.getFigure();
         Figure killedFigure = targetField.getFigure();
         this.preExecuteMove(sourceField, targetField, movedFigure, killedFigure);
 
-        //reset last state
-        board.getCheck().setCheck(false);
-        CheckState currentCheckState = board.getCheck();
+        //get only enemies of the king
+        List<Figure> enemyList = board.getFigureArrayList().stream()
+                .filter(f -> f.isAlive())
+                .filter(f -> !f.getFigureColor().equals(kingColor))
+                .collect(Collectors.toList());
 
-        Color lastPlayed = board.getLastPlayed();
-
-        ArrayList<Figure> figureArrayList = board.getFigureArrayList();
-        Figure king = figureArrayList.stream()
-                .filter(f -> f.getFigureType().equals(FigureType.KING) && !f.getFigureColor().equals(lastPlayed))
-                .findAny()
-                .get();
+        //get king
+        Figure king = board.getFigureArrayList().stream()
+                .filter(f -> f.getFigureType().equals(FigureType.KING))
+                .filter(f -> f.getFigureColor().equals(kingColor))
+                .findFirst().get();
 
         Field kingField = figureService.getFieldWithFigure(board, king);
 
-        figureArrayList.stream()
-                .filter(Figure::isAlive)
-                .filter(f -> !f.getFigureColor().equals(king.getFigureColor()))
-                .forEach(f -> {
+        enemyList.forEach(figure -> {
 
-            Field currentField = figureService.getFieldWithFigure(board, f);
-            if (isCheck(board, currentField, kingField)) {
-                currentCheckState.setCheck(true);
+            Field figureField = figureService.getFieldWithFigure(board, figure);
+            ValidFields figureValidTargetFields = validFieldService.validateFields(board, figureField, figure);
+
+            if (figureValidTargetFields.getFieldList().get(kingField).isState()) {
+                board.getCheck().setCheck(true);
+                board.getCheck().setCheckColor(kingColor);
             }
         });
-
-        //no possible move found -> its check mate
-        if(currentCheckState.isCheck()){
-            currentCheckState.setCheckMate(true);
-        }
 
         this.revertExecuteMove(sourceField, targetField, movedFigure, killedFigure);
     }
 
-
-    public Boolean isCheck(Board board, Field sourceField, Field targetField) {
-
-        Validation validation = new Validation(null);
-
-        switch (sourceField.getFigure().getFigureType()) {
-            case PAWN -> validation = new Validation(new ValidatePawn(board, sourceField, targetField));
-            case ROOK -> validation = new Validation(new ValidateRook(board, sourceField, targetField));
-            case BISHOP -> validation = new Validation(new ValidateBishop(board, sourceField, targetField));
-            case QUEEN -> validation = new Validation(new ValidateQueen(board, sourceField, targetField));
-            case KNIGHT -> validation = new Validation(new ValidateKnight(board, sourceField, targetField));
-            case KING -> validation = new Validation(new ValidateKing(board, sourceField, targetField));
-        }
-
-        validation.executeValidation();
-
-        return validation.isState();
-    }
-
-
     private void preExecuteMove(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure) {
         //set eliminated figure
-        if(killedFigure != null) killedFigure.setAlive(false);
+        if (killedFigure != null) killedFigure.setAlive(false);
 
         //set moved figure
         targetField.setFigure(movedFigure);
@@ -85,11 +85,12 @@ public class CheckService {
 
     private void revertExecuteMove(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure) {
         //set eliminated figure
-        if(killedFigure != null) killedFigure.setAlive(true);
+        if (killedFigure != null) killedFigure.setAlive(true);
 
         //set moved figure
         targetField.setFigure(killedFigure);
         sourceField.setFigure(movedFigure);
     }
+
 
 }

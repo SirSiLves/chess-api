@@ -46,6 +46,39 @@ public class ValidateBishop implements IValidate {
 
     }
 
+    private void checkUpToDown(int tempSourceNumber, int tempTargetNumber,
+                               int sourceIndex, int targetIndex) {
+
+        int index = sourceIndex;
+
+        for (int i = tempSourceNumber; i < tempTargetNumber; i++) {
+
+            if (this.checkNextField(index, sourceIndex, targetIndex, i, 1)) {
+                //dont check more fields
+                break;
+            } else {
+                if (index < targetIndex) index++;
+                else index--;
+            }
+        }
+    }
+
+    private void checkDownToUp(int tempSourceNumber, int tempTargetNumber,
+                               int sourceIndex, int targetIndex) {
+
+        int index = sourceIndex;
+
+        for (int i = tempSourceNumber; i > tempTargetNumber; i--) {
+
+            if (this.checkNextField(index, sourceIndex, targetIndex, i, -1)) {
+                //dont check more fields
+                break;
+            } else {
+                if (index > targetIndex) index--;
+                else index++;
+            }
+        }
+    }
 
     private boolean checkNextField(int index, int sourceIndex,
                                    int targetIndex, int i, int direction) {
@@ -60,53 +93,19 @@ public class ValidateBishop implements IValidate {
             endIndex = 0;
         }
 
-        String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index + startIndex, index + endIndex);
-        Field nextField = this.board.getFieldFromMatrix(verticalValue, i + direction);
+        if (index + startIndex >= 0 && index + startIndex < 8 ) {
+            String verticalValue = BoardService.VERTICAL_DESIGNATION.substring(index + startIndex, index + endIndex);
+            Field nextField = this.board.getFieldFromMatrix(verticalValue, i + direction);
 
-        if (targetField.getFieldDesignation() == nextField.getFieldDesignation() && this.checkDestroy()) {
-            this.isValid = true;
-            return true;
-        } else {
-            return nextField.getFigure() != null;
-        }
-
-    }
-
-
-    private void checkDownToUp(int tempSourceNumber, int tempTargetNumber,
-                               int sourceIndex, int targetIndex) {
-
-        int index = sourceIndex;
-
-        for (int i = tempSourceNumber; i > tempTargetNumber; i--) {
-
-            if (this.checkNextField(index, sourceIndex, targetIndex, i, -1)) {
-                //dont check more fields
-                break;
-            }
-            else {
-                if (index > targetIndex) index--;
-                else index++;
+            if (targetField.getFieldDesignation() == nextField.getFieldDesignation() && this.checkDestroy()) {
+                this.isValid = true;
+                return true;
+            } else {
+                return nextField.getFigure() != null;
             }
         }
-    }
-
-
-    private void checkUpToDown(int tempSourceNumber, int tempTargetNumber,
-                               int sourceIndex, int targetIndex) {
-
-        int index = sourceIndex;
-
-        for (int i = tempSourceNumber; i < tempTargetNumber; i++) {
-
-            if (this.checkNextField(index, sourceIndex, targetIndex, i, 1)) {
-                //dont check more fields
-                break;
-            }
-            else {
-                if (index < targetIndex) index++;
-                else index--;
-            }
+        else {
+            return false;
         }
     }
 

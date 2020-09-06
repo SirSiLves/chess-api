@@ -6,7 +6,6 @@ public class Validation {
     private boolean state;
     private final IValidate IValidate;
 
-
     public Validation(IValidate IValidate){
         this.text = "no matched rule";
         this.IValidate = IValidate;

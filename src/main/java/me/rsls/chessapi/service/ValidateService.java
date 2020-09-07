@@ -18,6 +18,9 @@ public class ValidateService {
     @Autowired
     private ValidFieldService validFieldService;
 
+    @Autowired
+    private GameService gameService;
+
     private static final Map<Integer, String> RULE_TEXTS = new HashMap<>() {
         {
             put(1, "Valid");
@@ -31,8 +34,10 @@ public class ValidateService {
         }
     };
 
-    public Validation validateMove(Board board, Field sourceField, Field targetField) {
+    public Validation validateMove(Field sourceField, Field targetField) {
         Validation validation = new Validation(null);
+
+        Board board = gameService.getCurrentBoard();
 
         if (sourceField.getFigure() == null) {
             validation.setText(RULE_TEXTS.get(2));
@@ -41,8 +46,9 @@ public class ValidateService {
         } else if (sourceField.getFigure() != null) {
 
             Figure movedFigure = sourceField.getFigure();
+
             //collect all possible fields for moved figure
-            ValidFields validFields = validFieldService.validateFields(board, sourceField, movedFigure);
+            ValidFields validFields = validFieldService.validateFields(sourceField, movedFigure);
 
             validation = validFields.getFieldList().get(targetField);
 
@@ -54,7 +60,7 @@ public class ValidateService {
                     checkStateBefore = true;
                 }
 
-                checkState = checkService.validateCheck(board, sourceField, targetField);
+                checkState = checkService.validateCheck(sourceField, targetField);
 
                 if (checkStateBefore && checkState.isCheck()
                         || (checkState.getCheckColor() != null && !checkState.getCheckColor().equals(board.getLastPlayed()))) {

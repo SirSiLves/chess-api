@@ -22,8 +22,6 @@ public class CheckServiceTest extends ChessApiApplicationTests {
     @Autowired
     private GameService gameService;
 
-    @Autowired
-    private PlayerService playerService;
 
 
     @BeforeEach
@@ -33,7 +31,7 @@ public class CheckServiceTest extends ChessApiApplicationTests {
 
     @Test
     public void testCheckMate(){
-        Board board = gameService.getGamePicture(playerService.getPlayer()).getBoard();
+        Board board = gameService.getGamePicture().getBoard();
 
         assertTrue(moveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "6"}).isState());
         assertTrue(moveService.handleMove(new String[]{"a", "2"}, new String[]{"a", "3"}).isState());
@@ -174,7 +172,7 @@ public class CheckServiceTest extends ChessApiApplicationTests {
         assertTrue(moveService.handleMove(new String[]{"h", "1"}, new String[]{"g", "1"}).isState());
         assertTrue(moveService.handleMove(new String[]{"f", "8"}, new String[]{"f", "2"}).isState());
 
-        Game game = gameService.getGamePicture(playerService.getPlayer());
+        Game game = gameService.getGamePicture();
         Board board = game.getBoard();
 
         assertTrue(board.getCheck().isCheck());

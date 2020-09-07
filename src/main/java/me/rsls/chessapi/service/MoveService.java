@@ -14,9 +14,6 @@ public class MoveService {
     private GameService gameService;
 
     @Autowired
-    private PlayerService playerService;
-
-    @Autowired
     private BoardService boardService;
 
     @Autowired
@@ -25,22 +22,21 @@ public class MoveService {
 
     public Validation handleMove(String[] sourceDesignation, String[] targetDesignation){
 
-        Board tempBoard = gameService.getGamePicture(playerService.getPlayer()).getBoard();
+        Field sourceField = boardService.getField(sourceDesignation);
+        Field targetField = boardService.getField(targetDesignation);
 
-        Field sourceField = boardService.getField(tempBoard, sourceDesignation);
-        Field targetField = boardService.getField(tempBoard, targetDesignation);
-
-        Validation validation = validateService.validateMove(tempBoard, sourceField, targetField);
+        Validation validation = validateService.validateMove(sourceField, targetField);
 
         //if validation = true -> execute move
         if(validation.isState()) {
-            this.setMove(tempBoard, sourceField, targetField);
+            this.setMove(sourceField, targetField);
         }
 
         return validation;
     }
 
-    public void setMove(Board board, Field sourceField, Field targetField){
+    public void setMove(Field sourceField, Field targetField){
+        Board board = gameService.getCurrentBoard();
 
         //set eliminated figure
         if(targetField.getFigure() != null) targetField.getFigure().setAlive(false);
@@ -57,10 +53,6 @@ public class MoveService {
         //set last played
         board.setLastPlayed(movedFigure.getFigureColor());
 
-        //set winner
-        if(board.getCheck().isCheckMate()) {
-            gameService.getGamePicture(playerService.getPlayer()).setWinner(movedFigure.getFigureColor());
-        }
     }
 
 }

@@ -5,19 +5,19 @@ import java.util.Date;
 public class Game {
 
     private final Board board;
-    private final Player[] players;
+    private final Player player;
     private Color winnerPlayer;
     private final Date createDate;
 
-    public Game(Player[] players, Board board) {
+    public Game(Player player, Board board) {
         this.board = board;
-        this.players = players;
+        this.player = player;
         this.createDate = new Date();
         this.winnerPlayer = null;
     }
 
-    public Player[] getPlayers() {
-        return players;
+    public Player getPlayer() {
+        return player;
     }
 
     public Board getBoard() {

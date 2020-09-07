@@ -19,16 +19,21 @@ public class CheckService {
     @Autowired
     private ValidFieldService validFieldService;
 
+    @Autowired
+    private GameService gameService;
 
-    public CheckState validateCheck(Board board, Field sourceField, Field targetField) {
+
+    public CheckState validateCheck(Field sourceField, Field targetField) {
+        Board board = gameService.getCurrentBoard();
+
         //reset check state
         CheckState checkState = board.getCheck();
         this.resetCheckState(checkState);
 
-        processCheckValidation(board, sourceField, targetField, Color.BLACK);
+        processCheckValidation(sourceField, targetField, Color.BLACK);
 
         if (!checkState.isCheck()) {
-            processCheckValidation(board, sourceField, targetField, Color.WHITE);
+            processCheckValidation(sourceField, targetField, Color.WHITE);
         }
 
         return checkState;
@@ -39,7 +44,8 @@ public class CheckService {
         checkState.setCheckColor(null);
     }
 
-    private void processCheckValidation(Board board, Field sourceField, Field targetField, Color kingColor) {
+    private void processCheckValidation(Field sourceField, Field targetField, Color kingColor) {
+        Board board = gameService.getCurrentBoard();
 
         //execute move, to check the new situation
         Figure movedFigure = sourceField.getFigure();
@@ -58,12 +64,12 @@ public class CheckService {
                 .filter(f -> f.getFigureColor().equals(kingColor))
                 .findFirst().get();
 
-        Field kingField = figureService.getFieldWithFigure(board, king);
+        Field kingField = figureService.getFieldWithFigure(king);
 
         enemyList.forEach(figure -> {
 
-            Field figureField = figureService.getFieldWithFigure(board, figure);
-            ValidFields figureValidTargetFields = validFieldService.validateFields(board, figureField, figure);
+            Field figureField = figureService.getFieldWithFigure(figure);
+            ValidFields figureValidTargetFields = validFieldService.validateFields(figureField, figure);
 
             if (figureValidTargetFields.getFieldList().get(kingField).isState()) {
                 board.getCheck().setCheck(true);

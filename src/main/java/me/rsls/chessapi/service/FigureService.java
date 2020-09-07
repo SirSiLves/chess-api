@@ -1,6 +1,7 @@
 package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,7 +11,12 @@ import java.util.HashMap;
 @Service
 public class FigureService {
 
-    public Field getFieldWithFigure(Board board, Figure figure) {
+    @Autowired
+    private GameService gameService;
+
+    public Field getFieldWithFigure(Figure figure) {
+
+        Board board = gameService.getCurrentBoard();
 
         for(HashMap<Integer, Field> column : board.getFieldMatrix().values()){
             for(Field f : column.values()){

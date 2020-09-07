@@ -27,14 +27,14 @@ public class CheckService {
 
         processCheckValidation(board, sourceField, targetField, Color.BLACK);
 
-        if(!checkState.isCheck()){
+        if (!checkState.isCheck()) {
             processCheckValidation(board, sourceField, targetField, Color.WHITE);
         }
 
         return checkState;
     }
 
-    private void resetCheckState(CheckState checkState){
+    private void resetCheckState(CheckState checkState) {
         checkState.setCheck(false);
         checkState.setCheckColor(null);
     }

@@ -27,6 +27,7 @@ public class ValidateService {
             put(5, "Your figure is in a check state");
             put(6, "Checkmate!");
             put(7, "Check!");
+            put(8, "Remis");
         }
     };
 
@@ -49,19 +50,27 @@ public class ValidateService {
 
                 boolean checkStateBefore = false;
                 CheckState checkState = board.getCheck();
-                if (checkState.isCheck()) checkStateBefore = true;
+                if (checkState.isCheck()) {
+                    checkStateBefore = true;
+                }
 
                 checkState = checkService.validateCheck(board, sourceField, targetField);
 
-                if (checkStateBefore && checkState.isCheck()) {
+                if (checkStateBefore && checkState.isCheck()
+                        || (checkState.getCheckColor() != null && !checkState.getCheckColor().equals(board.getLastPlayed()))) {
+
                     validation = new Validation(null);
                     validation.setText(RULE_TEXTS.get(7));
 
                 } else {
-                    validation.setText(RULE_TEXTS.get(1));
-
+                    if (checkState.isCheckMate()) {
+                        validation.setText(RULE_TEXTS.get(6));
+                    } else if (checkState.isRemis()) {
+                        validation.setText(RULE_TEXTS.get(8));
+                    } else {
+                        validation.setText(RULE_TEXTS.get(1));
+                    }
                 }
-
             } else {
                 validation.setText(RULE_TEXTS.get(4));
             }

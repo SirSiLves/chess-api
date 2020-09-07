@@ -9,7 +9,6 @@ import java.util.HashMap;
 @Service
 public class ValidFieldService {
 
-
     public ValidFields validateFields(Board board, Field sourceField, Figure movedFigure) {
 
         ValidFields validFields = new ValidFields();

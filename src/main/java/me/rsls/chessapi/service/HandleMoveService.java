@@ -8,16 +8,16 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class MoveService {
-
-    @Autowired
-    private GameService gameService;
+public class HandleMoveService {
 
     @Autowired
     private BoardService boardService;
 
     @Autowired
     private ValidateService validateService;
+
+    @Autowired
+    private MoveExecutorService moveExecutorService;
 
 
     public Validation handleMove(String[] sourceDesignation, String[] targetDesignation){
@@ -29,30 +29,10 @@ public class MoveService {
 
         //if validation = true -> execute move
         if(validation.isState()) {
-            this.setMove(sourceField, targetField);
+            moveExecutorService.executeMove(sourceField, targetField);
         }
 
         return validation;
-    }
-
-    public void setMove(Field sourceField, Field targetField){
-        Board board = gameService.getCurrentBoard();
-
-        //set eliminated figure
-        if(targetField.getFigure() != null) targetField.getFigure().setAlive(false);
-
-        //set moved figure
-        Figure movedFigure = sourceField.getFigure();
-        targetField.setFigure(movedFigure);
-        sourceField.setFigure(null);
-
-        //create history entry
-        Move historyEntry = new Move(sourceField, targetField, movedFigure);
-        board.addMoveToHistory(historyEntry);
-
-        //set last played
-        board.setLastPlayed(movedFigure.getFigureColor());
-
     }
 
 }

@@ -28,8 +28,8 @@ public class ValidateService {
             put(3, "The other player's turn");
             put(4, "Invalid move");
             put(5, "Your figure is in a check state");
-            put(6, "Checkmate!");
-            put(7, "Check!");
+            put(6, "Check!");
+            put(7, "Checkmate!");
             put(8, "Remis");
         }
     };
@@ -56,27 +56,23 @@ public class ValidateService {
 
                 boolean checkStateBefore = false;
                 CheckState checkState = board.getCheck();
-                if (checkState.isCheck()) {
-                    checkStateBefore = true;
-                }
+                if (checkState.isCheck()) checkStateBefore = true;
 
                 checkState = checkService.validateCheck(sourceField, targetField);
 
-                if (checkStateBefore && checkState.isCheck()
-                        || (checkState.getCheckColor() != null && !checkState.getCheckColor().equals(board.getLastPlayed()))) {
+                if (checkStateBefore && checkState.isCheck() ||
+                        (checkState.getCheckColor() != null && !checkState.getCheckColor().equals(board.getLastPlayed()))) {
 
+                    //invalid move, its still check
                     validation = new Validation(null);
-                    validation.setText(RULE_TEXTS.get(7));
+                    validation.setText(RULE_TEXTS.get(6));
 
                 } else {
-                    if (checkState.isCheckMate()) {
-                        validation.setText(RULE_TEXTS.get(6));
-                    } else if (checkState.isRemis()) {
-                        validation.setText(RULE_TEXTS.get(8));
-                    } else {
-                        validation.setText(RULE_TEXTS.get(1));
-                    }
+                    if (checkState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
+                    else if (checkState.isRemis()) validation.setText(RULE_TEXTS.get(8));
+                    else if (checkState.isCheck()) validation.setText(RULE_TEXTS.get(6));
                 }
+
             } else {
                 validation.setText(RULE_TEXTS.get(4));
             }

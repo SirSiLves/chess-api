@@ -2,7 +2,7 @@ package me.rsls.chessapi.controller;
 
 import me.rsls.chessapi.model.ClickedFields;
 import me.rsls.chessapi.model.validation.Validation;
-import me.rsls.chessapi.service.MoveService;
+import me.rsls.chessapi.service.HandleMoveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class MoveController {
 
     @Autowired
-    MoveService moveService;
+    HandleMoveService handleMoveService;
 
     @RequestMapping(value = "doMove", method = RequestMethod.POST)
     public ResponseEntity<Validation> doMove(@RequestBody ClickedFields clickedFields) {
 
-        Validation validation = moveService.handleMove(clickedFields.getSourceField(), clickedFields.getTargetField());
+        Validation validation = handleMoveService.handleMove(clickedFields.getSourceField(), clickedFields.getTargetField());
 
         return new ResponseEntity<>(validation, HttpStatus.OK);
     }

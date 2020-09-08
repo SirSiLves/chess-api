@@ -22,6 +22,12 @@ public class CheckService {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private CheckMateService checkMateService;
+
+    @Autowired
+    private MoveExecutorService moveExecutorService;
+
 
     public CheckState validateCheck(Field sourceField, Field targetField) {
         Board board = gameService.getCurrentBoard();
@@ -45,12 +51,11 @@ public class CheckService {
     }
 
     private void processCheckValidation(Field sourceField, Field targetField, Color kingColor) {
+
         Board board = gameService.getCurrentBoard();
 
         //execute move, to check the new situation
-        Figure movedFigure = sourceField.getFigure();
-        Figure killedFigure = targetField.getFigure();
-        this.preExecuteMove(sourceField, targetField, movedFigure, killedFigure);
+        moveExecutorService.executeMove(sourceField, targetField);
 
         //get only enemies of the king
         List<Figure> enemyList = board.getFigureArrayList().stream()
@@ -74,29 +79,12 @@ public class CheckService {
             if (figureValidTargetFields.getFieldList().get(kingField).isState()) {
                 board.getCheck().setCheck(true);
                 board.getCheck().setCheckColor(kingColor);
+
+                checkMateService.validateCheckMate();
             }
         });
 
-        this.revertExecuteMove(sourceField, targetField, movedFigure, killedFigure);
+        moveExecutorService.revertLastMove();
     }
-
-    private void preExecuteMove(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure) {
-        //set eliminated figure
-        if (killedFigure != null) killedFigure.setAlive(false);
-
-        //set moved figure
-        targetField.setFigure(movedFigure);
-        sourceField.setFigure(null);
-    }
-
-    private void revertExecuteMove(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure) {
-        //set eliminated figure
-        if (killedFigure != null) killedFigure.setAlive(true);
-
-        //set moved figure
-        targetField.setFigure(killedFigure);
-        sourceField.setFigure(movedFigure);
-    }
-
 
 }

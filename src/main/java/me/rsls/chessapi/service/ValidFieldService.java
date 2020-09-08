@@ -2,6 +2,7 @@ package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.model.*;
 import me.rsls.chessapi.model.validation.*;
+import me.rsls.chessapi.model.validation.figures.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

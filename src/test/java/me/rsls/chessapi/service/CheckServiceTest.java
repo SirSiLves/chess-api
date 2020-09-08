@@ -28,9 +28,25 @@ public class CheckServiceTest extends ChessApiApplicationTests {
         initializeService.initializeGame();
     }
 
+
+    @Test
+    public void testSimpleCheck(){
+        Board board = gameService.getCurrentBoard();
+
+        assertFalse(board.getCheck().isCheck());
+        assertFalse(board.getCheck().isCheckMate());
+
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"d", "2"}, new String[]{"d", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"d", "8"}, new String[]{"a", "5"}).isState());
+
+        assertTrue(board.getCheck().isCheck());
+        assertFalse(board.getCheck().isCheckMate());
+    }
+
     @Test
     public void testCheckMate(){
-        Board board = gameService.getGamePicture().getBoard();
+        Board board = gameService.getCurrentBoard();
 
         assertTrue(handleMoveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "6"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"a", "2"}, new String[]{"a", "3"}).isState());

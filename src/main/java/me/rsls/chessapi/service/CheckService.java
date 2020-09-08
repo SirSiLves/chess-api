@@ -80,7 +80,7 @@ public class CheckService {
                 board.getCheck().setCheck(true);
                 board.getCheck().setCheckColor(kingColor);
 
-                checkMateService.validateCheckMate();
+                checkMateService.validateCheckMate(kingField, enemyList);
             }
         });
 

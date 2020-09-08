@@ -53,24 +53,27 @@ public class ValidateService {
             validation = validFields.getFieldList().get(targetField);
 
             if (validation.isState()) {
+                if (board.getMoveHistory().size() > 0) {
 
-                boolean checkStateBefore = false;
-                CheckState checkState = board.getCheck();
-                if (checkState.isCheck()) checkStateBefore = true;
+                    boolean checkStateBefore = false;
+                    CheckState checkState = board.getCheck();
 
-                checkState = checkService.validateCheck(sourceField, targetField);
+                    if (checkState.isCheck()) checkStateBefore = true;
 
-                if (checkStateBefore && checkState.isCheck() ||
-                        (checkState.getCheckColor() != null && !checkState.getCheckColor().equals(board.getLastPlayed()))) {
+                    checkState = checkService.validateCheck(sourceField, targetField);
 
-                    //invalid move, its still check
-                    validation = new Validation(null);
-                    validation.setText(RULE_TEXTS.get(6));
+                    if (checkStateBefore && checkState.isCheck() ||
+                            (checkState.getCheckColor() != null && !checkState.getCheckColor().equals(board.getLastPlayed()))) {
 
-                } else {
-                    if (checkState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
-                    else if (checkState.isRemis()) validation.setText(RULE_TEXTS.get(8));
-                    else if (checkState.isCheck()) validation.setText(RULE_TEXTS.get(6));
+                        //invalid move, its still check
+                        validation = new Validation(null);
+                        validation.setText(RULE_TEXTS.get(6));
+
+                    } else {
+                        if (checkState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
+                        else if (checkState.isRemis()) validation.setText(RULE_TEXTS.get(8));
+                        else if (checkState.isCheck()) validation.setText(RULE_TEXTS.get(6));
+                    }
                 }
 
             } else {

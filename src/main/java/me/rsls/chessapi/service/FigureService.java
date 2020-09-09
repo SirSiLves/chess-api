@@ -14,7 +14,7 @@ public class FigureService {
     @Autowired
     private GameService gameService;
 
-    public Field getFieldWithFigure(Figure figure) {
+    public Field getFigureField(Figure figure) {
 
         Board board = gameService.getCurrentBoard();
 
@@ -27,6 +27,17 @@ public class FigureService {
         }
 
         throw new RuntimeException("Each alive figure must exist on the board!");
+    }
+
+    public Figure getKing(Color kingColor){
+
+        //get king
+        Figure king = gameService.getCurrentBoard().getFigureArrayList().stream()
+                .filter(f -> f.getFigureType().equals(FigureType.KING))
+                .filter(f -> f.getFigureColor().equals(kingColor))
+                .findFirst().get();
+
+        return king;
     }
 
 

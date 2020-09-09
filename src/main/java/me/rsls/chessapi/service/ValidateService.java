@@ -16,6 +16,9 @@ public class ValidateService {
     private CheckService checkService;
 
     @Autowired
+    private CheckMateService checkMateService;
+
+    @Autowired
     private ValidFieldService validFieldService;
 
     @Autowired
@@ -52,7 +55,7 @@ public class ValidateService {
 
             validation = validFields.getFieldList().get(targetField);
 
-            if (validation.isState()) {
+            if (validation != null && validation.isState()) {
                 if (board.getMoveHistory().size() > 0) {
 
                     boolean checkStateBefore = false;
@@ -60,7 +63,7 @@ public class ValidateService {
 
                     if (checkState.isCheck()) checkStateBefore = true;
 
-                    checkState = checkService.validateCheck(sourceField, targetField);
+                    checkService.validateCheck(sourceField, targetField, checkState);
 
                     if (checkStateBefore && checkState.isCheck() ||
                             (checkState.getCheckColor() != null && !checkState.getCheckColor().equals(board.getLastPlayed()))) {
@@ -70,13 +73,22 @@ public class ValidateService {
                         validation.setText(RULE_TEXTS.get(6));
 
                     } else {
-                        if (checkState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
-                        else if (checkState.isRemis()) validation.setText(RULE_TEXTS.get(8));
-                        else if (checkState.isCheck()) validation.setText(RULE_TEXTS.get(6));
+
+                        if (checkState.isCheck()) {
+                            checkMateService.validateCheckMate(sourceField, targetField);
+
+                            if (checkState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
+                            else if (checkState.isRemis()) validation.setText(RULE_TEXTS.get(8));
+                            else validation.setText(RULE_TEXTS.get(6));
+
+                        } else {
+                            validation.setText(RULE_TEXTS.get(1));
+                        }
                     }
                 }
 
             } else {
+                validation = new Validation(null);
                 validation.setText(RULE_TEXTS.get(4));
             }
         }

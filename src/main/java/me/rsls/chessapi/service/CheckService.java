@@ -23,17 +23,13 @@ public class CheckService {
     private GameService gameService;
 
     @Autowired
-    private CheckMateService checkMateService;
-
-    @Autowired
     private MoveExecutorService moveExecutorService;
 
 
-    public CheckState validateCheck(Field sourceField, Field targetField) {
+    public void validateCheck(Field sourceField, Field targetField, CheckState checkState) {
         Board board = gameService.getCurrentBoard();
 
         //reset check state
-        CheckState checkState = board.getCheck();
         this.resetCheckState(checkState);
 
         processCheckValidation(sourceField, targetField, Color.BLACK);
@@ -41,8 +37,6 @@ public class CheckService {
         if (!checkState.isCheck()) {
             processCheckValidation(sourceField, targetField, Color.WHITE);
         }
-
-        return checkState;
     }
 
     private void resetCheckState(CheckState checkState) {
@@ -63,24 +57,18 @@ public class CheckService {
                 .filter(f -> !f.getFigureColor().equals(kingColor))
                 .collect(Collectors.toList());
 
-        //get king
-        Figure king = board.getFigureArrayList().stream()
-                .filter(f -> f.getFigureType().equals(FigureType.KING))
-                .filter(f -> f.getFigureColor().equals(kingColor))
-                .findFirst().get();
+        Figure king = figureService.getKing(kingColor);
 
-        Field kingField = figureService.getFieldWithFigure(king);
+        Field kingField = figureService.getFigureField(king);
 
         enemyList.forEach(figure -> {
 
-            Field figureField = figureService.getFieldWithFigure(figure);
+            Field figureField = figureService.getFigureField(figure);
             ValidFields figureValidTargetFields = validFieldService.validateFields(figureField, figure);
 
-            if (figureValidTargetFields.getFieldList().get(kingField).isState()) {
+            if (figureValidTargetFields.getFieldList().get(kingField) != null) {
                 board.getCheck().setCheck(true);
                 board.getCheck().setCheckColor(kingColor);
-
-                checkMateService.validateCheckMate(kingField, enemyList);
             }
         });
 

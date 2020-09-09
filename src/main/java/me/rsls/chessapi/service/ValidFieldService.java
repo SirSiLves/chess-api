@@ -24,7 +24,9 @@ public class ValidFieldService {
         for (HashMap<Integer, Field> column : board.getFieldMatrix().values()) {
             for (Field field : column.values()) {
                 Validation validation = this.isValid(sourceField, field, movedFigure);
-                validFields.addFieldValidation(field, validation);
+                if (validation.isState()) {
+                    validFields.addFieldValidation(field, validation);
+                }
             }
         }
 

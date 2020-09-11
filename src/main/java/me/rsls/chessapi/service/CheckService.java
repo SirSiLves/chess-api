@@ -27,15 +27,14 @@ public class CheckService {
 
 
     public void validateCheck(Field sourceField, Field targetField, CheckState checkState) {
-        Board board = gameService.getCurrentBoard();
 
         //reset check state
         this.resetCheckState(checkState);
 
-        processCheckValidation(sourceField, targetField, Color.BLACK);
+        processCheckValidation(sourceField, targetField, Color.BLACK, checkState);
 
         if (!checkState.isCheck()) {
-            processCheckValidation(sourceField, targetField, Color.WHITE);
+            processCheckValidation(sourceField, targetField, Color.WHITE, checkState);
         }
     }
 
@@ -44,7 +43,7 @@ public class CheckService {
         checkState.setCheckColor(null);
     }
 
-    private void processCheckValidation(Field sourceField, Field targetField, Color kingColor) {
+    private void processCheckValidation(Field sourceField, Field targetField, Color kingColor, CheckState checkState) {
 
         Board board = gameService.getCurrentBoard();
 
@@ -67,8 +66,8 @@ public class CheckService {
             ValidFields figureValidTargetFields = validFieldService.validateFields(figureField, figure);
 
             if (figureValidTargetFields.getFieldList().get(kingField) != null) {
-                board.getCheck().setCheck(true);
-                board.getCheck().setCheckColor(kingColor);
+                checkState.setCheck(true);
+                checkState.setCheckColor(kingColor);
             }
         });
 

@@ -47,12 +47,12 @@ public class CheckMateService {
                 .filter(f -> f.getFigureColor().equals(king.getFigureColor()))
                 .collect(Collectors.toList());
 
-        guardiens.forEach(g -> {
+        for(Figure g : guardiens){
             Field guardSourceField = figureService.getFigureField(g);
             ValidFields validGuardFields = validFieldService.validateFields(guardSourceField, g);
 
             //check if a mate can prevent the check state
-            validGuardFields.getFieldList().keySet().forEach(guardTargetField -> {
+            for(Field guardTargetField : validGuardFields.getFieldList().keySet()){
                 CheckState checkState = new CheckState();
 
                 checkService.validateCheck(guardSourceField, guardTargetField, checkState);
@@ -60,20 +60,13 @@ public class CheckMateService {
                 if(!checkState.isCheck()){
                     canProtect = true;
                 }
-            });
-        });
+            }
+        }
 
-        //event auslösen -> subscribor prüfen... haben wir schachmatt??
-        //aop -> aspekt orientierte programm
-
-
-//    player.startTurn();
-//        if (player.isInCheck()
-//        if(player.king.hasNoLegalMoves() && player.cannotProtectKing())
-//            game.checkMate(player)
-
+        if(!canProtect) {
+            currentCheckState.setCheckMate(true);
+        }
 
         moveExecutorService.revertLastMove();
-
     }
 }

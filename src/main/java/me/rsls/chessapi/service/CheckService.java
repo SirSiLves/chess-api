@@ -19,19 +19,23 @@ public class CheckService {
     @Autowired
     private ValidFieldService validFieldService;
 
+    @Autowired
+    private GameService gameService;
 
-    public CheckState validateCheck(Board board, Field sourceField, Field targetField) {
+    @Autowired
+    private MoveExecutorService moveExecutorService;
+
+
+    public void validateCheck(Field sourceField, Field targetField, CheckState checkState) {
+
         //reset check state
-        CheckState checkState = board.getCheck();
         this.resetCheckState(checkState);
 
-        processCheckValidation(board, sourceField, targetField, Color.BLACK);
+        processCheckValidation(sourceField, targetField, Color.BLACK, checkState);
 
         if (!checkState.isCheck()) {
-            processCheckValidation(board, sourceField, targetField, Color.WHITE);
+            processCheckValidation(sourceField, targetField, Color.WHITE, checkState);
         }
-
-        return checkState;
     }
 
     private void resetCheckState(CheckState checkState) {
@@ -39,58 +43,42 @@ public class CheckService {
         checkState.setCheckColor(null);
     }
 
-    private void processCheckValidation(Board board, Field sourceField, Field targetField, Color kingColor) {
+    private void processCheckValidation(Field sourceField, Field targetField, Color kingColor, CheckState checkState) {
 
-        //execute move, to check the new situation
-        Figure movedFigure = sourceField.getFigure();
-        Figure killedFigure = targetField.getFigure();
-        this.preExecuteMove(sourceField, targetField, movedFigure, killedFigure);
+        Board board = gameService.getCurrentBoard();
 
-        //get only enemies of the king
-        List<Figure> enemyList = board.getFigureArrayList().stream()
-                .filter(f -> f.isAlive())
-                .filter(f -> !f.getFigureColor().equals(kingColor))
-                .collect(Collectors.toList());
+        if (targetField.getFigure() != null && targetField.getFigure().getFigureType().equals(FigureType.KING)) {
+            checkState.setCheck(true);
+            checkState.setCheckColor(kingColor);
+        } else {
+            //execute move, to check the new situation
+            moveExecutorService.executeMove(sourceField, targetField);
 
-        //get king
-        Figure king = board.getFigureArrayList().stream()
-                .filter(f -> f.getFigureType().equals(FigureType.KING))
-                .filter(f -> f.getFigureColor().equals(kingColor))
-                .findFirst().get();
+            //get only enemies of the king
+            List<Figure> enemyList = board.getFigureArrayList().stream()
+                    .filter(f -> f.isAlive())
+                    .filter(f -> !f.getFigureColor().equals(kingColor))
+                    .collect(Collectors.toList());
 
-        Field kingField = figureService.getFieldWithFigure(board, king);
+            Figure king = figureService.getKing(kingColor);
 
-        enemyList.forEach(figure -> {
+            Field kingField = figureService.getFigureField(king);
 
-            Field figureField = figureService.getFieldWithFigure(board, figure);
-            ValidFields figureValidTargetFields = validFieldService.validateFields(board, figureField, figure);
+            enemyList.forEach(figure -> {
 
-            if (figureValidTargetFields.getFieldList().get(kingField).isState()) {
-                board.getCheck().setCheck(true);
-                board.getCheck().setCheckColor(kingColor);
-            }
-        });
+                Field figureField = figureService.getFigureField(figure);
+                ValidFields figureValidTargetFields = validFieldService.validateFields(figureField, figure);
 
-        this.revertExecuteMove(sourceField, targetField, movedFigure, killedFigure);
+                if (figureValidTargetFields.getFieldList().get(kingField) != null) {
+                    checkState.setCheck(true);
+                    checkState.setCheckColor(kingColor);
+                }
+            });
+
+            moveExecutorService.revertLastMove();
+
+        }
+
     }
-
-    private void preExecuteMove(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure) {
-        //set eliminated figure
-        if (killedFigure != null) killedFigure.setAlive(false);
-
-        //set moved figure
-        targetField.setFigure(movedFigure);
-        sourceField.setFigure(null);
-    }
-
-    private void revertExecuteMove(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure) {
-        //set eliminated figure
-        if (killedFigure != null) killedFigure.setAlive(true);
-
-        //set moved figure
-        targetField.setFigure(killedFigure);
-        sourceField.setFigure(movedFigure);
-    }
-
 
 }

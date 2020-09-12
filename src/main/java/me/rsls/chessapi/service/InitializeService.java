@@ -24,14 +24,12 @@ public class InitializeService {
     public void initializeGame(){
 
         playerService.addPlayer("TEST USER01");
-        Player bot = playerService.getBot();
         Player custom = playerService.getPlayer();
-        Player[] players = {bot, custom};
 
         Board tempBoard = boardService.createBoard();
         figureService.createFigures(tempBoard);
 
-        gameService.createGame(players, tempBoard);
+        gameService.createGame(custom, tempBoard);
     }
 
 }

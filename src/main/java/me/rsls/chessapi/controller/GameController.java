@@ -20,15 +20,12 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
-    @Autowired
-    private PlayerService playerService;
-
 
     @RequestMapping(value = "getGamePicture", method = RequestMethod.GET)
     public ResponseEntity<Game> getGamePicture() {
-        Player tempPlayer = playerService.getPlayer();
-        if (gameService.getGamePicture(tempPlayer) != null) {
-            return new ResponseEntity<>(gameService.getGamePicture(tempPlayer), HttpStatus.OK);
+        Game game = gameService.getGamePicture();
+        if (game != null) {
+            return new ResponseEntity<>(game, HttpStatus.OK);
         } else {
             throw new ApiException("The game is not yet initialized", HttpStatus.OK);
         }

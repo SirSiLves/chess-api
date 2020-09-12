@@ -19,6 +19,12 @@ public class Board {
         this.checkState = new CheckState();
     }
 
+    public Field getField(String[] fieldDesignation){
+        return this.getFieldMatrix()
+                .get(fieldDesignation[0])
+                .get(Integer.parseInt(fieldDesignation[1]));
+    }
+
     public HashMap<String, HashMap<Integer, Field>> getFieldMatrix() {
         return fieldMatrix;
     }

@@ -1,16 +1,17 @@
-package me.rsls.chessapi.model.validation;
+package me.rsls.chessapi.model.validation.figures;
 
 import me.rsls.chessapi.model.Board;
 import me.rsls.chessapi.model.Field;
+import me.rsls.chessapi.model.validation.IValidate;
 import me.rsls.chessapi.service.BoardService;
 
-public class ValidateKing implements IValidate {
+public class ValidateKnight implements IValidate {
 
     private boolean isValid;
     private final Field sourceField, targetField;
     private final Board board;
 
-    public ValidateKing(Board board, Field sourceField, Field targetField) {
+    public ValidateKnight(Board board, Field sourceField, Field targetField) {
         this.isValid = false;
         this.board = board;
         this.sourceField = sourceField;
@@ -30,9 +31,8 @@ public class ValidateKing implements IValidate {
         int targetIndex = BoardService.VERTICAL_DESIGNATION.indexOf(targetField.getVertical());
 
 
-        if ((Math.abs(sourceIndex - targetIndex) == 1) && (Math.abs(sourceNumber - targetNumber) == 0) ||
-                (Math.abs(sourceIndex - targetIndex) == 1) && (Math.abs(sourceNumber - targetNumber) == 1) ||
-                (Math.abs(sourceIndex - targetIndex) == 0) && (Math.abs(sourceNumber - targetNumber) == 1)) {
+        if ((Math.abs(sourceIndex - targetIndex) == 1) && (Math.abs(sourceNumber - targetNumber) == 2) ||
+                (Math.abs(sourceIndex - targetIndex) == 2) && (Math.abs(sourceNumber - targetNumber) == 1)) {
 
             if (this.checkDestroy()) {
                 this.isValid = true;
@@ -40,6 +40,7 @@ public class ValidateKing implements IValidate {
 
         }
     }
+
 
     private boolean checkDestroy() {
 

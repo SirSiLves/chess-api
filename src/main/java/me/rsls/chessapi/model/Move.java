@@ -2,24 +2,29 @@ package me.rsls.chessapi.model;
 
 public class Move {
 
-    private final String[] sourceField, targetField;
-    private final Figure figure;
+    private final Field sourceField, targetField;
+    private final Figure movedFigure, killedFigure;
 
-    public Move(Field sourceField, Field targetField, Figure figure) {
-        this.sourceField = sourceField.getFieldDesignation();
-        this.targetField = targetField.getFieldDesignation();
-        this.figure = figure;
+    public Move(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure) {
+        this.sourceField = sourceField;
+        this.targetField = targetField;
+        this.movedFigure = movedFigure;
+        this.killedFigure = killedFigure;
     }
 
-    public String[] getSourceField() {
+    public Field getSourceField() {
         return sourceField;
     }
 
-    public String[] getTargetField() {
+    public Field getTargetField() {
         return targetField;
     }
 
-    public Figure getFigure() {
-        return figure;
+    public Figure getMovedFigure() {
+        return movedFigure;
+    }
+
+    public Figure getKilledFigure() {
+        return killedFigure;
     }
 }

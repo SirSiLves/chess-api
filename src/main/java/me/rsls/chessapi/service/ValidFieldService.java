@@ -2,6 +2,8 @@ package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.model.*;
 import me.rsls.chessapi.model.validation.*;
+import me.rsls.chessapi.model.validation.figures.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -9,14 +11,22 @@ import java.util.HashMap;
 @Service
 public class ValidFieldService {
 
-    public ValidFields validateFields(Board board, Field sourceField, Figure movedFigure) {
+    @Autowired
+    private GameService gameService;
+
+
+    public ValidFields validateFields(Field sourceField, Figure movedFigure) {
+
+        Board board = gameService.getCurrentBoard();
 
         ValidFields validFields = new ValidFields();
 
         for (HashMap<Integer, Field> column : board.getFieldMatrix().values()) {
             for (Field field : column.values()) {
-                Validation validation = this.isValid(board, sourceField, field, movedFigure);
-                validFields.addFieldValidation(field, validation);
+                Validation validation = this.isValid(sourceField, field, movedFigure);
+                if (validation.isState()) {
+                    validFields.addFieldValidation(field, validation);
+                }
             }
         }
 
@@ -24,8 +34,9 @@ public class ValidFieldService {
     }
 
 
-    public Validation isValid(Board board, Field sourceField, Field targetField, Figure movedFigure) {
+    public Validation isValid(Field sourceField, Field targetField, Figure movedFigure) {
 
+        Board board = gameService.getCurrentBoard();
         Validation validation = new Validation(null);
 
         switch (movedFigure.getFigureType()) {

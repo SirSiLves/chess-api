@@ -1,8 +1,9 @@
-package me.rsls.chessapi.model.validation;
+package me.rsls.chessapi.model.validation.figures;
 
 import me.rsls.chessapi.model.Board;
 import me.rsls.chessapi.model.Color;
 import me.rsls.chessapi.model.Field;
+import me.rsls.chessapi.model.validation.IValidate;
 import me.rsls.chessapi.service.BoardService;
 
 

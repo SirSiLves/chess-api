@@ -237,6 +237,14 @@ public class HandleMoveServiceTest extends ChessApiApplicationTests {
     }
 
     @Test
+    public void testInvalidQueenMoves2(){
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "2"}, new String[]{"a", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "1"}, new String[]{"a", "3"}).isState());
+        assertFalse(handleMoveService.handleMove(new String[]{"d", "8"}, new String[]{"a", "3"}).isState());
+    }
+
+    @Test
     public void testValidKnightMoves(){
         assertTrue(handleMoveService.handleMove(new String[]{"g", "8"}, new String[]{"f", "6"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"g", "1"}, new String[]{"f", "3"}).isState());

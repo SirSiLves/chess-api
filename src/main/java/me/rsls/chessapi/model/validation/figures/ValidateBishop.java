@@ -58,7 +58,7 @@ public class ValidateBishop implements IValidate {
                 //dont check more fields
                 break;
             } else {
-                if (index < targetIndex) index++;
+                if (sourceIndex < targetIndex) index++;
                 else index--;
             }
         }
@@ -75,7 +75,7 @@ public class ValidateBishop implements IValidate {
                 //dont check more fields
                 break;
             } else {
-                if (index > targetIndex) index--;
+                if (sourceIndex > targetIndex) index--;
                 else index++;
             }
         }

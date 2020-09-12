@@ -26,7 +26,7 @@ public class FigureService {
             }
         }
 
-        throw new RuntimeException("Each alive figure must exist on the board!");
+        throw new RuntimeException("Each alive figure must exist on the board! Figure: " + figure.getFigureType() + " not found..");
     }
 
     public Figure getKing(Color kingColor){

@@ -2,6 +2,7 @@ package me.rsls.chessapi.controller;
 
 import me.rsls.chessapi.model.ClickedFields;
 import me.rsls.chessapi.model.validation.Validation;
+import me.rsls.chessapi.service.BotService;
 import me.rsls.chessapi.service.HandleMoveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class MoveController {
 
     @Autowired
-    HandleMoveService handleMoveService;
+    private HandleMoveService handleMoveService;
+
+    @Autowired
+    private BotService botService;
+
 
     @RequestMapping(value = "doMove", method = RequestMethod.POST)
     public ResponseEntity<Validation> doMove(@RequestBody ClickedFields clickedFields) {
@@ -27,4 +32,14 @@ public class MoveController {
 
         return new ResponseEntity<>(validation, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "doBotMove", method = RequestMethod.GET)
+    public ResponseEntity<String> doBotMove() {
+
+        botService.executeRandomBotMove();
+
+        return new ResponseEntity<>("Bot move executed.", HttpStatus.OK);
+    }
+
+
 }

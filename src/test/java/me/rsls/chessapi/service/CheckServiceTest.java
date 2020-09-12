@@ -190,8 +190,9 @@ public class CheckServiceTest extends ChessApiApplicationTests {
         Game game = gameService.getGamePicture();
         Board board = game.getBoard();
 
-        assertTrue(board.getCheck().isCheck());
+        assertFalse(board.getCheck().isCheck());
         assertFalse(board.getCheck().isCheckMate());
+        assertTrue(board.getCheck().isRemis());
 
     }
 }

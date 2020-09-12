@@ -4,6 +4,7 @@ import me.rsls.chessapi.model.ClickedField;
 import me.rsls.chessapi.model.Field;
 import me.rsls.chessapi.model.validation.ValidFields;
 import me.rsls.chessapi.service.BoardService;
+import me.rsls.chessapi.service.GameService;
 import me.rsls.chessapi.service.ValidFieldService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,12 +22,13 @@ public class ValidFieldsController {
     private ValidFieldService validFieldService;
 
     @Autowired
-    private BoardService boardService;
+    private GameService gameService;
+
 
     @RequestMapping(value = "getFields", method = RequestMethod.POST)
     public ResponseEntity<Set<Field>> getValidFields(@RequestBody ClickedField clickedField) {
 
-        Field sourceField = boardService.getField(clickedField.getSourceField());
+        Field sourceField = gameService.getCurrentBoard().getField(clickedField.getSourceField());
         ValidFields validFields = validFieldService.validateFields(sourceField, sourceField.getFigure());
 
         return new ResponseEntity<>(validFields.getFieldList().keySet(), HttpStatus.OK);

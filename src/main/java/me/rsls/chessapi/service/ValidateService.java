@@ -22,6 +22,9 @@ public class ValidateService {
     private ValidFieldService validFieldService;
 
     @Autowired
+    private RemisService remisService;
+
+    @Autowired
     private GameService gameService;
 
     private static final Map<Integer, String> RULE_TEXTS = new HashMap<>() {
@@ -78,11 +81,16 @@ public class ValidateService {
                             checkMateService.validateCheckMate(sourceField, targetField);
 
                             if (checkState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
-                            else if (checkState.isRemis()) validation.setText(RULE_TEXTS.get(8));
                             else validation.setText(RULE_TEXTS.get(6));
 
                         } else {
-                            validation.setText(RULE_TEXTS.get(1));
+                            remisService.validateRemis(sourceField, targetField);
+
+                            if (checkState.isRemis()) {
+                                validation.setText(RULE_TEXTS.get(9));
+                            } else {
+                                validation.setText(RULE_TEXTS.get(1));
+                            }
                         }
                     }
                 }

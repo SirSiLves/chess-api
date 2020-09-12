@@ -47,31 +47,38 @@ public class CheckService {
 
         Board board = gameService.getCurrentBoard();
 
-        //execute move, to check the new situation
-        moveExecutorService.executeMove(sourceField, targetField);
+        if (targetField.getFigure() != null && targetField.getFigure().getFigureType().equals(FigureType.KING)) {
+            checkState.setCheck(true);
+            checkState.setCheckColor(kingColor);
+        } else {
+            //execute move, to check the new situation
+            moveExecutorService.executeMove(sourceField, targetField);
 
-        //get only enemies of the king
-        List<Figure> enemyList = board.getFigureArrayList().stream()
-                .filter(f -> f.isAlive())
-                .filter(f -> !f.getFigureColor().equals(kingColor))
-                .collect(Collectors.toList());
+            //get only enemies of the king
+            List<Figure> enemyList = board.getFigureArrayList().stream()
+                    .filter(f -> f.isAlive())
+                    .filter(f -> !f.getFigureColor().equals(kingColor))
+                    .collect(Collectors.toList());
 
-        Figure king = figureService.getKing(kingColor);
+            Figure king = figureService.getKing(kingColor);
 
-        Field kingField = figureService.getFigureField(king);
+            Field kingField = figureService.getFigureField(king);
 
-        enemyList.forEach(figure -> {
+            enemyList.forEach(figure -> {
 
-            Field figureField = figureService.getFigureField(figure);
-            ValidFields figureValidTargetFields = validFieldService.validateFields(figureField, figure);
+                Field figureField = figureService.getFigureField(figure);
+                ValidFields figureValidTargetFields = validFieldService.validateFields(figureField, figure);
 
-            if (figureValidTargetFields.getFieldList().get(kingField) != null) {
-                checkState.setCheck(true);
-                checkState.setCheckColor(kingColor);
-            }
-        });
+                if (figureValidTargetFields.getFieldList().get(kingField) != null) {
+                    checkState.setCheck(true);
+                    checkState.setCheckColor(kingColor);
+                }
+            });
 
-        moveExecutorService.revertLastMove();
+            moveExecutorService.revertLastMove();
+
+        }
+
     }
 
 }

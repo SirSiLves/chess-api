@@ -24,6 +24,7 @@ public class ValidFieldsController {
     @Autowired
     private GameService gameService;
 
+    //TODO POST?
 
     @RequestMapping(value = "getFields", method = RequestMethod.POST)
     public ResponseEntity<Set<Field>> getValidFields(@RequestBody ClickedField clickedField) {

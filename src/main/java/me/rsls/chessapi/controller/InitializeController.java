@@ -16,6 +16,7 @@ public class InitializeController {
     @Autowired
     private InitializeService initializeService;
 
+
     @RequestMapping(value = "createGame", method = RequestMethod.GET)
     public ResponseEntity<String> createGame() {
         initializeService.initializeGame();

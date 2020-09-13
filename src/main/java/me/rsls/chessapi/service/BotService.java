@@ -29,17 +29,16 @@ public class BotService {
     @Autowired
     private FigureService figureService;
 
-    public void executeRandomBotMove() {
+    public Field[] executeRandomBotMove() {
 
         Board board = gameService.getCurrentBoard();
 
         List<Figure> botFigures = board.getFigureArrayList().stream()
                 .filter(f -> !board.getLastPlayed().equals(f.getFigureColor()))
+                .filter(f -> f.isAlive())
                 .collect(Collectors.toList());
 
-
-        boolean moveExecuted = false;
-        while (!moveExecuted) {
+        while (true) {
             Figure randomFigure = botFigures.get(new Random().nextInt(botFigures.size()));
 
             Field sourceField = figureService.getFigureField(randomFigure);
@@ -53,10 +52,12 @@ public class BotService {
 
                     if (validation.isState()) {
                         moveExecutorService.executeMove(sourceField, field);
-                        moveExecuted = true;
-                        break;
-                    }
 
+                        return new Field[]{
+                          sourceField, field
+                        };
+
+                    }
                 }
             }
         }

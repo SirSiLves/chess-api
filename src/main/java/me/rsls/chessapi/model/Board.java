@@ -47,7 +47,6 @@ public class Board {
 
     public void addMoveToHistory(Move move){
         moveHistory.put(moveHistory.size(), move);
-
     }
 
     public HashMap<Integer, Move> getMoveHistory() {

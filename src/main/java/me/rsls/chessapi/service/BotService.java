@@ -29,7 +29,7 @@ public class BotService {
     @Autowired
     private FigureService figureService;
 
-    public Field[] executeRandomBotMove() {
+    public void executeRandomBotMove() {
 
         Board board = gameService.getCurrentBoard();
 
@@ -38,7 +38,9 @@ public class BotService {
                 .filter(f -> f.isAlive())
                 .collect(Collectors.toList());
 
-        while (true) {
+
+        boolean moveExecuted = false;
+        while (!moveExecuted) {
             Figure randomFigure = botFigures.get(new Random().nextInt(botFigures.size()));
 
             Field sourceField = figureService.getFigureField(randomFigure);
@@ -47,16 +49,12 @@ public class BotService {
             if (validFields.getFieldList().size() > 0) {
 
                 for (Field field : validFields.getFieldList().keySet()) {
-
                     Validation validation = validateService.validateMove(sourceField, field);
 
                     if (validation.isState()) {
                         moveExecutorService.executeMove(sourceField, field);
-
-                        return new Field[]{
-                          sourceField, field
-                        };
-
+                        moveExecuted = true;
+                        break;
                     }
                 }
             }

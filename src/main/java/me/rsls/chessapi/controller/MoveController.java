@@ -38,11 +38,11 @@ public class MoveController {
     //TODO GET?
 
     @RequestMapping(value = "doBotMove", method = RequestMethod.GET)
-    public ResponseEntity<Field[]> doBotMove() {
+    public ResponseEntity<String> doBotMove() {
 
-        Field[] sourceAndTarget = botService.executeRandomBotMove();
+        botService.executeRandomBotMove();
 
-        return new ResponseEntity<>(sourceAndTarget, HttpStatus.OK);
+        return new ResponseEntity<>("Bot move executed.", HttpStatus.OK);
     }
 
 

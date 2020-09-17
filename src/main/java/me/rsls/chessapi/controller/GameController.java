@@ -5,6 +5,7 @@ import me.rsls.chessapi.exception.model.ApiException;
 import me.rsls.chessapi.model.Game;
 import me.rsls.chessapi.model.Player;
 import me.rsls.chessapi.service.GameService;
+import me.rsls.chessapi.service.InitializeService;
 import me.rsls.chessapi.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,14 +21,20 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private InitializeService initializeService;
+
 
     @RequestMapping(value = "getGamePicture", method = RequestMethod.GET)
     public ResponseEntity<Game> getGamePicture() {
+        System.out.println("GET GAME PICTURE");
         Game game = gameService.getGamePicture();
-        if (game != null) {
-            return new ResponseEntity<>(game, HttpStatus.OK);
-        } else {
-            throw new ApiException("The game is not yet initialized", HttpStatus.OK);
+
+        if (game == null) {
+            initializeService.initializeGame();
+            game = gameService.getGamePicture();
         }
+
+        return new ResponseEntity<>(game, HttpStatus.OK);
     }
 }

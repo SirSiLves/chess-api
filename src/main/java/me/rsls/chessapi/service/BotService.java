@@ -34,8 +34,8 @@ public class BotService {
         Board board = gameService.getCurrentBoard();
 
         List<Figure> botFigures = board.getFigureArrayList().stream()
-                .filter(f -> !board.getLastPlayed().equals(f.getFigureColor()))
                 .filter(f -> f.isAlive())
+                .filter(f -> !board.getLastPlayed().equals(f.getFigureColor()))
                 .collect(Collectors.toList());
 
 

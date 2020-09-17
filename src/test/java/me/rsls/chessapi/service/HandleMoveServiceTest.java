@@ -1,6 +1,8 @@
 package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.ChessApiApplicationTests;
+import me.rsls.chessapi.model.Board;
+import me.rsls.chessapi.model.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -349,15 +351,4 @@ public class HandleMoveServiceTest extends ChessApiApplicationTests {
         assertFalse(handleMoveService.handleMove(new String[]{"e", "8"}, new String[]{"e", "1"}).isState());
     }
 
-    @Test
-    public void testCheckState(){
-        assertTrue(handleMoveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "5"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"d", "2"}, new String[]{"d", "4"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"d", "8"}, new String[]{"a", "5"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"d", "1"}, new String[]{"d", "2"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"d", "7"}, new String[]{"d", "6"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"e", "2"}, new String[]{"e", "3"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"d", "6"}, new String[]{"d", "5"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"e", "1"}, new String[]{"e", "2"}).isState());
-    }
 }

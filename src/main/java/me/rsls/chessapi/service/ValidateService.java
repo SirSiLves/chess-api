@@ -37,6 +37,7 @@ public class ValidateService {
             put(6, "Check!");
             put(7, "Checkmate!");
             put(8, "Remis");
+            put(9, "Your king runs into Check!");
         }
     };
 
@@ -68,34 +69,47 @@ public class ValidateService {
 
                     checkService.validateCheck(sourceField, targetField, checkState);
 
-                    if (checkStateBefore && checkState.isCheck() ||
-                            (checkState.getCheckColor() != null && !checkState.getCheckColor().equals(board.getLastPlayed()))) {
-
-                        //invalid move, its still check
+                    //king can not jump into a check state
+                    if (sourceField.getFigure().getFigureType().equals(FigureType.KING)
+                            && checkState.isCheck()) {
+                        checkState.setCheck(false);
                         validation = new Validation(null);
-                        validation.setText(RULE_TEXTS.get(6));
+                        validation.setText(RULE_TEXTS.get(9));
 
                     } else {
+                        if (checkStateBefore && checkState.isCheck() ||
+                                (checkState.getCheckColor() != null && !checkState.getCheckColor().equals(board.getLastPlayed()))) {
 
-                        if (checkState.isCheck()) {
-                            checkMateService.validateCheckMate(sourceField, targetField);
-
-                            if (checkState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
-                            else validation.setText(RULE_TEXTS.get(6));
+                            //invalid move, its still check
+                            validation = new Validation(null);
+                            validation.setText(RULE_TEXTS.get(6));
 
                         } else {
-                            remisService.validateRemis(sourceField, targetField);
 
-                            if (checkState.isRemis()) {
-                                validation.setText(RULE_TEXTS.get(9));
+                            if (checkState.isCheck()) {
+                                checkMateService.validateCheckMate(sourceField, targetField);
+
+                                if (checkState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
+                                else validation.setText(RULE_TEXTS.get(6));
+
                             } else {
-                                validation.setText(RULE_TEXTS.get(1));
+                                remisService.validateRemis(sourceField, targetField);
+
+                                if (checkState.isRemis()) {
+                                    validation.setText(RULE_TEXTS.get(9));
+                                } else {
+                                    validation.setText(RULE_TEXTS.get(1));
+                                }
                             }
                         }
                     }
                 }
+                else {
+                    validation.setText(RULE_TEXTS.get(1));
+                }
 
-            } else {
+            }
+            else {
                 validation = new Validation(null);
                 validation.setText(RULE_TEXTS.get(4));
             }

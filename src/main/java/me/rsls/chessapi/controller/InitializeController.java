@@ -20,6 +20,7 @@ public class InitializeController {
     @RequestMapping(value = "createGame", method = RequestMethod.GET)
     public ResponseEntity<String> createGame() {
         initializeService.initializeGame();
+
         return new ResponseEntity<>("Game successfully initialized.", HttpStatus.OK);
     }
 }

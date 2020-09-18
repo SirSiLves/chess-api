@@ -27,7 +27,6 @@ public class GameController {
 
     @RequestMapping(value = "getGamePicture", method = RequestMethod.GET)
     public ResponseEntity<Game> getGamePicture() {
-        System.out.println("GET GAME PICTURE");
         Game game = gameService.getGamePicture();
 
         if (game == null) {

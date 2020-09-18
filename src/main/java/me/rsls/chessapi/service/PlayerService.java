@@ -21,7 +21,10 @@ public class PlayerService {
     }
 
     public void addPlayer(String nickName){
-        playerArrayList.add(new Player(nickName, sessionService.getHttpSessionId()));
+        Player player = this.getPlayer();
+        if (player == null){
+            playerArrayList.add(new Player(nickName, sessionService.getHttpSessionId()));
+        }
     }
 
     public Player getPlayer(){

@@ -26,30 +26,30 @@ public class CheckService {
     private MoveExecutorService moveExecutorService;
 
 
-    public void validateCheck(Field sourceField, Field targetField, CheckState checkState) {
+    public void validateCheck(Field sourceField, Field targetField, GameState gameState) {
 
         //reset check state
-        this.resetCheckState(checkState);
+        this.resetCheckState(gameState);
 
-        processCheckValidation(sourceField, targetField, Color.BLACK, checkState);
+        processCheckValidation(sourceField, targetField, Color.BLACK, gameState);
 
-        if (!checkState.isCheck()) {
-            processCheckValidation(sourceField, targetField, Color.WHITE, checkState);
+        if (!gameState.isCheck()) {
+            processCheckValidation(sourceField, targetField, Color.WHITE, gameState);
         }
     }
 
-    private void resetCheckState(CheckState checkState) {
-        checkState.setCheck(false);
-        checkState.setCheckColor(null);
+    private void resetCheckState(GameState gameState) {
+        gameState.setCheck(false);
+        gameState.setCheckColor(null);
     }
 
-    private void processCheckValidation(Field sourceField, Field targetField, Color kingColor, CheckState checkState) {
+    private void processCheckValidation(Field sourceField, Field targetField, Color kingColor, GameState gameState) {
 
         Board board = gameService.getCurrentBoard();
 
         if (targetField.getFigure() != null && targetField.getFigure().getFigureType().equals(FigureType.KING)) {
-            checkState.setCheck(true);
-            checkState.setCheckColor(kingColor);
+            gameState.setCheck(true);
+            gameState.setCheckColor(kingColor);
         } else {
             //execute move, to check the new situation
             moveExecutorService.executeMove(sourceField, targetField);
@@ -70,8 +70,8 @@ public class CheckService {
                 ValidFields figureValidTargetFields = validFieldService.validateFields(figureField, figure);
 
                 if (figureValidTargetFields.getFieldList().get(kingField) != null) {
-                    checkState.setCheck(true);
-                    checkState.setCheckColor(kingColor);
+                    gameState.setCheck(true);
+                    gameState.setCheckColor(kingColor);
                 }
             });
 

@@ -29,11 +29,11 @@ public class CheckMateService {
 
     public void validateCheckMate(Field sourceField, Field targetField) {
         Board board = gameService.getCurrentBoard();
-        CheckState currentCheckState = board.getCheck();
+        GameState currentGameState = gameService.getCurrentGameState();
 
         boolean canProtect = false;
 
-        Figure king = figureService.getKing(currentCheckState.getCheckColor());
+        Figure king = figureService.getKing(currentGameState.getCheckColor());
         Field kingField = figureService.getFigureField(king);
 
         //pre execute move
@@ -50,12 +50,12 @@ public class CheckMateService {
         canProtect = isCanProtect(false, guardiens, figureService, validFieldService, checkService);
 
         if (!canProtect) {
-            currentCheckState.setCheckMate(true);
+            currentGameState.setCheckMate(true);
 
-            if (currentCheckState.getCheckColor().equals(Color.BLACK)) {
-                gameService.getGamePicture().setWinner(Color.WHITE);
+            if (currentGameState.getCheckColor().equals(Color.BLACK)) {
+                gameService.getCurrentGameState().setWinner(Color.WHITE);
             } else {
-                gameService.getGamePicture().setWinner(Color.BLACK);
+                gameService.getCurrentGameState().setWinner(Color.BLACK);
             }
         }
 
@@ -69,11 +69,11 @@ public class CheckMateService {
 
             //check if a mate can prevent the check state
             for (Field guardTargetField : validGuardFields.getFieldList().keySet()) {
-                CheckState checkState = new CheckState();
+                GameState gameState = new GameState();
 
-                checkService.validateCheck(guardSourceField, guardTargetField, checkState);
+                checkService.validateCheck(guardSourceField, guardTargetField, gameState);
                 // a mate can prevent the check
-                if (!checkState.isCheck()) {
+                if (!gameState.isCheck()) {
                     canProtect = true;
                 }
             }

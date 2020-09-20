@@ -2,6 +2,7 @@ package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.model.Board;
 import me.rsls.chessapi.model.Game;
+import me.rsls.chessapi.model.GameState;
 import me.rsls.chessapi.model.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,5 +43,9 @@ public class GameService {
 
     public Board getCurrentBoard(){
         return this.getGamePicture().getBoard();
+    }
+
+    public GameState getCurrentGameState(){
+        return this.getGamePicture().getGameState();
     }
 }

@@ -1,7 +1,6 @@
 package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.model.*;
-import me.rsls.chessapi.model.validation.ValidFields;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,25 +27,52 @@ public class RemisService {
 
 
     public void validateRemis(Field sourceField, Field targetField) {
-        Board board = gameService.getCurrentBoard();
+        Game game = gameService.getGamePicture();
+        Board board = game.getBoard();
+        GameState gameState = game.getGameState();
 
-        moveExecutorService.executeMove(sourceField, targetField);
+        //validate if the same move was to often done
+        boolean checkSameMove = this.checkSameMove(board);
+        if (!checkSameMove) {
+            moveExecutorService.executeMove(sourceField, targetField);
 
-        boolean figureWithPossibleFields;
+            boolean figureWithPossibleFields;
 
-        if(board.getLastPlayed().equals(Color.BLACK)){
-            figureWithPossibleFields = existsPossibleFields(Color.WHITE);
+            if (board.getLastPlayed().equals(Color.BLACK)) {
+                figureWithPossibleFields = existsPossibleFields(Color.WHITE);
+            } else {
+                figureWithPossibleFields = existsPossibleFields(Color.BLACK);
+            }
+
+            if (!figureWithPossibleFields) gameState.setRemis(true);
+
+            moveExecutorService.revertLastMove();
+        } else {
+            gameState.setRemis(true);
         }
-        else {
-            figureWithPossibleFields = existsPossibleFields(Color.BLACK);
-        }
 
-        if(!figureWithPossibleFields) board.getCheck().setRemis(true);
-
-        moveExecutorService.revertLastMove();
     }
 
-    private boolean existsPossibleFields(Color figureColor){
+    private boolean checkSameMove(Board board) {
+        int historySize = board.getMoveHistory().size();
+        if (historySize > 7) {
+            for (int i = historySize - 1; i > 3; i--) {
+                Move firstMove = board.getMoveHistory().get(i);
+                Move secondMove = board.getMoveHistory().get(i - 2);
+                Move thirdMove = board.getMoveHistory().get(i - 4);
+
+                if (firstMove.getSourceField() == secondMove.getTargetField()
+                        && secondMove.getTargetField() == thirdMove.getSourceField()
+                        && firstMove.getMovedFigure() == secondMove.getMovedFigure()
+                        && secondMove.getMovedFigure() == thirdMove.getMovedFigure()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean existsPossibleFields(Color figureColor) {
         Board board = gameService.getCurrentBoard();
 
         List<Figure> alliesFigures = board.getFigureArrayList().stream()
@@ -60,9 +86,6 @@ public class RemisService {
         possibleFields = CheckMateService.isCanProtect(possibleFields, alliesFigures, figureService, validFieldService, checkService);
 
         return possibleFields;
-
-
-
     }
 
 }

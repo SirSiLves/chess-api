@@ -1,15 +1,25 @@
 package me.rsls.chessapi.model;
 
-public class CheckState {
+public class GameState {
 
     private boolean check, checkMate, isRemis;
     private Color checkColor;
+    private Color winnerPlayer;
 
-    public CheckState() {
+    public GameState() {
         this.check = false;
         this.checkMate = false;
         this.isRemis = false;
         this.checkColor = null;
+        this.winnerPlayer = null;
+    }
+
+    public Color getCheckColor() {
+        return checkColor;
+    }
+
+    public void setCheckColor(Color checkColor) {
+        this.checkColor = checkColor;
     }
 
     public boolean isCheck() {
@@ -36,11 +46,11 @@ public class CheckState {
         isRemis = remis;
     }
 
-    public Color getCheckColor() {
-        return checkColor;
+    public Color getWinner() {
+        return winnerPlayer;
     }
 
-    public void setCheckColor(Color checkColor) {
-        this.checkColor = checkColor;
+    public void setWinner(Color winnerColor) {
+        this.winnerPlayer = winnerColor;
     }
 }

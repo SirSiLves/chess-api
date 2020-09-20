@@ -6,14 +6,14 @@ public class Game {
 
     private final Board board;
     private final Player player;
-    private Color winnerPlayer;
     private final Date createDate;
+    private final GameState gameState;
 
     public Game(Player player, Board board) {
         this.board = board;
         this.player = player;
         this.createDate = new Date();
-        this.winnerPlayer = null;
+        this.gameState = new GameState();
     }
 
     public Player getPlayer() {
@@ -24,15 +24,11 @@ public class Game {
         return board;
     }
 
-    public Color getWinner() {
-        return winnerPlayer;
-    }
-
-    public void setWinner(Color winnerColor) {
-        this.winnerPlayer = winnerColor;
-    }
-
     public Date getCreateDate() {
         return createDate;
+    }
+
+    public GameState getGameState() {
+        return gameState;
     }
 }

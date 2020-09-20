@@ -3,6 +3,7 @@ package me.rsls.chessapi.service;
 import me.rsls.chessapi.ChessApiApplicationTests;
 import me.rsls.chessapi.model.Board;
 import me.rsls.chessapi.model.Game;
+import me.rsls.chessapi.model.GameState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,35 +32,36 @@ public class CheckServiceTest extends ChessApiApplicationTests {
 
     @Test
     public void testSimpleCheck(){
-        Board board = gameService.getCurrentBoard();
+        GameState gameState = gameService.getCurrentGameState();
 
-        assertFalse(board.getCheck().isCheck());
-        assertFalse(board.getCheck().isCheckMate());
+
+        assertFalse(gameState.isCheck());
+        assertFalse(gameState.isCheckMate());
 
         assertTrue(handleMoveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "6"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"d", "2"}, new String[]{"d", "4"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"d", "8"}, new String[]{"a", "5"}).isState());
 
-        assertTrue(board.getCheck().isCheck());
-        assertFalse(board.getCheck().isCheckMate());
+        assertTrue(gameState.isCheck());
+        assertFalse(gameState.isCheckMate());
     }
 
     @Test
     public void testCheckMate(){
-        Board board = gameService.getCurrentBoard();
+        GameState gameState = gameService.getCurrentGameState();
 
         assertTrue(handleMoveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "6"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"a", "2"}, new String[]{"a", "3"}).isState());
 
-        assertFalse(board.getCheck().isCheck());
-        assertFalse(board.getCheck().isCheckMate());
+        assertFalse(gameState.isCheck());
+        assertFalse(gameState.isCheckMate());
 
         assertTrue(handleMoveService.handleMove(new String[]{"d", "8"}, new String[]{"b", "6"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"a", "3"}, new String[]{"a", "4"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"e", "7"}, new String[]{"e", "6"}).isState());
 
-        assertFalse(board.getCheck().isCheck());
-        assertFalse(board.getCheck().isCheckMate());
+        assertFalse(gameState.isCheck());
+        assertFalse(gameState.isCheckMate());
 
         assertTrue(handleMoveService.handleMove(new String[]{"c", "2"}, new String[]{"c", "3"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"f", "8"}, new String[]{"e", "7"}).isState());
@@ -71,10 +73,8 @@ public class CheckServiceTest extends ChessApiApplicationTests {
         //TODO Checkmate status kommt zu spät. Ab jetzt ist schon klar, wer gewonnen hat!
 //        assertFalse(moveService.handleMove(new String[]{"e", "1"}, new String[]{"f", "2"}).isState());
 
-
-
-        assertTrue(board.getCheck().isCheck());
-        assertTrue(board.getCheck().isCheckMate());
+        assertTrue(gameState.isCheck());
+        assertTrue(gameState.isCheckMate());
     }
 
     @Test
@@ -188,11 +188,10 @@ public class CheckServiceTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"f", "8"}, new String[]{"f", "2"}).isState());
 
         Game game = gameService.getGamePicture();
-        Board board = game.getBoard();
 
-        assertFalse(board.getCheck().isCheck());
-        assertFalse(board.getCheck().isCheckMate());
-        assertTrue(board.getCheck().isRemis());
+        assertFalse(game.getGameState().isCheck());
+        assertFalse(game.getGameState().isCheckMate());
+        assertTrue(game.getGameState().isRemis());
 
     }
 
@@ -289,11 +288,32 @@ public class CheckServiceTest extends ChessApiApplicationTests {
         assertFalse(handleMoveService.handleMove(new String[]{"f", "7"}, new String[]{"f", "6"}).isState());
 
         Game game = gameService.getGamePicture();
-        Board board = game.getBoard();
 
-        assertFalse(board.getCheck().isCheck());
-        assertFalse(board.getCheck().isCheckMate());
-        assertFalse(board.getCheck().isRemis());
+        assertFalse(game.getGameState().isCheck());
+        assertFalse(game.getGameState().isCheckMate());
+        assertFalse(game.getGameState().isRemis());
 
+    }
+
+    @Test
+    public void testRemisWithToManyMoves(){
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "8"}, new String[]{"f", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "1"}, new String[]{"c", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "6"}, new String[]{"g", "8"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "3"}, new String[]{"e", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "8"}, new String[]{"f", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"e", "4"}, new String[]{"c", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "6"}, new String[]{"g", "8"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "3"}, new String[]{"e", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "8"}, new String[]{"f", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"e", "4"}, new String[]{"c", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "6"}, new String[]{"g", "8"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "3"}, new String[]{"e", "4"}).isState());
+
+        Game game = gameService.getGamePicture();
+
+        assertFalse(game.getGameState().isCheck());
+        assertFalse(game.getGameState().isCheckMate());
+        assertTrue(game.getGameState().isRemis());
     }
 }

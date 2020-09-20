@@ -63,22 +63,22 @@ public class ValidateService {
                 if (board.getMoveHistory().size() > 0) {
 
                     boolean checkStateBefore = false;
-                    CheckState checkState = board.getCheck();
+                    GameState gameState = gameService.getCurrentGameState();
 
-                    if (checkState.isCheck()) checkStateBefore = true;
+                    if (gameState.isCheck()) checkStateBefore = true;
 
-                    checkService.validateCheck(sourceField, targetField, checkState);
+                    checkService.validateCheck(sourceField, targetField, gameState);
 
                     //king can not jump into a check state
                     if (sourceField.getFigure().getFigureType().equals(FigureType.KING)
-                            && checkState.isCheck()) {
-                        checkState.setCheck(false);
+                            && gameState.isCheck()) {
+                        gameState.setCheck(false);
                         validation = new Validation(null);
                         validation.setText(RULE_TEXTS.get(9));
 
                     } else {
-                        if (checkStateBefore && checkState.isCheck() ||
-                                (checkState.getCheckColor() != null && !checkState.getCheckColor().equals(board.getLastPlayed()))) {
+                        if (checkStateBefore && gameState.isCheck() ||
+                                (gameState.getCheckColor() != null && !gameState.getCheckColor().equals(board.getLastPlayed()))) {
 
                             //invalid move, its still check
                             validation = new Validation(null);
@@ -86,16 +86,16 @@ public class ValidateService {
 
                         } else {
 
-                            if (checkState.isCheck()) {
+                            if (gameState.isCheck()) {
                                 checkMateService.validateCheckMate(sourceField, targetField);
 
-                                if (checkState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
+                                if (gameState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
                                 else validation.setText(RULE_TEXTS.get(6));
 
                             } else {
                                 remisService.validateRemis(sourceField, targetField);
 
-                                if (checkState.isRemis()) {
+                                if (gameState.isRemis()) {
                                     validation.setText(RULE_TEXTS.get(9));
                                 } else {
                                     validation.setText(RULE_TEXTS.get(1));

@@ -27,18 +27,32 @@ public class CheckService {
 
 
     public void validateCheck(Field sourceField, Field targetField, GameState gameState) {
-
         //reset check state
         this.resetCheckState(gameState);
 
-        processCheckValidation(sourceField, targetField, Color.BLACK, gameState);
+        GameState gameStateBlack = new GameState();
+        processCheckValidation(sourceField, targetField, Color.BLACK, gameStateBlack);
 
-        if (!gameState.isCheck()) {
-            processCheckValidation(sourceField, targetField, Color.WHITE, gameState);
+        GameState gameStateWhite = new GameState();
+        processCheckValidation(sourceField, targetField, Color.WHITE, gameStateWhite);
+
+        //not allowed to have both kings in a check state
+        if(gameStateBlack.isCheck() && gameStateWhite.isCheck()){
+            gameState.setDoubleCheck(true);
+        }
+        else {
+            if (gameStateBlack.getCheckColor() != null) {
+                gameState.setCheck(true);
+                gameState.setCheckColor(gameStateBlack.getCheckColor());
+            } else if (gameStateWhite.getCheckColor() != null) {
+                gameState.setCheck(true);
+                gameState.setCheckColor(gameStateWhite.getCheckColor());
+            }
         }
     }
 
     private void resetCheckState(GameState gameState) {
+        gameState.setDoubleCheck(false);
         gameState.setCheck(false);
         gameState.setCheckColor(null);
     }

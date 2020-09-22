@@ -80,10 +80,7 @@ public class RemisService {
                 .filter(f -> f.getFigureColor().equals(figureColor))
                 .collect(Collectors.toList());
 
-
-        boolean possibleFields = false;
-
-        possibleFields = CheckMateService.isCanProtect(possibleFields, alliesFigures, figureService, validFieldService, checkService);
+        boolean possibleFields = CheckMateService.isCanProtect(alliesFigures, figureService, validFieldService, checkService);
 
         return possibleFields;
     }

@@ -2,7 +2,7 @@ package me.rsls.chessapi.model;
 
 public class GameState {
 
-    private boolean check, checkMate, isRemis;
+    private boolean check, checkMate, isRemis, doubleCheck;
     private Color checkColor;
     private Color winnerPlayer;
 
@@ -12,6 +12,7 @@ public class GameState {
         this.isRemis = false;
         this.checkColor = null;
         this.winnerPlayer = null;
+        this.doubleCheck = false;
     }
 
     public Color getCheckColor() {
@@ -52,5 +53,21 @@ public class GameState {
 
     public void setWinner(Color winnerColor) {
         this.winnerPlayer = winnerColor;
+    }
+
+    public boolean isDoubleCheck() {
+        return doubleCheck;
+    }
+
+    public void setDoubleCheck(boolean doubleCheck) {
+        this.doubleCheck = doubleCheck;
+    }
+
+    public Color getWinnerPlayer() {
+        return winnerPlayer;
+    }
+
+    public void setWinnerPlayer(Color winnerPlayer) {
+        this.winnerPlayer = winnerPlayer;
     }
 }

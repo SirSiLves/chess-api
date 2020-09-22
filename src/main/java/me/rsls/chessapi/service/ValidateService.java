@@ -42,77 +42,114 @@ public class ValidateService {
     };
 
     public Validation validateMove(Field sourceField, Field targetField) {
-        Validation validation = new Validation(null);
 
-        Board board = gameService.getCurrentBoard();
+        Game currentGame = gameService.getGamePicture();
+        Board board = currentGame.getBoard();
 
+        boolean checkStateBefore = false;
+        GameState gameState = currentGame.getGameState();
+
+        if (gameState.isCheck()) checkStateBefore = true;
+
+        //on source field is no figure
         if (sourceField.getFigure() == null) {
+            Validation validation = new Validation(null);
             validation.setText(RULE_TEXTS.get(2));
-        } else if (sourceField.getFigure().getFigureColor().equals(board.getLastPlayed())) {
+            validation.setState(false);
+            return validation;
+        }
+
+        //can not attack same figures
+        if (sourceField.getFigure().getFigureColor().equals(board.getLastPlayed())) {
+            Validation validation = new Validation(null);
             validation.setText(RULE_TEXTS.get(3));
-        } else if (sourceField.getFigure() != null) {
+            validation.setState(false);
+            return validation;
+        }
 
-            Figure movedFigure = sourceField.getFigure();
+        //validate if some possible field exists
+        Validation validation = this.getValidatePossibleFields(sourceField, targetField);
+        if (!validation.isState()) {
+            return validation;
+        }
 
-            //collect all possible fields for moved figure
-            ValidFields validFields = validFieldService.validateFields(sourceField, movedFigure);
+        //its not allowed to have both king in check state
+        validation = this.getValidateDoubleCheck(sourceField, targetField, validation);
+        if (!validation.isState()) {
+            return validation;
+        }
 
-            validation = validFields.getFieldList().get(targetField);
+        //it can not be check behind each other
+        validation = this.getValidateStillCheck(gameState, board, checkStateBefore, validation);
+        if (!validation.isState()) {
+            return validation;
+        }
 
-            if (validation != null && validation.isState()) {
-                if (board.getMoveHistory().size() > 0) {
+        //finally handle the check, checkmate or remis state
+        this.handleGameStateCheckCheckMateOrRemis(gameState, sourceField, targetField, validation);
+        return validation;
 
-                    boolean checkStateBefore = false;
-                    GameState gameState = gameService.getCurrentGameState();
+    }
 
-                    if (gameState.isCheck()) checkStateBefore = true;
+    private void handleGameStateCheckCheckMateOrRemis(GameState gameState, Field sourceField, Field targetField, Validation validation) {
+        if (gameState.isCheck()) {
+            checkMateService.validateCheckMate(sourceField, targetField);
 
-                    checkService.validateCheck(sourceField, targetField, gameState);
-
-                    //king can not jump into a check state
-                    if (sourceField.getFigure().getFigureType().equals(FigureType.KING)
-                            && gameState.isCheck()) {
-                        gameState.setCheck(false);
-                        validation = new Validation(null);
-                        validation.setText(RULE_TEXTS.get(9));
-
-                    } else {
-                        if (checkStateBefore && gameState.isCheck() ||
-                                (gameState.getCheckColor() != null && !gameState.getCheckColor().equals(board.getLastPlayed()))) {
-
-                            //invalid move, its still check
-                            validation = new Validation(null);
-                            validation.setText(RULE_TEXTS.get(6));
-
-                        } else {
-
-                            if (gameState.isCheck()) {
-                                checkMateService.validateCheckMate(sourceField, targetField);
-
-                                if (gameState.isCheckMate()) validation.setText(RULE_TEXTS.get(7));
-                                else validation.setText(RULE_TEXTS.get(6));
-
-                            } else {
-                                remisService.validateRemis(sourceField, targetField);
-
-                                if (gameState.isRemis()) {
-                                    validation.setText(RULE_TEXTS.get(9));
-                                } else {
-                                    validation.setText(RULE_TEXTS.get(1));
-                                }
-                            }
-                        }
-                    }
-                }
-                else {
-                    validation.setText(RULE_TEXTS.get(1));
-                }
-
+            if (gameState.isCheckMate()) {
+                validation.setText(RULE_TEXTS.get(7));
+            } else {
+                validation.setText(RULE_TEXTS.get(6));
             }
-            else {
-                validation = new Validation(null);
-                validation.setText(RULE_TEXTS.get(4));
+        } else {
+            remisService.validateRemis(sourceField, targetField);
+
+            if (gameState.isRemis()) {
+                validation.setText(RULE_TEXTS.get(8));
+            } else {
+                validation.setText(RULE_TEXTS.get(1));
             }
+        }
+    }
+
+    private Validation getValidateStillCheck(GameState gameState, Board board, boolean checkStateBefore, Validation validation) {
+
+        //overwrite validation object
+        if (gameState.isCheck() && checkStateBefore ||
+                (gameState.getCheckColor() != null && !gameState.getCheckColor().equals(board.getLastPlayed()))) {
+            validation = new Validation(null);
+            validation.setState(false);
+            validation.setText(RULE_TEXTS.get(6));
+        }
+        return validation;
+    }
+
+    private Validation getValidateDoubleCheck(Field sourceField, Field targetField, Validation validation) {
+
+        GameState gameState = gameService.getCurrentGameState();
+        checkService.validateCheck(sourceField, targetField, gameState);
+
+        //overwrite validation object
+        if (gameState.isDoubleCheck()) {
+            gameState.setCheck(false);
+            validation = new Validation(null);
+            validation.setState(false);
+            validation.setText(RULE_TEXTS.get(9));
+        }
+        return validation;
+    }
+
+    private Validation getValidatePossibleFields(Field sourceField, Field targetField) {
+        Figure movedFigure = sourceField.getFigure();
+
+        //collect all possible fields for moved figure
+        ValidFields validFields = validFieldService.validateFields(sourceField, movedFigure);
+        Validation validation = validFields.getFieldList().get(targetField);
+
+        //overwrite validation object
+        if (validation == null) {
+            validation = new Validation(null);
+            validation.setState(false);
+            validation.setText(RULE_TEXTS.get(4));
         }
 
         return validation;

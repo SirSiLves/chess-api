@@ -47,7 +47,7 @@ public class CheckMateService {
                 .filter(f -> f.getFigureColor().equals(king.getFigureColor()))
                 .collect(Collectors.toList());
 
-        canProtect = isCanProtect(false, guardiens, figureService, validFieldService, checkService);
+        canProtect = isCanProtect(guardiens, figureService, validFieldService, checkService);
 
         if (!canProtect) {
             currentGameState.setCheckMate(true);
@@ -62,7 +62,7 @@ public class CheckMateService {
         moveExecutorService.revertLastMove();
     }
 
-    static boolean isCanProtect(boolean canProtect, List<Figure> guardiens, FigureService figureService, ValidFieldService validFieldService, CheckService checkService) {
+    static boolean isCanProtect(List<Figure> guardiens, FigureService figureService, ValidFieldService validFieldService, CheckService checkService) {
         for (Figure g : guardiens) {
             Field guardSourceField = figureService.getFigureField(g);
             ValidFields validGuardFields = validFieldService.validateFields(guardSourceField, g);
@@ -73,11 +73,11 @@ public class CheckMateService {
 
                 checkService.validateCheck(guardSourceField, guardTargetField, gameState);
                 // a mate can prevent the check
-                if (!gameState.isCheck()) {
-                    canProtect = true;
+                if (!gameState.isCheck() && !gameState.isDoubleCheck()) {
+                    return true;
                 }
             }
         }
-        return canProtect;
+        return false;
     }
 }

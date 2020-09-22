@@ -33,5 +33,7 @@ public class Validation {
         return text;
     }
 
-
+    public void setState(boolean state) {
+        this.state = state;
+    }
 }

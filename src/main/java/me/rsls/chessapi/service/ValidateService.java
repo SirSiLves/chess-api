@@ -38,6 +38,7 @@ public class ValidateService {
             put(7, "Checkmate!");
             put(8, "Remis");
             put(9, "Your king runs into Check!");
+            put(10, "You have to change your pawn");
         }
     };
 
@@ -59,7 +60,7 @@ public class ValidateService {
             return validation;
         }
 
-        //can not attack same figures
+        //friendly fire
         if (sourceField.getFigure().getFigureColor().equals(board.getLastPlayed())) {
             Validation validation = new Validation(null);
             validation.setText(RULE_TEXTS.get(3));
@@ -69,6 +70,12 @@ public class ValidateService {
 
         //validate if some possible field exists
         Validation validation = this.getValidatePossibleFields(sourceField, targetField);
+        if (!validation.isState()) {
+            return validation;
+        }
+
+        //validate if pawn was changed or not
+        validation = this.getValidatePawnChange(sourceField, targetField, validation, gameState);
         if (!validation.isState()) {
             return validation;
         }
@@ -89,6 +96,23 @@ public class ValidateService {
         this.handleGameStateCheckCheckMateOrRemis(gameState, sourceField, targetField, validation);
         return validation;
 
+    }
+
+    private Validation getValidatePawnChange(Field sourceField, Field targetField, Validation validation, GameState gameState) {
+
+        boolean pawnChangeBefore = gameState.isPawnChange();
+
+        if(sourceField.getFigure().getFigureType().equals(FigureType.PAWN) && (targetField.getHorizontalNumber() == 8 || targetField.getHorizontalNumber() == 1)) {
+            gameState.setPawnChange(true);
+        }
+
+        if(pawnChangeBefore && gameState.isPawnChange()) {
+            validation = new Validation(null);
+            validation.setState(false);
+            validation.setText(RULE_TEXTS.get(10));
+        }
+
+        return validation;
     }
 
     private void handleGameStateCheckCheckMateOrRemis(GameState gameState, Field sourceField, Field targetField, Validation validation) {

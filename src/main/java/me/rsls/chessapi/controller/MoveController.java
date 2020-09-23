@@ -2,6 +2,8 @@ package me.rsls.chessapi.controller;
 
 import me.rsls.chessapi.model.ClickedFields;
 import me.rsls.chessapi.model.Field;
+import me.rsls.chessapi.model.Figure;
+import me.rsls.chessapi.model.SelectedFigure;
 import me.rsls.chessapi.model.validation.Validation;
 import me.rsls.chessapi.service.BotService;
 import me.rsls.chessapi.service.HandleMoveService;
@@ -44,6 +46,16 @@ public class MoveController {
 
         return new ResponseEntity<>("Bot move executed.", HttpStatus.OK);
     }
+
+
+    @RequestMapping(value = "doChangePawn", method = RequestMethod.POST)
+    public ResponseEntity<String> doChangePawn(@RequestBody SelectedFigure selectedFigure) {
+//        Validation validation = handleMoveService.handleMove(clickedFields.getSourceField(), clickedFields.getTargetField());
+        System.out.println(selectedFigure.getFigureType());
+
+        return new ResponseEntity<>("Figure success fully changed", HttpStatus.OK);
+    }
+
 
 
 }

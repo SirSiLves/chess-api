@@ -35,4 +35,10 @@ public class HandleMoveService {
         return validation;
     }
 
+    public void replacePawn(){
+
+
+
+    }
+
 }

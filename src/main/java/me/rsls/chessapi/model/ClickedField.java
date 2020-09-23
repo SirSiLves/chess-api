@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.validation.annotation.Validated;
 
 public class ClickedField {
-    String[] sourceField;
+
+    private String[] sourceField;
 
     public ClickedField(){ }
 

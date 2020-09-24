@@ -20,7 +20,7 @@ public class HandleMoveService {
     private MoveExecutorService moveExecutorService;
 
     @Autowired
-    private PawnChangerService pawnChangerService;
+    private PawnPromotionService pawnPromotionService;
 
 
     public Validation handleMove(String[] sourceDesignation, String[] targetDesignation){

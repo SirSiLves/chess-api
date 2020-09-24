@@ -28,7 +28,7 @@ public class BotService {
     private FigureService figureService;
 
     @Autowired
-    private PawnChangerService pawnChangerService;
+    private PawnPromotionService pawnPromotionService;
 
 
     public void executeRandomBotMove() {
@@ -78,7 +78,7 @@ public class BotService {
                 (targetField.getHorizontalNumber() == 1 || targetField.getHorizontalNumber() == 8)) {
 
             SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
-            pawnChangerService.changePawn(selectedFigure);
+            pawnPromotionService.changePawn(selectedFigure);
         }
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PawnChangerService {
+public class PawnPromotionService {
 
     @Autowired
     private GameService gameService;

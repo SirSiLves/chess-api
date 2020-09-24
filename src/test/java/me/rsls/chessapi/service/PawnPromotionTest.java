@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class PawnChangeTest extends ChessApiApplicationTests {
+public class PawnPromotionTest extends ChessApiApplicationTests {
 
     @Autowired
     private InitializeService initializeService;
@@ -25,7 +25,7 @@ public class PawnChangeTest extends ChessApiApplicationTests {
     private GameService gameService;
 
     @Autowired
-    private PawnChangerService pawnChangerService;
+    private PawnPromotionService pawnPromotionService;
 
 
     @BeforeEach
@@ -57,7 +57,7 @@ public class PawnChangeTest extends ChessApiApplicationTests {
         assertFalse(handleMoveService.handleMove(new String[]{"g", "1"}, new String[]{"g", "4"}).isState());
 
         SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnChangerService.changePawn(selectedFigure);
+        pawnPromotionService.changePawn(selectedFigure);
 
         assertFalse(gameState.isPawnChange());
 
@@ -159,7 +159,7 @@ public class PawnChangeTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"f", "2"}, new String[]{"f", "1"}).isState());
 
         SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnChangerService.changePawn(selectedFigure);
+        pawnPromotionService.changePawn(selectedFigure);
 
         assertTrue(handleMoveService.handleMove(new String[]{"h", "1"}, new String[]{"f", "1"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"f", "8"}, new String[]{"f", "5"}).isState());
@@ -194,7 +194,7 @@ public class PawnChangeTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"h", "7"}, new String[]{"h", "8"}).isState());
 
         selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnChangerService.changePawn(selectedFigure);
+        pawnPromotionService.changePawn(selectedFigure);
 
         assertTrue(handleMoveService.handleMove(new String[]{"a", "4"}, new String[]{"a", "8"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"d", "1"}, new String[]{"d", "2"}).isState());
@@ -216,7 +216,7 @@ public class PawnChangeTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"b", "7"}, new String[]{"b", "8"}).isState());
 
         selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnChangerService.changePawn(selectedFigure);
+        pawnPromotionService.changePawn(selectedFigure);
 
         assertTrue(handleMoveService.handleMove(new String[]{"a", "4"}, new String[]{"a", "8"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"d", "1"}, new String[]{"e", "1"}).isState());

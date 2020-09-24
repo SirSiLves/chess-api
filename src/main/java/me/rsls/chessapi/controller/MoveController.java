@@ -5,7 +5,7 @@ import me.rsls.chessapi.model.SelectedFigure;
 import me.rsls.chessapi.model.validation.Validation;
 import me.rsls.chessapi.service.BotService;
 import me.rsls.chessapi.service.HandleMoveService;
-import me.rsls.chessapi.service.PawnChangerService;
+import me.rsls.chessapi.service.PawnPromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class MoveController {
     private BotService botService;
 
     @Autowired
-    private PawnChangerService pawnChangerService;
+    private PawnPromotionService pawnPromotionService;
 
 
     @RequestMapping(value = "doMove", method = RequestMethod.POST)
@@ -50,7 +50,7 @@ public class MoveController {
     @RequestMapping(value = "doChangePawn", method = RequestMethod.POST)
     public ResponseEntity<String> doChangePawn(@RequestBody SelectedFigure selectedFigure) {
 
-        pawnChangerService.changePawn(selectedFigure);
+        pawnPromotionService.changePawn(selectedFigure);
         return new ResponseEntity<>("Figure success fully changed", HttpStatus.OK);
     }
 

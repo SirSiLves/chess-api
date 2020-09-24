@@ -13,7 +13,7 @@ public class MoveExecutorService {
     private GameService gameService;
 
     @Autowired
-    private PawnChangerService pawnChangerService;
+    private PawnPromotionService pawnPromotionService;
 
 
     public void executeMove(Field sourceField, Field targetField, boolean temporarily) {
@@ -43,13 +43,13 @@ public class MoveExecutorService {
     private void pawnHandling(Field targetField, boolean temporarily) {
         GameState gameState = gameService.getCurrentGameState();
 
-        if (pawnChangerService.getPawnChangeState(targetField)) {
+        if (pawnPromotionService.getPawnChangeState(targetField)) {
             gameState.setPawnChange(true);
         }
 
         if(temporarily && gameState.isPawnChange()) {
             SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
-            pawnChangerService.changePawn(selectedFigure);
+            pawnPromotionService.changePawn(selectedFigure);
         }
     }
 

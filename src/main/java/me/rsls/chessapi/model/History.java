@@ -1,15 +1,17 @@
 package me.rsls.chessapi.model;
 
-public class Move {
+public class History {
 
     private final Field sourceField, targetField;
     private final Figure movedFigure, killedFigure;
+    private final boolean pawnChange;
 
-    public Move(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure) {
+    public History(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure, boolean pawnChange) {
         this.sourceField = sourceField;
         this.targetField = targetField;
         this.movedFigure = movedFigure;
         this.killedFigure = killedFigure;
+        this.pawnChange = pawnChange;
     }
 
     public Field getSourceField() {
@@ -26,5 +28,9 @@ public class Move {
 
     public Figure getKilledFigure() {
         return killedFigure;
+    }
+
+    public boolean isPawnChange() {
+        return pawnChange;
     }
 }

@@ -37,7 +37,7 @@ public class CheckMateService {
         Field kingField = figureService.getFigureField(king);
 
         //pre execute move
-        moveExecutorService.executeMove(sourceField, targetField);
+        moveExecutorService.executeMove(sourceField, targetField, true);
 
         ValidFields kingValidFields = validFieldService.validateFields(kingField, king);
 
@@ -59,7 +59,7 @@ public class CheckMateService {
             }
         }
 
-        moveExecutorService.revertLastMove();
+        moveExecutorService.revertLastMove(true);
     }
 
     static boolean isCanProtect(List<Figure> guardiens, FigureService figureService, ValidFieldService validFieldService, CheckService checkService) {

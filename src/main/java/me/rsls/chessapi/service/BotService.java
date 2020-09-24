@@ -61,7 +61,7 @@ public class BotService {
                 Validation validation = validateService.validateMove(sourceField, targetField);
 
                 if (validation.isState()) {
-                    moveExecutorService.executeMove(sourceField, targetField);
+                    moveExecutorService.executeMove(sourceField, targetField, false);
 
                     //Check if pawn reaches one of the border and replace it
                     this.handlePawn(targetField);

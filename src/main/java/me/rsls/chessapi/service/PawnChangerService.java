@@ -18,19 +18,26 @@ public class PawnChangerService {
 
 
     public void changePawn(SelectedFigure selectedFigure) {
+        Board board = gameService.getCurrentBoard();
         FigureType selectedFigureType = selectedFigure.getFigureType();
 
         Field borderPawnField = this.getBorderPawnField();
 
+        Figure oldPawn = borderPawnField.getFigure();
         Figure newFigure = new Figure(selectedFigureType, borderPawnField.getFigure().getFigureColor());
-        borderPawnField.getFigure().setAlive(false);
+
+        oldPawn.setAlive(false);
         borderPawnField.setFigure(newFigure);
 
         gameService.getCurrentGameState().setPawnChange(false);
         gameService.getCurrentBoard().getFigureArrayList().add(newFigure);
+
+        //create history entry
+        History history = new History(borderPawnField, borderPawnField, newFigure, oldPawn, true);
+        board.addMoveToHistory(history);
     }
 
-    public Field getBorderPawnField() {
+    private Field getBorderPawnField() {
         List<Figure> pawnList = gameService.getCurrentBoard().getFigureArrayList()
                 .stream()
                 .filter(p -> p.getFigureType().equals(FigureType.PAWN))
@@ -48,12 +55,12 @@ public class PawnChangerService {
     }
 
 
-    public void handlePawnChangeState(Field targetField) {
-        if (targetField.getFigure().getFigureType().equals(FigureType.PAWN)
-                && (targetField.getHorizontalNumber() == 8 || targetField.getHorizontalNumber() == 1)) {
-
-            gameService.getCurrentGameState().setPawnChange(true);
-        }
+    public boolean getPawnChangeState(Field targetField) {
+        return targetField.getFigure().getFigureType().equals(FigureType.PAWN)
+                && (targetField.getHorizontalNumber() == 8 || targetField.getHorizontalNumber() == 1);
     }
+
+
+
 
 }

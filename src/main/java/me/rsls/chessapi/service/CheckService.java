@@ -66,7 +66,7 @@ public class CheckService {
             gameState.setCheckColor(kingColor);
         } else {
             //execute move, to check the new situation
-            moveExecutorService.executeMove(sourceField, targetField);
+            moveExecutorService.executeMove(sourceField, targetField, true);
 
             //get only enemies of the king
             List<Figure> enemyList = board.getFigureArrayList().stream()
@@ -89,7 +89,7 @@ public class CheckService {
                 }
             });
 
-            moveExecutorService.revertLastMove();
+            moveExecutorService.revertLastMove(true);
 
         }
 

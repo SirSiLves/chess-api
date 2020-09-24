@@ -34,7 +34,7 @@ public class RemisService {
         //validate if the same move was to often done
         boolean checkSameMove = this.checkSameMove(board);
         if (!checkSameMove) {
-            moveExecutorService.executeMove(sourceField, targetField);
+            moveExecutorService.executeMove(sourceField, targetField, true);
 
             boolean figureWithPossibleFields;
 
@@ -46,7 +46,7 @@ public class RemisService {
 
             if (!figureWithPossibleFields) gameState.setRemis(true);
 
-            moveExecutorService.revertLastMove();
+            moveExecutorService.revertLastMove(true);
         } else {
             gameState.setRemis(true);
         }
@@ -57,14 +57,14 @@ public class RemisService {
         int historySize = board.getMoveHistory().size();
         if (historySize > 7) {
             for (int i = historySize - 1; i > 3; i--) {
-                Move firstMove = board.getMoveHistory().get(i);
-                Move secondMove = board.getMoveHistory().get(i - 2);
-                Move thirdMove = board.getMoveHistory().get(i - 4);
+                History firstHistory = board.getMoveHistory().get(i);
+                History secondHistory = board.getMoveHistory().get(i - 2);
+                History thirdHistory = board.getMoveHistory().get(i - 4);
 
-                if (firstMove.getSourceField() == secondMove.getTargetField()
-                        && secondMove.getTargetField() == thirdMove.getSourceField()
-                        && firstMove.getMovedFigure() == secondMove.getMovedFigure()
-                        && secondMove.getMovedFigure() == thirdMove.getMovedFigure()) {
+                if (firstHistory.getSourceField() == secondHistory.getTargetField()
+                        && secondHistory.getTargetField() == thirdHistory.getSourceField()
+                        && firstHistory.getMovedFigure() == secondHistory.getMovedFigure()
+                        && secondHistory.getMovedFigure() == thirdHistory.getMovedFigure()) {
                     return true;
                 }
             }

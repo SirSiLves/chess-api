@@ -1,9 +1,7 @@
 package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.ChessApiApplicationTests;
-import me.rsls.chessapi.model.Board;
-import me.rsls.chessapi.model.Game;
-import me.rsls.chessapi.model.GameState;
+import me.rsls.chessapi.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -405,4 +403,5 @@ public class CheckTest extends ChessApiApplicationTests {
         assertFalse(game.getGameState().isCheckMate());
         assertFalse(game.getGameState().isRemis());
     }
+
 }

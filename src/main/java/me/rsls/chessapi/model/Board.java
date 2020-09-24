@@ -8,7 +8,7 @@ public class Board {
     private final HashMap<String, HashMap<Integer, Field>> fieldMatrix;
     private final ArrayList<Figure> figureArrayList;
     private Color lastPlayed;
-    private final HashMap<Integer, Move> moveHistory; // 1,2,3,4.. <Move Count, Move Object>
+    private final HashMap<Integer, History> moveHistory; // 1,2,3,4.. <Move Count, Move Object>
 
     public Board() {
         this.fieldMatrix = new HashMap<>();
@@ -43,11 +43,11 @@ public class Board {
         this.lastPlayed = playerTurn;
     }
 
-    public void addMoveToHistory(Move move){
-        moveHistory.put(moveHistory.size(), move);
+    public void addMoveToHistory(History history){
+        moveHistory.put(moveHistory.size(), history);
     }
 
-    public HashMap<Integer, Move> getMoveHistory() {
+    public HashMap<Integer, History> getMoveHistory() {
         return moveHistory;
     }
 

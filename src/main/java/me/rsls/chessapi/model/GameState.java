@@ -5,6 +5,7 @@ public class GameState {
     private boolean check, checkMate, isRemis, doubleCheck, pawnChange;
     private Color checkColor;
     private Color winnerPlayer;
+    private String remisReason;
 
     public GameState() {
         this.check = false;
@@ -14,6 +15,7 @@ public class GameState {
         this.winnerPlayer = null;
         this.doubleCheck = false;
         this.pawnChange = false;
+        this.remisReason = null;
     }
 
     public Color getCheckColor() {
@@ -78,5 +80,13 @@ public class GameState {
 
     public void setPawnChange(boolean pawnChange) {
         this.pawnChange = pawnChange;
+    }
+
+    public String getRemisReason() {
+        return remisReason;
+    }
+
+    public void setRemisReason(String remisReason) {
+        this.remisReason = remisReason;
     }
 }

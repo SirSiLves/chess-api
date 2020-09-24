@@ -36,14 +36,19 @@ public class RemisService {
         //validate remis situations
         if (this.isStaleMate()) {
             gameState.setRemis(true);
+            gameState.setRemisReason("Stalemate");
         }
         else if (this.fiftyMoveRule(board)) {
             gameState.setRemis(true);
+            gameState.setRemisReason("Fifty-Move Rule");
         }
         else if (this.deadPosition()) {
             gameState.setRemis(true);
+            gameState.setRemisReason("Insufficient Mating Material");
         }
-        //TODO https://www.spielezar.ch/blog/spielregeln/unentschieden-beim-schach#Dreifache_Stellungswiederholung
+        //TODO Threefold Repetition https://www.spielezar.ch/blog/spielregeln/unentschieden-beim-schach#Dreifache_Stellungswiederholung
+        //TODO perpetual check -> means each can go for check
+        //TODO if same move was done for both 3 times in a row
 
         moveExecutorService.revertLastMove(true);
     }

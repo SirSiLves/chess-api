@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,8 +31,8 @@ public class FigureService {
         throw new RuntimeException("Each alive figure must exist on the board! Figure: " + figure.getFigureType() + " not found..");
     }
 
-    public Figure getKing(Color kingColor){
 
+    public Figure getKing(Color kingColor){
         //get king
         Figure king = gameService.getCurrentBoard().getFigureArrayList().stream()
                 .filter(f -> f.getFigureType().equals(FigureType.KING))
@@ -40,6 +42,32 @@ public class FigureService {
         return king;
     }
 
+    public List<Figure> getAllies(Color allyColor) {
+        Board board = gameService.getCurrentBoard();
+
+        return board.getFigureArrayList().stream()
+                .filter(f -> f.isAlive())
+                .filter(f -> f.getFigureColor().equals(allyColor))
+                .collect(Collectors.toList());
+    }
+
+    public List<Figure> getAtTurnFigures() {
+        Board board = gameService.getCurrentBoard();
+
+        return board.getFigureArrayList().stream()
+                .filter(f -> f.isAlive())
+                .filter(f -> !board.getLastPlayed().equals(f.getFigureColor()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Figure> getEnemies(Color enemyColor) {
+        Board board = gameService.getCurrentBoard();
+
+        return board.getFigureArrayList().stream()
+                .filter(f -> f.isAlive())
+                .filter(f -> !f.getFigureColor().equals(enemyColor))
+                .collect(Collectors.toList());
+    }
 
     public void createFigures(Board board) {
         HashMap<String, HashMap<Integer, Field>> tempMatrix = board.getFieldMatrix();

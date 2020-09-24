@@ -1,8 +1,6 @@
 package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.ChessApiApplicationTests;
-import me.rsls.chessapi.model.Board;
-import me.rsls.chessapi.model.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -31,45 +31,94 @@ public class RemisService {
         Board board = game.getBoard();
         GameState gameState = game.getGameState();
 
-        //validate if the same move was to often done
-        boolean checkSameMove = this.checkSameMove(board);
-        if (!checkSameMove) {
-            moveExecutorService.executeMove(sourceField, targetField, true);
+        moveExecutorService.executeMove(sourceField, targetField, true);
 
-            boolean figureWithPossibleFields;
-
-            if (board.getLastPlayed().equals(Color.BLACK)) {
-                figureWithPossibleFields = existsPossibleFields(Color.WHITE);
-            } else {
-                figureWithPossibleFields = existsPossibleFields(Color.BLACK);
-            }
-
-            if (!figureWithPossibleFields) gameState.setRemis(true);
-
-            moveExecutorService.revertLastMove(true);
-        } else {
+        //validate remis situations
+        if (this.isStaleMate()) {
             gameState.setRemis(true);
         }
+        else if (this.fiftyMoveRule(board)) {
+            gameState.setRemis(true);
+        }
+        else if (this.deadPosition()) {
+            gameState.setRemis(true);
+        }
+        //TODO https://www.spielezar.ch/blog/spielregeln/unentschieden-beim-schach#Dreifache_Stellungswiederholung
 
+        moveExecutorService.revertLastMove(true);
     }
 
-    private boolean checkSameMove(Board board) {
-        int historySize = board.getMoveHistory().size();
-        if (historySize > 7) {
-            for (int i = historySize - 1; i > 3; i--) {
-                History firstHistory = board.getMoveHistory().get(i);
-                History secondHistory = board.getMoveHistory().get(i - 2);
-                History thirdHistory = board.getMoveHistory().get(i - 4);
+    private boolean isStaleMate() {
+        Board board = gameService.getCurrentBoard();
 
-                if (firstHistory.getSourceField() == secondHistory.getTargetField()
-                        && secondHistory.getTargetField() == thirdHistory.getSourceField()
-                        && firstHistory.getMovedFigure() == secondHistory.getMovedFigure()
-                        && secondHistory.getMovedFigure() == thirdHistory.getMovedFigure()) {
-                    return true;
-                }
+        boolean figureWithPossibleFields;
+
+        if (board.getLastPlayed().equals(Color.BLACK)) {
+            figureWithPossibleFields = existsPossibleFields(Color.WHITE);
+        } else {
+            figureWithPossibleFields = existsPossibleFields(Color.BLACK);
+        }
+
+        return !figureWithPossibleFields;
+    }
+
+    private boolean deadPosition() {
+
+        List<Figure> blackFigures = figureService.getAllies(Color.BLACK);
+        List<Figure> whiteFigures = figureService.getAllies(Color.WHITE);
+
+        int blackBishopCount = 0;
+        int blackKnightCount = 0;
+        int blackOtherPlayers = 0;
+
+        for (Figure blackFigure : blackFigures) {
+            if (blackFigure.getFigureType().equals(FigureType.BISHOP)) blackBishopCount++;
+            else if (blackFigure.getFigureType().equals(FigureType.KNIGHT)) blackKnightCount++;
+            else if (!blackFigure.getFigureType().equals(FigureType.KING)) blackOtherPlayers++;
+        }
+
+        int whiteBishopCount = 0;
+        int whiteKnightCount = 0;
+        int whiteOtherPlayers = 0;
+
+        for (Figure whiteFigure : whiteFigures) {
+            if (whiteFigure.getFigureType().equals(FigureType.BISHOP)) whiteBishopCount++;
+            else if (whiteFigure.getFigureType().equals(FigureType.KNIGHT)) whiteKnightCount++;
+            else if (!whiteFigure.getFigureType().equals(FigureType.KING)) whiteOtherPlayers++;
+        }
+
+        if (blackBishopCount == 0 && whiteBishopCount == 0 && blackKnightCount == 0 && whiteKnightCount == 0 && blackOtherPlayers == 0 && whiteOtherPlayers == 0)
+            return true;
+        else if (blackBishopCount == 1 && whiteBishopCount == 0 && whiteKnightCount == 0 && whiteOtherPlayers == 0)
+            return true;
+        else if (whiteBishopCount == 1 && blackBishopCount == 0 && blackKnightCount == 0 && blackOtherPlayers == 0)
+            return true;
+        else if (whiteKnightCount == 1 && blackBishopCount == 0 && whiteBishopCount == 0 && whiteOtherPlayers == 0)
+            return true;
+        else if (blackKnightCount == 1 && whiteBishopCount == 0 && blackBishopCount == 0 && blackOtherPlayers == 0)
+            return true;
+        else return false;
+    }
+
+    private boolean fiftyMoveRule(Board board) {
+        int historySize = board.getMoveHistory().size();
+
+        int fiftyCount = 0;
+
+        for (int i = historySize - 1; i >= 0; i--) {
+
+            History history = board.getMoveHistory().get(i);
+
+            if (!history.getMovedFigure().getFigureType().equals(FigureType.PAWN)) {
+                fiftyCount++;
+            } else if (history.getKilledFigure() == null) {
+                fiftyCount++;
+            } else {
+                break;
             }
         }
-        return false;
+
+        return fiftyCount >= 50;
     }
 
     private boolean existsPossibleFields(Color figureColor) {

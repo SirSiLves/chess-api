@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CheckMateService {
@@ -28,7 +27,6 @@ public class CheckMateService {
 
 
     public void validateCheckMate(Field sourceField, Field targetField) {
-        Board board = gameService.getCurrentBoard();
         GameState currentGameState = gameService.getCurrentGameState();
 
         boolean canProtect = false;
@@ -42,10 +40,7 @@ public class CheckMateService {
         ValidFields kingValidFields = validFieldService.validateFields(kingField, king);
 
         //get protectors of the king
-        List<Figure> guardiens = board.getFigureArrayList().stream()
-                .filter(f -> f.isAlive())
-                .filter(f -> f.getFigureColor().equals(king.getFigureColor()))
-                .collect(Collectors.toList());
+        List<Figure> guardiens = figureService.getAllies(king.getFigureColor());
 
         canProtect = isCanProtect(guardiens, figureService, validFieldService, checkService);
 

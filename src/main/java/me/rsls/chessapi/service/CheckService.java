@@ -69,10 +69,7 @@ public class CheckService {
             moveExecutorService.executeMove(sourceField, targetField, true);
 
             //get only enemies of the king
-            List<Figure> enemyList = board.getFigureArrayList().stream()
-                    .filter(f -> f.isAlive())
-                    .filter(f -> !f.getFigureColor().equals(kingColor))
-                    .collect(Collectors.toList());
+            List<Figure> enemyList = figureService.getEnemies(kingColor);
 
             Figure king = figureService.getKing(kingColor);
 

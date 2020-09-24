@@ -32,13 +32,7 @@ public class BotService {
 
 
     public void executeRandomBotMove() {
-
-        Board board = gameService.getCurrentBoard();
-
-        List<Figure> botFigures = board.getFigureArrayList().stream()
-                .filter(f -> f.isAlive())
-                .filter(f -> !board.getLastPlayed().equals(f.getFigureColor()))
-                .collect(Collectors.toList());
+        List<Figure> botFigures = figureService.getAtTurnFigures();
 
         boolean moveExecuted = false;
         while (!moveExecuted) {

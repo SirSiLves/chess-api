@@ -27,6 +27,7 @@ public class ValidateService {
     @Autowired
     private GameService gameService;
 
+
     private static final Map<Integer, String> RULE_TEXTS = new HashMap<>() {
         {
             put(1, "Valid");
@@ -99,14 +100,7 @@ public class ValidateService {
     }
 
     private Validation getValidatePawnChange(Field sourceField, Field targetField, Validation validation, GameState gameState) {
-
-        boolean pawnChangeBefore = gameState.isPawnChange();
-
-        if(sourceField.getFigure().getFigureType().equals(FigureType.PAWN) && (targetField.getHorizontalNumber() == 8 || targetField.getHorizontalNumber() == 1)) {
-            gameState.setPawnChange(true);
-        }
-
-        if(pawnChangeBefore && gameState.isPawnChange()) {
+        if (gameState.isPawnChange()) {
             validation = new Validation(null);
             validation.setState(false);
             validation.setText(RULE_TEXTS.get(10));

@@ -19,6 +19,9 @@ public class HandleMoveService {
     @Autowired
     private MoveExecutorService moveExecutorService;
 
+    @Autowired
+    private PawnChangerService pawnChangerService;
+
 
     public Validation handleMove(String[] sourceDesignation, String[] targetDesignation){
 
@@ -30,15 +33,14 @@ public class HandleMoveService {
         //if validation = true -> execute move
         if(validation.isState()) {
             moveExecutorService.executeMove(sourceField, targetField);
+
+            //handle pawn state, if one reaches the border
+            pawnChangerService.handlePawnChangeState(targetField);
         }
 
         return validation;
     }
 
-    public void replacePawn(){
 
-
-
-    }
 
 }

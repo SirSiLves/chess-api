@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 
-public class HandleMoveServiceTest extends ChessApiApplicationTests {
+public class MoveTest extends ChessApiApplicationTests {
 
     @Autowired
     private InitializeService initializeService;

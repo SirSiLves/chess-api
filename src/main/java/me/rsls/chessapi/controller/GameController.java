@@ -1,12 +1,9 @@
 package me.rsls.chessapi.controller;
 
 
-import me.rsls.chessapi.exception.model.ApiException;
 import me.rsls.chessapi.model.Game;
-import me.rsls.chessapi.model.Player;
 import me.rsls.chessapi.service.GameService;
 import me.rsls.chessapi.service.InitializeService;
-import me.rsls.chessapi.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

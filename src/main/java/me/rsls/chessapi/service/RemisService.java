@@ -17,13 +17,10 @@ public class RemisService {
     private MoveExecutorService moveExecutorService;
 
     @Autowired
-    private ValidFieldService validFieldService;
+    private CheckMateService checkMateService;
 
     @Autowired
     private FigureService figureService;
-
-    @Autowired
-    private CheckService checkService;
 
 
     public void validateRemis(Field sourceField, Field targetField) {
@@ -37,20 +34,50 @@ public class RemisService {
         if (this.isStaleMate()) {
             gameState.setRemis(true);
             gameState.setRemisReason("Stalemate");
-        }
-        else if (this.fiftyMoveRule(board)) {
+        } else if (this.fiftyMoveRule(board)) {
             gameState.setRemis(true);
             gameState.setRemisReason("Fifty-Move Rule");
-        }
-        else if (this.deadPosition()) {
+        } else if (this.isDeadPosition()) {
             gameState.setRemis(true);
             gameState.setRemisReason("Insufficient Mating Material");
+        } else if (this.toOfterSameMove()) {
+            gameState.setRemis(true);
+            gameState.setRemisReason("Too often the same move");
         }
         //TODO Threefold Repetition https://www.spielezar.ch/blog/spielregeln/unentschieden-beim-schach#Dreifache_Stellungswiederholung
         //TODO perpetual check -> means each can go for check
-        //TODO if same move was done for both 3 times in a row
 
         moveExecutorService.revertLastMove(true);
+    }
+
+    private boolean toOfterSameMove() {
+        Board board = gameService.getCurrentBoard();
+
+        int historySize = board.getMoveHistory().size();
+
+        for (int i = historySize - 1; i > 4; i--) {
+            History firstMove = board.getMoveHistory().get(i);
+            History thirdMove = board.getMoveHistory().get(i - 2);
+            History fifthMove = board.getMoveHistory().get(i - 4);
+
+            History secondMove = board.getMoveHistory().get(i - 1);
+            History fourthMove = board.getMoveHistory().get(i - 3);
+            History sixthMove = board.getMoveHistory().get(i - 5);
+
+            if (firstMove.getSourceField() == thirdMove.getTargetField()
+                    && thirdMove.getTargetField() == fifthMove.getSourceField()
+                    && firstMove.getMovedFigure() == thirdMove.getMovedFigure()
+                    && thirdMove.getMovedFigure() == fifthMove.getMovedFigure()
+
+                    && secondMove.getSourceField() == fourthMove.getTargetField()
+                    && fourthMove.getTargetField() == sixthMove.getSourceField()
+                    && secondMove.getMovedFigure() == fourthMove.getMovedFigure()
+                    && fourthMove.getMovedFigure() == sixthMove.getMovedFigure()
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isStaleMate() {
@@ -67,7 +94,7 @@ public class RemisService {
         return !figureWithPossibleFields;
     }
 
-    private boolean deadPosition() {
+    private boolean isDeadPosition() {
 
         List<Figure> blackFigures = figureService.getAllies(Color.BLACK);
         List<Figure> whiteFigures = figureService.getAllies(Color.WHITE);
@@ -127,16 +154,8 @@ public class RemisService {
     }
 
     private boolean existsPossibleFields(Color figureColor) {
-        Board board = gameService.getCurrentBoard();
-
-        List<Figure> alliesFigures = board.getFigureArrayList().stream()
-                .filter(f -> f.isAlive())
-                .filter(f -> f.getFigureColor().equals(figureColor))
-                .collect(Collectors.toList());
-
-        boolean possibleFields = CheckMateService.isCanProtect(alliesFigures, figureService, validFieldService, checkService);
-
-        return possibleFields;
+        List<Figure> alliesFigures = figureService.getAllies(figureColor);
+        return checkMateService.isCanProtect(alliesFigures);
     }
 
 }

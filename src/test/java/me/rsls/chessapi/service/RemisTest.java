@@ -8,8 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RemisTest extends ChessApiApplicationTests {
 
@@ -29,6 +28,38 @@ public class RemisTest extends ChessApiApplicationTests {
     @BeforeEach
     public void setInitializeService() {
         initializeService.initializeGame();
+    }
+
+    @Test
+    public void testToOftenSameMove() {
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "2"}, new String[]{"a", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "7"}, new String[]{"a", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "2"}, new String[]{"b", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "7"}, new String[]{"b", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "2"}, new String[]{"c", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "1"}, new String[]{"a", "2"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "8"}, new String[]{"a", "7"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "2"}, new String[]{"a", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "7"}, new String[]{"a", "8"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "3"}, new String[]{"a", "1"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "8"}, new String[]{"a", "7"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "1"}, new String[]{"a", "2"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "7"}, new String[]{"a", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "2"}, new String[]{"b", "2"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "8"}, new String[]{"c", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "1"}, new String[]{"c", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "6"}, new String[]{"b", "8"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "3"}, new String[]{"b", "1"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "8"}, new String[]{"c", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "1"}, new String[]{"c", "3"}).isState());
+
+        Game game = gameService.getGamePicture();
+
+        assertEquals("Too often the same move", game.getGameState().getRemisReason());
+        assertFalse(game.getGameState().isCheck());
+        assertFalse(game.getGameState().isCheckMate());
+        assertTrue(game.getGameState().isRemis());
     }
 
     @Test
@@ -101,6 +132,7 @@ public class RemisTest extends ChessApiApplicationTests {
         //2 KINGS & a black bishop are left
         Game game = gameService.getGamePicture();
 
+        assertEquals("Insufficient Mating Material", game.getGameState().getRemisReason());
         assertFalse(game.getGameState().isCheck());
         assertFalse(game.getGameState().isCheckMate());
         assertTrue(game.getGameState().isRemis());
@@ -170,7 +202,7 @@ public class RemisTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"g", "7"}, new String[]{"g", "6"}).isState());
 
         Game game = gameService.getGamePicture();
-
+        assertEquals("Stalemate", game.getGameState().getRemisReason());
         assertFalse(game.getGameState().isCheck());
         assertFalse(game.getGameState().isCheckMate());
         assertTrue(game.getGameState().isRemis());
@@ -325,6 +357,7 @@ public class RemisTest extends ChessApiApplicationTests {
 
         assertTrue(handleMoveService.handleMove(new String[]{"e", "1"}, new String[]{"d", "2"}).isState());
 
+        assertEquals("Fifty-Move Rule", game.getGameState().getRemisReason());
         assertFalse(game.getGameState().isCheck());
         assertFalse(game.getGameState().isCheckMate());
         assertTrue(game.getGameState().isRemis());

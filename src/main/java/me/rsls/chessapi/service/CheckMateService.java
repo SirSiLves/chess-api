@@ -42,7 +42,7 @@ public class CheckMateService {
         //get protectors of the king
         List<Figure> guardiens = figureService.getAllies(king.getFigureColor());
 
-        canProtect = isCanProtect(guardiens, figureService, validFieldService, checkService);
+        canProtect = isCanProtect(guardiens);
 
         if (!canProtect) {
             currentGameState.setCheckMate(true);
@@ -57,7 +57,7 @@ public class CheckMateService {
         moveExecutorService.revertLastMove(true);
     }
 
-    static boolean isCanProtect(List<Figure> guardiens, FigureService figureService, ValidFieldService validFieldService, CheckService checkService) {
+    public boolean isCanProtect(List<Figure> guardiens) {
         for (Figure g : guardiens) {
             Field guardSourceField = figureService.getFigureField(g);
             ValidFields validGuardFields = validFieldService.validateFields(guardSourceField, g);

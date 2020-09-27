@@ -53,10 +53,11 @@ public class FigureService {
 
     public List<Figure> getAtTurnFigures() {
         Board board = gameService.getCurrentBoard();
+        Color lastPlayed = board.getLastPlayed();
 
         return board.getFigureArrayList().stream()
                 .filter(f -> f.isAlive())
-                .filter(f -> !board.getLastPlayed().equals(f.getFigureColor()))
+                .filter(f -> !lastPlayed.equals(f.getFigureColor()))
                 .collect(Collectors.toList());
     }
 

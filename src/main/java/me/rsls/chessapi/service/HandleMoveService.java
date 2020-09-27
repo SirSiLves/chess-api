@@ -19,9 +19,6 @@ public class HandleMoveService {
     @Autowired
     private MoveExecutorService moveExecutorService;
 
-    @Autowired
-    private PawnPromotionService pawnPromotionService;
-
 
     public Validation handleMove(String[] sourceDesignation, String[] targetDesignation){
 

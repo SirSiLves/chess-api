@@ -41,7 +41,6 @@ public class MoveController {
 
     @RequestMapping(value = "doBotMove", method = RequestMethod.GET)
     public ResponseEntity<String> doBotMove() {
-
         botService.executeRandomBotMove();
         return new ResponseEntity<>("Bot move executed.", HttpStatus.OK);
     }

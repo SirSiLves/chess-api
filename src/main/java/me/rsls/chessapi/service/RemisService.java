@@ -121,13 +121,13 @@ public class RemisService {
 
         if (blackBishopCount == 0 && whiteBishopCount == 0 && blackKnightCount == 0 && whiteKnightCount == 0 && blackOtherPlayers == 0 && whiteOtherPlayers == 0)
             return true;
-        else if (blackBishopCount == 1 && whiteBishopCount == 0 && whiteKnightCount == 0 && whiteOtherPlayers == 0)
+        else if (blackBishopCount == 1 && whiteBishopCount == 0 && whiteKnightCount == 0 && whiteOtherPlayers == 0 && blackOtherPlayers == 0)
             return true;
-        else if (whiteBishopCount == 1 && blackBishopCount == 0 && blackKnightCount == 0 && blackOtherPlayers == 0)
+        else if (whiteBishopCount == 1 && blackBishopCount == 0 && blackKnightCount == 0 && blackOtherPlayers == 0 && whiteOtherPlayers == 0)
             return true;
-        else if (whiteKnightCount == 1 && blackBishopCount == 0 && whiteBishopCount == 0 && whiteOtherPlayers == 0)
+        else if (whiteKnightCount == 1 && blackBishopCount == 0 && whiteBishopCount == 0 && whiteOtherPlayers == 0 && blackOtherPlayers == 0)
             return true;
-        else if (blackKnightCount == 1 && whiteBishopCount == 0 && blackBishopCount == 0 && blackOtherPlayers == 0)
+        else if (blackKnightCount == 1 && whiteBishopCount == 0 && blackBishopCount == 0 && blackOtherPlayers == 0 && whiteOtherPlayers == 0)
             return true;
         else return false;
     }

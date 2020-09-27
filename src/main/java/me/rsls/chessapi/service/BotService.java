@@ -31,6 +31,22 @@ public class BotService {
     private PawnPromotionService pawnPromotionService;
 
 
+    private static final Map<FigureType, Integer> FIGURE_WORTH = new HashMap<>() {
+        {
+            put(FigureType.PAWN, 10);
+            put(FigureType.KNIGHT, 30);
+            put(FigureType.BISHOP, 30);
+            put(FigureType.ROOK, 50);
+            put(FigureType.QUEEN, 90);
+            put(FigureType.KING, 900);
+        }
+    };
+
+
+
+
+
+
     public void executeRandomBotMove() {
         List<Figure> botFigures = figureService.getAtTurnFigures();
 

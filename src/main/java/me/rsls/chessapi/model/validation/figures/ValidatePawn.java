@@ -63,17 +63,16 @@ public class ValidatePawn implements IValidate {
                 this.isValid = true;
 
             } else if (Math.abs(sourceNumber - targetNumber) == 2
-                    && (sourceField.getHorizontalNumber() == 7 || sourceField.getHorizontalNumber() == 2)) {
+                    && (sourceField.getHorizontalNumber() == 7 || sourceField.getHorizontalNumber() == 2)
+                    && targetField.getFigure() == null) {
 
                 // check if a figure is between
                 if (sourceField.getFigure().getFigureColor().equals(Color.WHITE)
-                        && board.getFieldFromMatrix(sourceField.getVertical(), sourceNumber - 1).getFigure() == null
-                        && board.getFieldFromMatrix(sourceField.getVertical(), sourceNumber - 2).getFigure() == null) {
+                        && board.getFieldFromMatrix(sourceField.getVertical(), sourceNumber - 1).getFigure() == null) {
 
                     this.isValid = true;
                 } else if (sourceField.getFigure().getFigureColor().equals(Color.BLACK)
-                        && board.getFieldFromMatrix(sourceField.getVertical(), targetNumber - 1).getFigure() == null
-                        && board.getFieldFromMatrix(sourceField.getVertical(), targetNumber - 2).getFigure() == null) {
+                        && board.getFieldFromMatrix(sourceField.getVertical(), targetNumber - 1).getFigure() == null) {
 
                     this.isValid = true;
                 }

@@ -37,6 +37,15 @@ public class MoveTest extends ChessApiApplicationTests {
     }
 
     @Test
+    public void testInvalidPawnMovesAtStart(){
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"e", "2"}, new String[]{"e", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "5"}, new String[]{"c", "4"}).isState());
+
+        assertFalse(handleMoveService.handleMove(new String[]{"c", "2"}, new String[]{"c", "4"}).isState());
+    }
+
+    @Test
     public void testInvalidPawnMoves(){
         assertFalse(handleMoveService.handleMove(new String[]{"h", "7"}, new String[]{"h", "8"}).isState());
         assertFalse(handleMoveService.handleMove(new String[]{"h", "7"}, new String[]{"g", "8"}).isState());

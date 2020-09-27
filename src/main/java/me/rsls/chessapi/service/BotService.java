@@ -49,10 +49,11 @@ public class BotService {
     }
 
     private void executeRandomBot(){
+        GameState gameState = gameService.getCurrentGameState();
         List<Figure> botFigures = figureService.getAtTurnFigures();
 
         boolean moveExecuted = false;
-        while (!moveExecuted) {
+        while (!moveExecuted || gameState.isCheckMate() || gameState.isRemis()) {
             Figure randomFigure = botFigures.get(new Random().nextInt(botFigures.size()));
 
             Field sourceField = figureService.getFigureField(randomFigure);

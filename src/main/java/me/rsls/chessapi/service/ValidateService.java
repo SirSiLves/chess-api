@@ -38,7 +38,7 @@ public class ValidateService {
             put(6, "Check!");
             put(7, "Checkmate!");
             put(8, "Remis");
-            put(9, "Your king runs into Check!");
+            put(9, "Your king is in Check!");
             put(10, "You have to change your pawn");
         }
     };
@@ -148,7 +148,6 @@ public class ValidateService {
 
         //overwrite validation object
         if (gameState.isDoubleCheck()) {
-            gameState.setCheck(false);
             validation = new Validation(null);
             validation.setState(false);
             validation.setText(RULE_TEXTS.get(9));

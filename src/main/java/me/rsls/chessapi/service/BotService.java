@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BotService {
@@ -29,7 +30,7 @@ public class BotService {
     @Autowired
     private PawnPromotionService pawnPromotionService;
 
-    private static final int MINMAX_LEVEL = 3;
+    private static int MINMAX_LEVEL = 5;
     private static final Map<FigureType, Integer> FIGURE_WORTH = new HashMap<>() {
         {
             put(FigureType.PAWN, 10);
@@ -41,49 +42,125 @@ public class BotService {
         }
     };
 
+    public void handleBotMove() {
 
-    public void executeRandomBotMove() {
-        this.executeMinMaxBot();
+        ArrayList<Rating> ratedList = this.getRatingList();
+        Collections.sort(ratedList);
 
-//        this.executeRandomBot();
-    }
+        int position = 0;
+        int ratedSize = ratedList.size();
 
-    private void executeRandomBot(){
-        GameState gameState = gameService.getCurrentGameState();
-        List<Figure> botFigures = figureService.getAtTurnFigures();
+        List<Rating> possibleFields = new ArrayList<>();
 
-        boolean moveExecuted = false;
-        while (!moveExecuted || gameState.isCheckMate() || gameState.isRemis()) {
-            Figure randomFigure = botFigures.get(new Random().nextInt(botFigures.size()));
+        //TODO if ratedList == its checkmate / remis
+        Rating bestRated = ratedList.get(position);
 
-            Field sourceField = figureService.getFigureField(randomFigure);
-            ValidFields validFields = validFieldService.validateFields(sourceField, sourceField.getFigure());
+        for (int i = 0; i < ratedList.size(); i++) {
 
-            if (this.validateBotMove(sourceField, validFields)) {
-                moveExecuted = true;
+            Field sourceField = ratedList.get(i).getSourceField();
+            Field targetField = ratedList.get(i).getTargetField();
+
+            moveExecutorService.executeMove(sourceField, targetField, true);
+
+            List<Rating> nextFilteredList = this.getFilteredRatingList();
+
+            if(nextFilteredList == null) break;
+
+            for (Rating bestNextRated : nextFilteredList) {
+
+                //if next move have the same target like the one before
+                if (bestRated.getTargetField().equals(bestNextRated.getTargetField())) {
+
+                    //if next is better, take another target field
+                    if (bestNextRated.getRatingValue() > bestRated.getRatingValue()) {
+                        if (ratedSize - 1 > position) {
+                            position++;
+                            bestRated = ratedList.get(position);
+
+                            possibleFields.add(bestRated);
+                        }
+                    }
+                }
             }
+
+            moveExecutorService.revertLastMove(true);
         }
 
+
+        if (possibleFields.size() == 0 && ratedList.size() > 0) {
+            possibleFields = this.getFilteredRatingList();
+        }
+
+        Random random = new Random();
+        int rndPosition = random.nextInt(((possibleFields.size() - 1)) + 1);
+
+        Field sourceField = possibleFields.get(rndPosition).getSourceField();
+        Field targetField = possibleFields.get(rndPosition).getTargetField();
+
+
+        this.executeBotMove(sourceField, targetField);
     }
 
-    private boolean validateBotMove(Field sourceField, ValidFields validFields) {
+    private List<Rating> getFilteredRatingList() {
 
-        if (validFields.getFieldList().size() > 0) {
+        ArrayList<Rating> ratedList = this.getRatingList();
+        Collections.sort(ratedList);
+
+        if(ratedList.size() == 0) {
+            return null;
+        }
+
+        Rating bestRate = ratedList.get(0);
+
+        return ratedList.stream()
+                .filter(r -> r.getRatingValue() >= bestRate.getRatingValue())
+                .collect(Collectors.toList());
+    }
+
+
+    private ArrayList<Rating> getRatingList() {
+        List<Figure> botFigures = figureService.getAtTurnFigures();
+        ArrayList<Rating> ratedList = new ArrayList<>();
+
+        for (Figure figure : botFigures) {
+
+            Field sourceField = figureService.getFigureField(figure);
+            ValidFields validFields = validFieldService.validateFields(sourceField, figure);
+
             for (Field targetField : validFields.getFieldList().keySet()) {
-
                 Validation validation = validateService.validateMove(sourceField, targetField);
 
                 if (validation.isState()) {
-                    moveExecutorService.executeMove(sourceField, targetField, false);
-
-                    //Check if pawn reaches one of the border and replace it
-                    this.handlePawn(targetField);
-
-                    return true;
+                    int worthLevel = this.getWorthLevel(targetField);
+                    ratedList.add(new Rating(sourceField, targetField, worthLevel));
                 }
             }
         }
-        return false;
+
+        return ratedList;
+    }
+
+    private int getWorthLevel(Field targetField) {
+        Figure targetFigure = targetField.getFigure();
+
+        if (targetFigure != null) {
+            return FIGURE_WORTH.get(targetFigure.getFigureType());
+        } else {
+            return 0;
+        }
+    }
+
+    private void executeBotMove(Field sourceField, Field targetField) {
+
+        //Validate one last, to retrieve the check state
+        Validation validation = validateService.validateMove(sourceField, targetField);
+        if (validation.isState()) {
+            moveExecutorService.executeMove(sourceField, targetField, false);
+        } else {
+            throw new RuntimeException("Something went wrong with the bot handling!");
+        }
+
+        this.handlePawn(targetField);
     }
 
     private void handlePawn(Field targetField) {
@@ -95,65 +172,222 @@ public class BotService {
         }
     }
 
-    private void executeMinMaxBot() {
-
-        int highestRate = 0;
-        Field highestRatedTargetField = null;
-        Figure highestRatedFigure = null;
-        List<Figure> botFigures = figureService.getAtTurnFigures();
-
-
-        for(Figure figure : botFigures){
-
-            Field sourceField = figureService.getFigureField(figure);
-            ValidFields validFields = validFieldService.validateFields(sourceField, figure);
-
-            Field bestLevelField = null;
-            int worthLevel = 0;
-
-            for(Field targetField : validFields.getFieldList().keySet()){
-
-                Validation validation = validateService.validateMove(sourceField, targetField);
-                if(validation.isState()){
-
-                    //retrieve the best move
-                    int tempLevel = this.getWorthLevel(targetField);
-                    if(tempLevel >= worthLevel) {
-                        worthLevel = tempLevel;
-                        bestLevelField = targetField;
-                    }
-                }
-            }
-
-            if(worthLevel >= highestRate && figure != null && bestLevelField != null){
-                highestRate = worthLevel;
-                highestRatedTargetField = bestLevelField;
-                highestRatedFigure = figure;
-            }
-
-        }
-
-        this.executeBestRated(highestRatedFigure, highestRatedTargetField);
-
-    }
-
-    private int getWorthLevel(Field targetField) {
-        Figure targetFigure = targetField.getFigure();
-
-        if(targetFigure != null){
-            return FIGURE_WORTH.get(targetFigure.getFigureType());
-        }
-        else {
-            return 0;
-        }
-    }
-
-    private void executeBestRated(Figure figure, Field targetField){
-        Field sourceField = figureService.getFigureField(figure);
-        moveExecutorService.executeMove(sourceField, targetField, false);
-
-        //Check if pawn reaches one of the border and replace it
-        this.handlePawn(targetField);
-    }
-
 }
+
+//
+//    public void executeRandomBotMove() {
+//
+//        List<Figure> botFigures = figureService.getAtTurnFigures();
+//        Field bestRatedSourceField = null;
+//        Field bestRatedTargetField = null;
+//        int rateIndex = 0;
+//
+//        for(Figure figure : botFigures) {
+//
+//            Field sourceField = figureService.getFigureField(figure);
+//            ValidFields validFields = validFieldService.validateFields(sourceField, figure);
+//
+//            for(Field targetField : validFields.getFieldList().keySet()) {
+//
+//                Validation validation = validateService.validateMove(sourceField, targetField);
+//
+//                if(validation.isState()) {
+//
+//                    moveExecutorService.executeMove(sourceField, targetField, true);
+//
+//                    //**//
+//                    HashMap<Figure, Map<Field, Integer>> ratedFigures = this.executeMinMaxBot();
+//                    int tempRate = this.evaluateRatedFigures(ratedFigures);
+//                    //**//
+//
+//                    if(tempRate >= rateIndex) {
+//                        bestRatedSourceField = sourceField;
+//                        bestRatedTargetField = targetField;
+//                        rateIndex = tempRate;
+//                    }
+//
+//                    moveExecutorService.revertLastMove(true);
+//                }
+//
+//            }
+//
+//        }
+//
+//        Validation validation = validateService.validateMove(bestRatedSourceField, bestRatedTargetField);
+//
+//        this.executeBotMove(bestRatedSourceField, bestRatedTargetField);
+//
+//
+//
+////        this.executeRandomBot();
+//    }
+//
+//
+////    private void executeRandomBot() {
+////        GameState gameState = gameService.getCurrentGameState();
+////        List<Figure> botFigures = figureService.getAtTurnFigures();
+////
+////        boolean moveExecuted = false;
+////        while (!moveExecuted && !gameState.isCheckMate() && !gameState.isRemis()) {
+////            Figure randomFigure = botFigures.get(new Random().nextInt(botFigures.size()));
+////
+////            Field sourceField = figureService.getFigureField(randomFigure);
+////            ValidFields validFields = validFieldService.validateFields(sourceField, sourceField.getFigure());
+////
+////            if (this.validateBotMove(sourceField, validFields)) {
+////                moveExecuted = true;
+////            }
+////        }
+////
+////    }
+//
+////    private boolean validateBotMove(Field sourceField, ValidFields validFields) {
+////
+////        if (validFields.getFieldList().size() > 0) {
+////            for (Field targetField : validFields.getFieldList().keySet()) {
+////
+////                Validation validation = validateService.validateMove(sourceField, targetField);
+////
+////                if (validation.isState()) {
+////                    moveExecutorService.executeMove(sourceField, targetField, false);
+////
+////                    //Check if pawn reaches one of the border and replace it
+////                    this.handlePawn(targetField);
+////
+////                    return true;
+////                }
+////            }
+////        }
+////        return false;
+////    }
+//
+//    private void handlePawn(Field targetField) {
+//        if (targetField.getFigure().getFigureType().equals(FigureType.PAWN) &&
+//                (targetField.getHorizontalNumber() == 1 || targetField.getHorizontalNumber() == 8)) {
+//
+//            SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
+//            pawnPromotionService.changePawn(selectedFigure);
+//        }
+//    }
+//
+//    private HashMap<Figure, Map<Field, Integer>> executeMinMaxBot() {
+//
+//        List<Figure> botFigures = figureService.getAtTurnFigures();
+//        HashMap<Figure, Map<Field, Integer>> ratedFigures = new HashMap<>();
+//
+//        for (Figure figure : botFigures) {
+//
+//            Field sourceField = figureService.getFigureField(figure);
+//            ValidFields validFields = validFieldService.validateFields(sourceField, figure);
+//            HashMap<Field, Integer> ratedFields = new HashMap<>();
+//
+//            for (Field targetField : validFields.getFieldList().keySet()) {
+//
+//                int currentWorthLevel = this.getWorthLevel(targetField);
+//                ratedFields.put(targetField, currentWorthLevel);
+//            }
+//
+//            Map<Field, Integer> sortedRatedFields = sortedByFieldRate(ratedFields);
+//
+//            ratedFigures.put(figure, sortedRatedFields);
+//
+//        }
+//
+//        return ratedFigures;
+//    }
+//
+//    private int evaluateRatedFigures(HashMap<Figure, Map<Field, Integer>> ratedFigures) {
+//
+//        Map<Figure, Map<Field, Integer>> sortedRatedFigure = sortedByFigure(ratedFigures);
+////        boolean moveExecuted = false;
+//
+//        for (Figure figure : sortedRatedFigure.keySet()) {
+////            if(moveExecuted) break;
+//
+//            Field sourceField = figureService.getFigureField(figure);
+//
+//            for (Field targetField : sortedRatedFigure.get(figure).keySet()) {
+////                if(moveExecuted) break;
+//
+//                Validation validation = validateService.validateMove(sourceField, targetField);
+//
+//                if (validation.isState()) {
+//
+////                    this.executeBotMove(figure, targetField);
+//                    //return rated value
+//                    return sortedRatedFigure.get(figure).get(targetField);
+////                    moveExecuted = true;
+//                }
+//            }
+//        }
+//        throw new RuntimeException("It must have a valid field for the bot move!");
+//    }
+//
+//    private int getWorthLevel(Field targetField) {
+//        Figure targetFigure = targetField.getFigure();
+//
+//        if (targetFigure != null) {
+//            return FIGURE_WORTH.get(targetFigure.getFigureType());
+//        } else {
+//            return 0;
+//        }
+//    }
+//
+
+//
+//
+//    public static HashMap<Field, Integer> sortedByFieldRate(HashMap<Field, Integer> hashMap) {
+//        // Create a list from elements of HashMap
+//        List<Map.Entry<Field, Integer>> list =
+//                new LinkedList<Map.Entry<Field, Integer>>(hashMap.entrySet());
+//
+//        // Sort the list
+//        list.sort(new Comparator<Entry<Field, Integer>>() {
+//            public int compare(Entry<Field, Integer> o1,
+//                               Entry<Field, Integer> o2) {
+//                return (o2.getValue()).compareTo(o1.getValue());
+//            }
+//        });
+//
+//        // put data from sorted list to hashmap
+//        HashMap<Field, Integer> temp = new LinkedHashMap<Field, Integer>();
+//        for (Map.Entry<Field, Integer> aa : list) {
+//            temp.put(aa.getKey(), aa.getValue());
+//        }
+//        return temp;
+//    }
+//
+//    public static HashMap<Figure, Map<Field, Integer>> sortedByFigure(HashMap<Figure, Map<Field, Integer>> hashMap) {
+//        // Create a list from elements of HashMap
+//        List<Map.Entry<Figure, Map<Field, Integer>>> list =
+//                new LinkedList<Map.Entry<Figure, Map<Field, Integer>>>(hashMap.entrySet());
+//
+//        // Sort the list
+//        list.sort(new Comparator<Entry<Figure, Map<Field, Integer>>>() {
+//            public int compare(Entry<Figure, Map<Field, Integer>> o1,
+//                               Entry<Figure, Map<Field, Integer>> o2) {
+//
+//
+//                Integer int1 = 0;
+//                Integer int2 = 0;
+//
+//                if (o1.getValue().values().iterator().hasNext()) {
+//                    int1 = o1.getValue().values().iterator().next();
+//                }
+//                if (o2.getValue().values().iterator().hasNext()) {
+//                    int2 = o2.getValue().values().iterator().next();
+//                }
+//
+//                return (int2).compareTo(int1);
+//            }
+//        });
+//
+//        // put data from sorted list to hashmap
+//        HashMap<Figure, Map<Field, Integer>> temp = new LinkedHashMap<Figure, Map<Field, Integer>>();
+//        for (Map.Entry<Figure, Map<Field, Integer>> aa : list) {
+//            temp.put(aa.getKey(), aa.getValue());
+//        }
+//        return temp;
+//    }
+//
+//}

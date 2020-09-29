@@ -48,4 +48,21 @@ public class GameService {
     public GameState getCurrentGameState(){
         return this.getGamePicture().getGameState();
     }
+
+
+    public GameState getCopyGameState() {
+
+        //collect last gamestate
+        GameState historyGameState = new GameState();
+        historyGameState.setCheck(this.getCurrentGameState().isCheck());
+        historyGameState.setCheckMate(this.getCurrentGameState().isCheckMate());
+        historyGameState.setRemis(this.getCurrentGameState().isRemis());
+        historyGameState.setCheckColor(this.getCurrentGameState().getCheckColor());
+        historyGameState.setWinner(this.getCurrentGameState().getWinner());
+        historyGameState.setDoubleCheck(this.getCurrentGameState().isDoubleCheck());
+        historyGameState.setPawnChange(this.getCurrentGameState().isPawnChange());
+        historyGameState.setRemisReason(this.getCurrentGameState().getRemisReason());
+
+        return historyGameState;
+    }
 }

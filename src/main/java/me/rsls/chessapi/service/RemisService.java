@@ -26,28 +26,34 @@ public class RemisService {
     public void validateRemis(Field sourceField, Field targetField) {
         Game game = gameService.getGamePicture();
         Board board = game.getBoard();
-        GameState gameState = game.getGameState();
+
+        boolean isRemis = false;
+        String remisReason = null;
 
         moveExecutorService.executeMove(sourceField, targetField, true);
 
         //validate remis situations
         if (this.isStaleMate()) {
-            gameState.setRemis(true);
-            gameState.setRemisReason("Stalemate");
+            isRemis = true;
+            remisReason = "Stalemate";
         } else if (this.fiftyMoveRule(board)) {
-            gameState.setRemis(true);
-            gameState.setRemisReason("Fifty-Move Rule");
+            isRemis = true;
+            remisReason = "Fifty-Move Rule";
         } else if (this.isDeadPosition()) {
-            gameState.setRemis(true);
-            gameState.setRemisReason("Insufficient Mating Material");
+            isRemis = true;
+            remisReason = "Insufficient Mating Material";
         } else if (this.toOfterSameMove()) {
-            gameState.setRemis(true);
-            gameState.setRemisReason("Too often the same move");
+            isRemis = true;
+            remisReason = "Too often the same move";
         }
         //TODO Threefold Repetition https://www.spielezar.ch/blog/spielregeln/unentschieden-beim-schach#Dreifache_Stellungswiederholung
         //TODO perpetual check -> means each can go for check
 
         moveExecutorService.revertLastMove(true);
+
+        GameState gameState = game.getGameState();
+        gameState.setRemis(isRemis);
+        gameState.setRemisReason(remisReason);
     }
 
     private boolean toOfterSameMove() {

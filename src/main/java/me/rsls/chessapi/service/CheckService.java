@@ -27,6 +27,9 @@ public class CheckService {
 
 
     public void validateCheck(Field sourceField, Field targetField, GameState gameState) {
+
+        boolean checkStateBefore = gameState.isCheck();
+
         //reset check state
         this.resetCheckState(gameState);
 
@@ -39,6 +42,7 @@ public class CheckService {
         //not allowed to have both kings in a check state
         if(gameStateBlack.isCheck() && gameStateWhite.isCheck()){
             gameState.setDoubleCheck(true);
+            gameState.setCheck(checkStateBefore);
         }
         else {
             if (gameStateBlack.getCheckColor() != null) {
@@ -59,7 +63,8 @@ public class CheckService {
 
     private void processCheckValidation(Field sourceField, Field targetField, Color kingColor, GameState gameState) {
 
-        Board board = gameService.getCurrentBoard();
+        boolean isCheck = false;
+        Color checkColor = null;
 
         if (targetField.getFigure() != null && targetField.getFigure().getFigureType().equals(FigureType.KING)) {
             gameState.setCheck(true);
@@ -75,21 +80,24 @@ public class CheckService {
 
             Field kingField = figureService.getFigureField(king);
 
-            enemyList.forEach(figure -> {
-
+            for(Figure figure : enemyList) {
                 Field figureField = figureService.getFigureField(figure);
                 ValidFields figureValidTargetFields = validFieldService.validateFields(figureField, figure);
 
                 if (figureValidTargetFields.getFieldList().get(kingField) != null) {
-                    gameState.setCheck(true);
-                    gameState.setCheckColor(kingColor);
+                    isCheck = true;
+                    checkColor = kingColor;
+
+                    break;
                 }
-            });
+            }
 
             moveExecutorService.revertLastMove(true);
 
         }
 
+        gameState.setCheck(isCheck);
+        gameState.setCheckColor(checkColor);
     }
 
 }

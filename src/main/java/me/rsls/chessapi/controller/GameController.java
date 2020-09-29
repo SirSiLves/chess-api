@@ -26,6 +26,8 @@ public class GameController {
     public ResponseEntity<Game> getGamePicture() {
         Game game = gameService.getGamePicture();
 
+        System.out.println("GET GAME PICTURE");
+
         if (game == null) {
             initializeService.initializeGame();
             game = gameService.getGamePicture();

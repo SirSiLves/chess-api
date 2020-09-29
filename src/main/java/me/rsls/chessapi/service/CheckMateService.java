@@ -30,14 +30,15 @@ public class CheckMateService {
         GameState currentGameState = gameService.getCurrentGameState();
 
         boolean canProtect = false;
+        boolean isCheckMate = false;
 
         Figure king = figureService.getKing(currentGameState.getCheckColor());
-        Field kingField = figureService.getFigureField(king);
+//        Field kingField = figureService.getFigureField(king);
 
         //pre execute move
         moveExecutorService.executeMove(sourceField, targetField, true);
 
-        ValidFields kingValidFields = validFieldService.validateFields(kingField, king);
+//        ValidFields kingValidFields = validFieldService.validateFields(kingField, king);
 
         //get protectors of the king
         List<Figure> guardiens = figureService.getAllies(king.getFigureColor());
@@ -45,16 +46,18 @@ public class CheckMateService {
         canProtect = isCanProtect(guardiens);
 
         if (!canProtect) {
-            currentGameState.setCheckMate(true);
-
-            if (currentGameState.getCheckColor().equals(Color.BLACK)) {
-                gameService.getCurrentGameState().setWinner(Color.WHITE);
-            } else {
-                gameService.getCurrentGameState().setWinner(Color.BLACK);
-            }
+            isCheckMate = true;
         }
 
         moveExecutorService.revertLastMove(true);
+
+        if (currentGameState.getCheckColor().equals(Color.BLACK)) {
+            gameService.getCurrentGameState().setWinner(Color.WHITE);
+        } else {
+            gameService.getCurrentGameState().setWinner(Color.BLACK);
+        }
+
+        currentGameState.setCheckMate(isCheckMate);
     }
 
     public boolean isCanProtect(List<Figure> guardiens) {

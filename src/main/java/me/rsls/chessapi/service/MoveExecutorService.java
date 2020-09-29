@@ -30,7 +30,8 @@ public class MoveExecutorService {
         sourceField.setFigure(null);
 
         //create history entry
-        History history = new History(sourceField, targetField, movedFigure, killedFigure, false);
+        GameState historyGameState = gameService.getCopyGameState();
+        History history = new History(sourceField, targetField, movedFigure, killedFigure, false, historyGameState);
         board.addMoveToHistory(history);
 
         //set last played
@@ -38,6 +39,53 @@ public class MoveExecutorService {
 
         //handle pawn state, if one reaches the border
         this.pawnHandling(targetField, temporarily);
+    }
+
+    public void revertLastMove(boolean temporarily) {
+        Board board = gameService.getCurrentBoard();
+
+        //remove last pawn change
+        if(temporarily){
+            this.revertPawnSelection(board);
+        }
+
+        History lastHistory = board.getMoveHistory().get(board.getMoveHistory().size() - 1);
+
+        Field lastSourceField = lastHistory.getSourceField();
+        Field lastTargetField = lastHistory.getTargetField();
+        Figure movedFigure = lastHistory.getMovedFigure();
+        Figure killedFigure = lastHistory.getKilledFigure();
+
+        //revive killed figure
+        if (killedFigure != null) killedFigure.setAlive(true);
+
+        //move back to start
+        lastTargetField.setFigure(killedFigure);
+        lastSourceField.setFigure(movedFigure);
+
+        //revert game state
+        this.revertGameState(lastHistory);
+
+        //delete last entry in history
+        board.getMoveHistory().entrySet().removeIf(m -> m.getValue().equals(lastHistory));
+
+        //set last played
+        if (movedFigure.getFigureColor().equals(Color.BLACK)) board.setLastPlayed(Color.WHITE);
+        else board.setLastPlayed(Color.BLACK);
+    }
+
+    private void revertGameState(History history) {
+        GameState currentGameState = gameService.getCurrentGameState();
+        GameState historyGameState = history.getLastGameState();
+
+        currentGameState.setCheck(historyGameState.isCheck());
+        currentGameState.setCheckMate(historyGameState.isCheckMate());
+        currentGameState.setRemis(historyGameState.isRemis());
+        currentGameState.setCheckColor(historyGameState.getCheckColor());
+        currentGameState.setWinner(historyGameState.getWinner());
+        currentGameState.setDoubleCheck(historyGameState.isDoubleCheck());
+        currentGameState.setPawnChange(historyGameState.isPawnChange());
+        currentGameState.setRemisReason(historyGameState.getRemisReason());
     }
 
     private void pawnHandling(Field targetField, boolean temporarily) {
@@ -80,35 +128,6 @@ public class MoveExecutorService {
     }
 
 
-    public void revertLastMove(boolean temporarily) {
-        Board board = gameService.getCurrentBoard();
-
-        //remove last pawn change
-        if(temporarily){
-            this.revertPawnSelection(board);
-        }
-
-        History lastHistory = board.getMoveHistory().get(board.getMoveHistory().size() - 1);
-
-        Field lastSourceField = lastHistory.getSourceField();
-        Field lastTargetField = lastHistory.getTargetField();
-        Figure movedFigure = lastHistory.getMovedFigure();
-        Figure killedFigure = lastHistory.getKilledFigure();
-
-        //revive killed figure
-        if (killedFigure != null) killedFigure.setAlive(true);
-
-        //move back to start
-        lastTargetField.setFigure(killedFigure);
-        lastSourceField.setFigure(movedFigure);
-
-        //delete last entry in history
-        board.getMoveHistory().entrySet().removeIf(m -> m.getValue().equals(lastHistory));
-
-        //set last played
-        if (movedFigure.getFigureColor().equals(Color.BLACK)) board.setLastPlayed(Color.WHITE);
-        else board.setLastPlayed(Color.BLACK);
-    }
 
 
 }

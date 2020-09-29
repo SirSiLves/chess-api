@@ -66,14 +66,6 @@ public class GameState {
         this.doubleCheck = doubleCheck;
     }
 
-    public Color getWinnerPlayer() {
-        return winnerPlayer;
-    }
-
-    public void setWinnerPlayer(Color winnerPlayer) {
-        this.winnerPlayer = winnerPlayer;
-    }
-
     public boolean isPawnChange() {
         return pawnChange;
     }

@@ -33,7 +33,8 @@ public class PawnPromotionService {
         gameService.getCurrentBoard().getFigureArrayList().add(newFigure);
 
         //create history entry
-        History history = new History(borderPawnField, borderPawnField, newFigure, oldPawn, true);
+        GameState historyGameState = gameService.getCopyGameState();
+        History history = new History(borderPawnField, borderPawnField, newFigure, oldPawn, true, historyGameState);
         board.addMoveToHistory(history);
     }
 
@@ -59,7 +60,6 @@ public class PawnPromotionService {
         return targetField.getFigure().getFigureType().equals(FigureType.PAWN)
                 && (targetField.getHorizontalNumber() == 8 || targetField.getHorizontalNumber() == 1);
     }
-
 
 
 

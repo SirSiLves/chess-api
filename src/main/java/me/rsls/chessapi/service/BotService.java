@@ -30,7 +30,6 @@ public class BotService {
     @Autowired
     private PawnPromotionService pawnPromotionService;
 
-    private static int MINMAX_LEVEL = 5;
     private static final Map<FigureType, Integer> FIGURE_WORTH = new HashMap<>() {
         {
             put(FigureType.PAWN, 10);
@@ -46,57 +45,13 @@ public class BotService {
         GameState gameState = gameService.getCurrentGameState();
         if (!(gameState.isCheckMate() || gameState.isRemis())) {
 
-            ArrayList<Rating> ratedList = this.getRatingList();
-            Collections.sort(ratedList);
+            List<Rating> ratedList = this.getFilteredRatingList();
 
-            int position = 0;
-            int ratedSize = ratedList.size();
+            Random rnd = new Random();
+            int position = Math.abs(rnd.nextInt(ratedList.size()));
 
-            List<Rating> possibleFields = new ArrayList<>();
-
-            for (int i = 0; i < ratedList.size(); i++) {
-                Rating bestRated = ratedList.get(position);
-
-                Field sourceField = ratedList.get(i).getSourceField();
-                Field targetField = ratedList.get(i).getTargetField();
-
-                moveExecutorService.executeMove(sourceField, targetField, true);
-
-                List<Rating> nextFilteredList = this.getFilteredRatingList();
-
-                if (nextFilteredList == null) break;
-
-                for (Rating bestNextRated : nextFilteredList) {
-
-                    //if next move have the same target like the one before
-                    if (bestRated.getTargetField().equals(bestNextRated.getTargetField())) {
-
-                        //if next is better, take another target field
-                        if (bestNextRated.getRatingValue() > bestRated.getRatingValue()) {
-                            if (ratedSize - 1 > position) {
-                                position++;
-                                bestRated = ratedList.get(position);
-
-                                possibleFields.add(bestRated);
-                            }
-                        }
-                    }
-                }
-
-                moveExecutorService.revertLastMove(true);
-            }
-
-
-            if (possibleFields.size() == 0 && ratedList.size() > 0) {
-                possibleFields = this.getFilteredRatingList();
-            }
-
-            Random random = new Random();
-            int rndPosition = random.nextInt(((possibleFields.size() - 1)) + 1);
-
-            Field sourceField = possibleFields.get(rndPosition).getSourceField();
-            Field targetField = possibleFields.get(rndPosition).getTargetField();
-
+            Field sourceField = ratedList.get(position).getSourceField();
+            Field targetField = ratedList.get(position).getTargetField();
 
             this.executeBotMove(sourceField, targetField);
         }
@@ -107,10 +62,6 @@ public class BotService {
 
         ArrayList<Rating> ratedList = this.getRatingList();
         Collections.sort(ratedList);
-
-        if (ratedList.size() == 0) {
-            return null;
-        }
 
         Rating bestRate = ratedList.get(0);
 

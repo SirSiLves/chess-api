@@ -496,4 +496,39 @@ public class CheckTest extends ChessApiApplicationTests {
         assertFalse(game.getGameState().isRemis());
     }
 
+    @Test
+    public void testCheckAndReplacceWithNewCheck() {
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "1"}, new String[]{"h", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"h", "7"}, new String[]{"h", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"h", "3"}, new String[]{"g", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"e", "7"}, new String[]{"e", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"d", "2"}, new String[]{"d", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"e", "5"}, new String[]{"d", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"d", "1"}, new String[]{"d", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "7"}, new String[]{"a", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"e", "2"}, new String[]{"e", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "8"}, new String[]{"a", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "1"}, new String[]{"a", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"d", "8"}, new String[]{"g", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "2"}, new String[]{"f", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "8"}, new String[]{"a", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"h", "1"}, new String[]{"f", "1"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "5"}, new String[]{"f", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "1"}, new String[]{"f", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "6"}, new String[]{"e", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "1"}, new String[]{"d", "2"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"e", "6"}, new String[]{"e", "4"}).isState());
+
+        Game game = gameService.getGamePicture();
+
+        assertTrue(game.getGameState().isCheck());
+        assertFalse(game.getGameState().isCheckMate());
+        assertFalse(game.getGameState().isRemis());
+
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "4"}, new String[]{"e", "4"}).isState());
+
+        assertTrue(game.getGameState().isCheck());
+        assertFalse(game.getGameState().isCheckMate());
+        assertFalse(game.getGameState().isRemis());
+    }
 }

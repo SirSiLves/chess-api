@@ -47,11 +47,7 @@ public class ValidateService {
 
         Game currentGame = gameService.getGamePicture();
         Board board = currentGame.getBoard();
-
-        boolean checkStateBefore = false;
         GameState gameState = currentGame.getGameState();
-
-        if (gameState.isCheck()) checkStateBefore = true;
 
         //on source field is no figure
         if (sourceField.getFigure() == null) {
@@ -88,7 +84,7 @@ public class ValidateService {
         }
 
         //it can not be check behind each other
-        validation = this.getValidateStillCheck(gameState, board, checkStateBefore, validation);
+        validation = this.getValidateStillCheck(gameState, board, validation);
         if (!validation.isState()) {
             return validation;
         }
@@ -129,11 +125,10 @@ public class ValidateService {
         }
     }
 
-    private Validation getValidateStillCheck(GameState gameState, Board board, boolean checkStateBefore, Validation validation) {
+    private Validation getValidateStillCheck(GameState gameState, Board board, Validation validation) {
 
         //overwrite validation object
-        if (gameState.isCheck() && checkStateBefore ||
-                (gameState.getCheckColor() != null && !gameState.getCheckColor().equals(board.getLastPlayed()))) {
+        if (gameState.getCheckColor() != null && !gameState.getCheckColor().equals(board.getLastPlayed())) {
             validation = new Validation(null);
             validation.setState(false);
             validation.setText(RULE_TEXTS.get(6));

@@ -81,4 +81,5 @@ public class GameState {
     public void setRemisReason(String remisReason) {
         this.remisReason = remisReason;
     }
+
 }

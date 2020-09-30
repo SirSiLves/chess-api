@@ -1,8 +1,9 @@
-package me.rsls.chessapi.service;
+package me.rsls.chessapi.service.validation;
 
 
 import me.rsls.chessapi.model.*;
 import me.rsls.chessapi.model.validation.*;
+import me.rsls.chessapi.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ public class ValidateService {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private CastlingService castlingService;
+
 
     private static final Map<Integer, String> RULE_TEXTS = new HashMap<>() {
         {
@@ -40,6 +44,7 @@ public class ValidateService {
             put(8, "Remis");
             put(9, "Your king is in Check!");
             put(10, "You have to change your pawn");
+            put(11, "Castling is not allowed");
         }
     };
 
@@ -48,43 +53,48 @@ public class ValidateService {
         Game currentGame = gameService.getGamePicture();
         Board board = currentGame.getBoard();
         GameState gameState = currentGame.getGameState();
+        Validation validation = Validation.createTempValidation();
 
         //on source field is no figure
         if (sourceField.getFigure() == null) {
-            Validation validation = new Validation(null);
             validation.setText(RULE_TEXTS.get(2));
             validation.setState(false);
             return validation;
         }
 
-        //friendly fire
+        //wrong turn
         if (sourceField.getFigure().getFigureColor().equals(board.getLastPlayed())) {
-            Validation validation = new Validation(null);
             validation.setText(RULE_TEXTS.get(3));
             validation.setState(false);
             return validation;
         }
 
+        //Castling -> change king with rook
+        validation = this.getValidateCastling(sourceField, targetField);
+        if(!validation.isState()) {
+            return validation;
+        }
+
         //validate if some possible field exists
-        Validation validation = this.getValidatePossibleFields(sourceField, targetField);
+        validation = this.getValidatePossibleFields(sourceField, targetField);
         if (!validation.isState()) {
             return validation;
         }
 
         //validate if pawn was changed or not
-        validation = this.getValidatePawnChange(sourceField, targetField, validation, gameState);
+        validation = this.getValidatePawnChange(gameState);
         if (!validation.isState()) {
             return validation;
         }
 
         //its not allowed to have both king in check state
-        validation = this.getValidateDoubleCheck(sourceField, targetField, validation);
+        validation = this.getValidateDoubleCheck(sourceField, targetField);
         if (!validation.isState()) {
             return validation;
         }
 
         //it can not be check behind each other
-        validation = this.getValidateStillCheck(gameState, board, validation);
+        validation = this.getValidateStillCheck(gameState, board);
         if (!validation.isState()) {
             return validation;
         }
@@ -95,7 +105,29 @@ public class ValidateService {
 
     }
 
-    private Validation getValidatePawnChange(Field sourceField, Field targetField, Validation validation, GameState gameState) {
+    private Validation getValidateCastling(Field sourceField, Field targetField) {
+        Validation validation = Validation.createTempValidation();
+
+        //validate rook king exchange - castling
+        if (targetField.getFigure() != null
+                && sourceField.getFigure().getFigureColor().equals(targetField.getFigure().getFigureColor())
+                && sourceField.getFigure().getFigureType().equals(FigureType.KING)) {
+
+            boolean isCastlingAllowed = castlingService.validateCastling(sourceField, targetField);
+
+            if (!isCastlingAllowed) {
+                validation.setState(false);
+                validation.setText(RULE_TEXTS.get(11));
+
+                return validation;
+            }
+        }
+        return validation;
+    }
+
+    private Validation getValidatePawnChange(GameState gameState) {
+        Validation validation = Validation.createTempValidation();
+
         if (gameState.isPawnChange()) {
             validation = new Validation(null);
             validation.setState(false);
@@ -103,6 +135,7 @@ public class ValidateService {
         }
 
         return validation;
+
     }
 
     private void handleGameStateCheckCheckMateOrRemis(GameState gameState, Field sourceField, Field targetField, Validation validation) {
@@ -125,25 +158,25 @@ public class ValidateService {
         }
     }
 
-    private Validation getValidateStillCheck(GameState gameState, Board board, Validation validation) {
+    private Validation getValidateStillCheck(GameState gameState, Board board) {
+        Validation validation = Validation.createTempValidation();
 
         //overwrite validation object
         if (gameState.getCheckColor() != null && !gameState.getCheckColor().equals(board.getLastPlayed())) {
-            validation = new Validation(null);
             validation.setState(false);
             validation.setText(RULE_TEXTS.get(6));
         }
         return validation;
     }
 
-    private Validation getValidateDoubleCheck(Field sourceField, Field targetField, Validation validation) {
+    private Validation getValidateDoubleCheck(Field sourceField, Field targetField) {
+        Validation validation = Validation.createTempValidation();
 
         GameState gameState = gameService.getCurrentGameState();
         checkService.validateCheck(sourceField, targetField, gameState);
 
         //overwrite validation object
         if (gameState.isDoubleCheck()) {
-            validation = new Validation(null);
             validation.setState(false);
             validation.setText(RULE_TEXTS.get(9));
         }
@@ -159,11 +192,10 @@ public class ValidateService {
 
         //overwrite validation object
         if (validation == null) {
-            validation = new Validation(null);
+            validation = Validation.createTempValidation();
             validation.setState(false);
             validation.setText(RULE_TEXTS.get(4));
         }
-
         return validation;
     }
 

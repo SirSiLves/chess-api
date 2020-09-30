@@ -1,8 +1,9 @@
-package me.rsls.chessapi.service;
+package me.rsls.chessapi.service.validation;
 
 import me.rsls.chessapi.model.*;
 import me.rsls.chessapi.model.validation.*;
 import me.rsls.chessapi.model.validation.figures.*;
+import me.rsls.chessapi.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

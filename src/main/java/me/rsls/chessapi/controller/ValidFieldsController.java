@@ -4,7 +4,7 @@ import me.rsls.chessapi.model.ClickedField;
 import me.rsls.chessapi.model.Field;
 import me.rsls.chessapi.model.validation.ValidFields;
 import me.rsls.chessapi.service.GameService;
-import me.rsls.chessapi.service.ValidFieldService;
+import me.rsls.chessapi.service.validation.ValidFieldService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

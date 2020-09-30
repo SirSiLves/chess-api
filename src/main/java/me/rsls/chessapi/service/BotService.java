@@ -3,6 +3,8 @@ package me.rsls.chessapi.service;
 import me.rsls.chessapi.model.*;
 import me.rsls.chessapi.model.validation.ValidFields;
 import me.rsls.chessapi.model.validation.Validation;
+import me.rsls.chessapi.service.validation.ValidFieldService;
+import me.rsls.chessapi.service.validation.ValidateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

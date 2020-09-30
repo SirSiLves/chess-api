@@ -36,4 +36,12 @@ public class Validation {
     public void setState(boolean state) {
         this.state = state;
     }
+
+
+    public static Validation createTempValidation() {
+        Validation validation = new Validation(null);
+        validation.setState(true);
+        validation.setText("no matched rule");
+        return validation;
+    }
 }

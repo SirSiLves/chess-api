@@ -123,7 +123,7 @@ public class RemisTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"h", "2"}, new String[]{"h", "1"}).isState());
 
         SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnPromotionService.changePawn(selectedFigure);
+        pawnPromotionService.promotePawn(selectedFigure);
 
         assertTrue(handleMoveService.handleMove(new String[]{"d", "1"}, new String[]{"d", "2"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"h", "1"}, new String[]{"h", "2"}).isState());
@@ -357,7 +357,7 @@ public class RemisTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"b", "7"}, new String[]{"b", "8"}).isState());
 
         SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnPromotionService.changePawn(selectedFigure);
+        pawnPromotionService.promotePawn(selectedFigure);
 
         assertTrue(handleMoveService.handleMove(new String[]{"h", "5"}, new String[]{"h", "4"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"c", "2"}, new String[]{"d", "1"}).isState());
@@ -393,12 +393,12 @@ public class RemisTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "8"}).isState());
 
         selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnPromotionService.changePawn(selectedFigure);
+        pawnPromotionService.promotePawn(selectedFigure);
 
         assertTrue(handleMoveService.handleMove(new String[]{"f", "2"}, new String[]{"g", "1"}).isState());
 
         selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnPromotionService.changePawn(selectedFigure);
+        pawnPromotionService.promotePawn(selectedFigure);
 
         assertTrue(handleMoveService.handleMove(new String[]{"d", "1"}, new String[]{"c", "2"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"h", "3"}, new String[]{"h", "2"}).isState());
@@ -412,7 +412,7 @@ public class RemisTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"h", "2"}, new String[]{"h", "1"}).isState());
 
         selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnPromotionService.changePawn(selectedFigure);
+        pawnPromotionService.promotePawn(selectedFigure);
 
         assertTrue(handleMoveService.handleMove(new String[]{"d", "2"}, new String[]{"f", "1"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"e", "8"}, new String[]{"d", "8"}).isState());
@@ -436,7 +436,7 @@ public class RemisTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"d", "2"}, new String[]{"d", "1"}).isState());
 
         selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnPromotionService.changePawn(selectedFigure);
+        pawnPromotionService.promotePawn(selectedFigure);
 
         assertTrue(handleMoveService.handleMove(new String[]{"c", "2"}, new String[]{"d", "1"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"f", "2"}, new String[]{"f", "4"}).isState());

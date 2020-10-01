@@ -87,8 +87,10 @@ public class ValidateKing implements IValidate {
 
                 if (tempFigureType.equals(FigureType.ROOK)) {
                     isRookMoved = true;
+                    break;
                 } else if (tempFigureType.equals(FigureType.KING)) {
                     isKingMoved = true;
+                    break;
                 }
             }
         }

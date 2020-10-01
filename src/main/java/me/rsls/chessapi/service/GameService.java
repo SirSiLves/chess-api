@@ -60,7 +60,7 @@ public class GameService {
         historyGameState.setCheckColor(this.getCurrentGameState().getCheckColor());
         historyGameState.setWinner(this.getCurrentGameState().getWinner());
         historyGameState.setDoubleCheck(this.getCurrentGameState().isDoubleCheck());
-        historyGameState.setPawnChange(this.getCurrentGameState().isPawnChange());
+        historyGameState.setPromotion(this.getCurrentGameState().isPromoted());
         historyGameState.setRemisReason(this.getCurrentGameState().getRemisReason());
 
         return historyGameState;

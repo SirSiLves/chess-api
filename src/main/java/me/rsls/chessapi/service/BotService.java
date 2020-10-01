@@ -127,7 +127,7 @@ public class BotService {
                 (targetField.getHorizontalNumber() == 1 || targetField.getHorizontalNumber() == 8)) {
 
             SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
-            pawnPromotionService.changePawn(selectedFigure);
+            pawnPromotionService.promotePawn(selectedFigure);
         }
     }
 

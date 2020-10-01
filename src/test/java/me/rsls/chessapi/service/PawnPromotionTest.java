@@ -2,7 +2,6 @@ package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.ChessApiApplicationTests;
 import me.rsls.chessapi.model.FigureType;
-import me.rsls.chessapi.model.Game;
 import me.rsls.chessapi.model.GameState;
 import me.rsls.chessapi.model.SelectedFigure;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,20 +45,20 @@ public class PawnPromotionTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"g", "3"}, new String[]{"h", "2"}).isState());
         assertTrue(handleMoveService.handleMove(new String[]{"f", "2"}, new String[]{"f", "3"}).isState());
 
-        assertFalse(gameState.isPawnChange());
+        assertFalse(gameState.isPromoted());
 
         assertTrue(handleMoveService.handleMove(new String[]{"h", "2"}, new String[]{"g", "1"}).isState());
 
-        assertTrue(gameState.isPawnChange());
+        assertTrue(gameState.isPromoted());
 
         //not allowed to move, because pawn must be selected
         assertFalse(handleMoveService.handleMove(new String[]{"f", "3"}, new String[]{"f", "4"}).isState());
         assertFalse(handleMoveService.handleMove(new String[]{"g", "1"}, new String[]{"g", "4"}).isState());
 
         SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
-        pawnPromotionService.changePawn(selectedFigure);
+        pawnPromotionService.promotePawn(selectedFigure);
 
-        assertFalse(gameState.isPawnChange());
+        assertFalse(gameState.isPromoted());
 
         //allowed to move, pawn has been replaced
         assertTrue(handleMoveService.handleMove(new String[]{"f", "3"}, new String[]{"f", "4"}).isState());
@@ -145,7 +144,7 @@ public class PawnPromotionTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"h", "7"}, new String[]{"h", "8"}).isState());
 
         GameState gameState = gameService.getCurrentGameState();
-        assertTrue(gameState.isPawnChange());
+        assertTrue(gameState.isPromoted());
         assertTrue(gameState.isCheckMate());
 
 //        SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);

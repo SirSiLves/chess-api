@@ -4,16 +4,16 @@ public class History {
 
     private final Field sourceField, targetField;
     private final Figure movedFigure, killedFigure;
-    private final boolean pawnChange;
-    private final GameState lastGameState;
+    private final MoveType moveType;
+    private final GameState gameState;
 
-    public History(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure, boolean pawnChange, GameState lastGameState) {
+    public History(Field sourceField, Field targetField, Figure movedFigure, Figure killedFigure, MoveType moveType, GameState gameState) {
         this.sourceField = sourceField;
         this.targetField = targetField;
         this.movedFigure = movedFigure;
         this.killedFigure = killedFigure;
-        this.pawnChange = pawnChange;
-        this.lastGameState = lastGameState;
+        this.moveType = moveType;
+        this.gameState = gameState;
     }
 
     public Field getSourceField() {
@@ -32,11 +32,11 @@ public class History {
         return killedFigure;
     }
 
-    public boolean isPawnChange() {
-        return pawnChange;
+    public MoveType isMoveType() {
+        return moveType;
     }
 
-    public GameState getLastGameState() {
-        return lastGameState;
+    public GameState getGameState() {
+        return gameState;
     }
 }

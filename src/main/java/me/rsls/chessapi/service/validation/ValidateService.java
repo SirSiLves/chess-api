@@ -69,11 +69,11 @@ public class ValidateService {
             return validation;
         }
 
-        //Castling -> change king with rook
-        validation = this.getValidateCastling(sourceField, targetField);
-        if(!validation.isState()) {
-            return validation;
-        }
+//        //Castling -> change king with rook
+//        validation = this.getValidateCastling(sourceField, targetField);
+//        if (!validation.isState()) {
+//            return validation;
+//        }
 
         //validate if some possible field exists
         validation = this.getValidatePossibleFields(sourceField, targetField);
@@ -109,8 +109,7 @@ public class ValidateService {
         Validation validation = Validation.createTempValidation();
 
         //validate rook king exchange - castling
-        if (targetField.getFigure() != null
-                && sourceField.getFigure().getFigureColor().equals(targetField.getFigure().getFigureColor())
+        if (targetField.getFigure() == null
                 && sourceField.getFigure().getFigureType().equals(FigureType.KING)) {
 
             boolean isCastlingAllowed = castlingService.validateCastling(sourceField, targetField);
@@ -128,7 +127,7 @@ public class ValidateService {
     private Validation getValidatePawnChange(GameState gameState) {
         Validation validation = Validation.createTempValidation();
 
-        if (gameState.isPawnChange()) {
+        if (gameState.isPromoted()) {
             validation = new Validation(null);
             validation.setState(false);
             validation.setText(RULE_TEXTS.get(10));

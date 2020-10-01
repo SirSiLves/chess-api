@@ -17,7 +17,7 @@ public class PawnPromotionService {
     private FigureService figureService;
 
 
-    public void changePawn(SelectedFigure selectedFigure) {
+    public void promotePawn(SelectedFigure selectedFigure) {
         Board board = gameService.getCurrentBoard();
         FigureType selectedFigureType = selectedFigure.getFigureType();
 
@@ -29,12 +29,12 @@ public class PawnPromotionService {
         oldPawn.setAlive(false);
         borderPawnField.setFigure(newFigure);
 
-        gameService.getCurrentGameState().setPawnChange(false);
+        gameService.getCurrentGameState().setPromotion(false);
         gameService.getCurrentBoard().getFigureArrayList().add(newFigure);
 
         //create history entry
         GameState historyGameState = gameService.getCopyGameState();
-        History history = new History(borderPawnField, borderPawnField, newFigure, oldPawn, true, historyGameState);
+        History history = new History(borderPawnField, borderPawnField, newFigure, oldPawn, MoveType.PROMOTION, historyGameState);
         board.addMoveToHistory(history);
     }
 
@@ -56,9 +56,14 @@ public class PawnPromotionService {
     }
 
 
-    public boolean getPawnChangeState(Field targetField) {
-        return targetField.getFigure().getFigureType().equals(FigureType.PAWN)
-                && (targetField.getHorizontalNumber() == 8 || targetField.getHorizontalNumber() == 1);
+    public void validatePromotion(Field targetField) {
+        GameState gameState = gameService.getCurrentGameState();
+
+        if (targetField.getFigure().getFigureType().equals(FigureType.PAWN)
+                && (targetField.getHorizontalNumber() == 8 || targetField.getHorizontalNumber() == 1)) {
+
+            gameState.setPromotion(true);
+        }
     }
 
 

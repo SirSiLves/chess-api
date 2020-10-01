@@ -52,7 +52,7 @@ public class MoveController {
     @RequestMapping(value = "doPawnPromotion", method = RequestMethod.POST)
     public ResponseEntity<String> doPawnPromotion(@RequestBody SelectedFigure selectedFigure) {
 
-        pawnPromotionService.changePawn(selectedFigure);
+        pawnPromotionService.promotePawn(selectedFigure);
         return new ResponseEntity<>("Figure success fully changed", HttpStatus.OK);
     }
 

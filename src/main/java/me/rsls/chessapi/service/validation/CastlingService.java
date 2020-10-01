@@ -24,34 +24,42 @@ public class CastlingService {
     @Autowired
     private ValidFieldService validFieldService;
 
-    @Autowired
-    private MoveExecutorService moveExecutorService;
-
 
     public boolean validateCastling(Field sourceField, Field targetField) {
 
-        ValidFields kingValidFields = validFieldService.validateFields(sourceField, sourceField.getFigure());
-
-        //check if target field is one of the king possible target fields
-        Validation validation = kingValidFields.getFieldList().get(targetField);
-        if (validation == null) {
-            return false;
-        }
-
         int sourceX = BoardService.VERTICAL_DESIGNATION.indexOf(sourceField.getVertical());
         int targetX = BoardService.VERTICAL_DESIGNATION.indexOf(targetField.getVertical());
+        int sourceY = sourceField.getHorizontalNumber();
+        int targetY = targetField.getHorizontalNumber();
 
-        if (targetX - sourceX == -2) {
-            if (!validateQueenSideCastling(sourceField, targetField, kingValidFields)) {
+        //if its a castling move but not valid return false, else return true
+        if (this.isCastlingMove(sourceX, targetX, sourceY, targetY, targetField)) {
+
+            //set castling state to know which move should be executed later
+            GameState gameState = gameService.getCurrentGameState();
+            gameState.setCastling(true);
+
+            //castling field must in the valid field list
+            ValidFields kingValidFields = validFieldService.validateFields(sourceField, sourceField.getFigure());
+            Validation validation = kingValidFields.getFieldList().get(targetField);
+
+            if (validation == null) {
                 return false;
+            } else if (targetX - sourceX == -2) {
+                return validateQueenSideCastling(sourceField, targetField, kingValidFields);
+            } else {
+                return validateKingSideCastling(sourceField, targetField, kingValidFields);
             }
+
         } else {
-            if (!validateKingSideCastling(sourceField, targetField, kingValidFields)) {
-                return false;
-            }
+            return true;
         }
+    }
 
-        return true;
+    private boolean isCastlingMove(int sourceX, int targetX, int sourceY, int targetY, Field targetField) {
+        return (Math.abs(sourceX - targetX) == 2)
+                && (Math.abs(sourceY - targetY) == 0)
+                && targetField.getFigure() == null;
     }
 
     private boolean validateKingSideCastling(Field sourceField, Field targetField, ValidFields validFields) {
@@ -62,6 +70,7 @@ public class CastlingService {
 
         //exchange at bottom
         else if (sourceField.getHorizontalNumber() == 8) {
+
             Field f8 = boardService.getField(new String[]{"f", "8"});
 
             GameState gameState = new GameState();
@@ -77,6 +86,7 @@ public class CastlingService {
             if (gameState.isCheck()) {
                 return false;
             }
+
         }
 
         return true;

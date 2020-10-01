@@ -2,21 +2,21 @@ package me.rsls.chessapi.model;
 
 public class GameState {
 
-    private boolean check, checkMate, isRemis, doubleCheck, promotion, castling;
+    private boolean isCheck, isCheckMate, isRemis, isDoubleCheck, isPromotion, isCastling;
     private Color checkColor;
     private Color winnerPlayer;
     private String remisReason;
 
     public GameState() {
-        this.check = false;
-        this.checkMate = false;
+        this.isCheck = false;
+        this.isCheckMate = false;
         this.isRemis = false;
         this.checkColor = null;
         this.winnerPlayer = null;
-        this.doubleCheck = false;
-        this.promotion = false;
+        this.isDoubleCheck = false;
+        this.isPromotion = false;
         this.remisReason = null;
-        this.castling = false;
+        this.isCastling = false;
     }
 
     public Color getCheckColor() {
@@ -28,19 +28,19 @@ public class GameState {
     }
 
     public boolean isCheck() {
-        return check;
+        return isCheck;
     }
 
     public void setCheck(boolean check) {
-        this.check = check;
+        this.isCheck = check;
     }
 
     public boolean isCheckMate() {
-        return checkMate;
+        return isCheckMate;
     }
 
     public void setCheckMate(boolean checkMate) {
-        this.checkMate = checkMate;
+        this.isCheckMate = checkMate;
     }
 
     public boolean isRemis() {
@@ -60,19 +60,19 @@ public class GameState {
     }
 
     public boolean isDoubleCheck() {
-        return doubleCheck;
+        return isDoubleCheck;
     }
 
     public void setDoubleCheck(boolean doubleCheck) {
-        this.doubleCheck = doubleCheck;
+        this.isDoubleCheck = doubleCheck;
     }
 
     public boolean isPromoted() {
-        return promotion;
+        return isPromotion;
     }
 
     public void setPromotion(boolean promotion) {
-        this.promotion = promotion;
+        this.isPromotion = promotion;
     }
 
     public String getRemisReason() {
@@ -84,10 +84,10 @@ public class GameState {
     }
 
     public boolean isCastling() {
-        return castling;
+        return isCastling;
     }
 
     public void setCastling(boolean castling) {
-        this.castling = castling;
+        this.isCastling = castling;
     }
 }

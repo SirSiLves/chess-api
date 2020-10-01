@@ -4,6 +4,7 @@ import me.rsls.chessapi.ChessApiApplicationTests;
 import me.rsls.chessapi.model.FigureType;
 import me.rsls.chessapi.model.Game;
 import me.rsls.chessapi.model.SelectedFigure;
+import me.rsls.chessapi.service.validation.PawnPromotionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

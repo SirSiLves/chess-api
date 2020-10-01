@@ -69,11 +69,11 @@ public class ValidateService {
             return validation;
         }
 
-//        //Castling -> change king with rook
-//        validation = this.getValidateCastling(sourceField, targetField);
-//        if (!validation.isState()) {
-//            return validation;
-//        }
+        //Castling -> change king with rook
+        validation = this.getValidateCastling(sourceField, targetField);
+        if (!validation.isState()) {
+            return validation;
+        }
 
         //validate if some possible field exists
         validation = this.getValidatePossibleFields(sourceField, targetField);
@@ -112,9 +112,10 @@ public class ValidateService {
         if (targetField.getFigure() == null
                 && sourceField.getFigure().getFigureType().equals(FigureType.KING)) {
 
-            boolean isCastlingAllowed = castlingService.validateCastling(sourceField, targetField);
+            //if its a castling move but not valid, it returns false
+            boolean validCastling = castlingService.validateCastling(sourceField, targetField);
 
-            if (!isCastlingAllowed) {
+            if (!validCastling) {
                 validation.setState(false);
                 validation.setText(RULE_TEXTS.get(11));
 
@@ -161,7 +162,8 @@ public class ValidateService {
         Validation validation = Validation.createTempValidation();
 
         //overwrite validation object
-        if (gameState.getCheckColor() != null && !gameState.getCheckColor().equals(board.getLastPlayed())) {
+        if (gameState.getCheckColor() != null
+                && !gameState.getCheckColor().equals(board.getLastPlayed())) {
             validation.setState(false);
             validation.setText(RULE_TEXTS.get(6));
         }

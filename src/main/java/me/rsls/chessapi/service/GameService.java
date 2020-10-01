@@ -62,6 +62,7 @@ public class GameService {
         historyGameState.setDoubleCheck(this.getCurrentGameState().isDoubleCheck());
         historyGameState.setPromotion(this.getCurrentGameState().isPromoted());
         historyGameState.setRemisReason(this.getCurrentGameState().getRemisReason());
+        historyGameState.setCastling(this.getCurrentGameState().isCastling());
 
         return historyGameState;
     }

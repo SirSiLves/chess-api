@@ -42,7 +42,7 @@ public class CastlingTest extends ChessApiApplicationTests {
         assertTrue(handleMoveService.handleMove(new String[]{"e", "8"}, new String[]{"g", "8"}).isState());
 
         Field kingField = boardService.getField(new String[]{"g", "8"});
-        Field rookField = boardService.getField(new String[]{"e", "8"});
+        Field rookField = boardService.getField(new String[]{"f", "8"});
 
         assertEquals(kingField.getFigure().getFigureType(), FigureType.KING);
         assertEquals(rookField.getFigure().getFigureType(), FigureType.ROOK);

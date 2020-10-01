@@ -7,7 +7,7 @@ public class Game {
     private final Board board;
     private final Player player;
     private final Date createDate;
-    private GameState gameState;
+    private final GameState gameState;
 
     public Game(Player player, Board board) {
         this.board = board;
@@ -32,7 +32,7 @@ public class Game {
         return gameState;
     }
 
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-    }
+//    public void setGameState(GameState gameState) {
+//        this.gameState = gameState;
+//    }
 }

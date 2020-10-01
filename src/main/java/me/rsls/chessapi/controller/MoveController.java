@@ -5,7 +5,7 @@ import me.rsls.chessapi.model.SelectedFigure;
 import me.rsls.chessapi.model.validation.Validation;
 import me.rsls.chessapi.service.BotService;
 import me.rsls.chessapi.service.HandleMoveService;
-import me.rsls.chessapi.service.PawnPromotionService;
+import me.rsls.chessapi.service.validation.PawnPromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

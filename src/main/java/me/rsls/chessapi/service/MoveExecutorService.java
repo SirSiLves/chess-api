@@ -2,6 +2,8 @@ package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.model.*;
 import me.rsls.chessapi.model.Color;
+import me.rsls.chessapi.service.validation.CastlingService;
+import me.rsls.chessapi.service.validation.PawnPromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,22 +15,23 @@ public class MoveExecutorService {
     private GameService gameService;
 
     @Autowired
-    private PawnPromotionService pawnPromotionService;
-
-    @Autowired
     private BoardService boardService;
 
+    @Autowired
+    private PawnPromotionService pawnPromotionService;
 
-    public void executeMove(Field sourceField, Field targetField, boolean includeAutoPromotion) {
+
+
+    public void executeMove(Field sourceField, Field targetField, boolean isTestMove) {
         GameState gameState = gameService.getCurrentGameState();
 
-        if (gameState.isCastling()) {
-            this.executeCastling(sourceField);
+        if (gameState.isCastling() && !isTestMove) {
+            this.executeCastling(sourceField, targetField);
         } else {
             this.executeNormalMove(sourceField, targetField);
         }
 
-        if (includeAutoPromotion) this.executePromotion();
+        if (isTestMove) this.executePromotion();
     }
 
     public void executeNormalMove(Field sourceField, Field targetField) {
@@ -56,11 +59,11 @@ public class MoveExecutorService {
         pawnPromotionService.validatePromotion(targetField);
     }
 
-    public void revertLastMove(boolean includeAutoPromotion) {
+    public void revertLastMove(boolean isTestMove) {
         Board board = gameService.getCurrentBoard();
 
         //remove last pawn change
-        if (includeAutoPromotion) this.revertPromotion(board);
+        if (isTestMove) this.revertPromotion(board);
 
         History lastHistory = board.getMoveHistory().get(board.getMoveHistory().size() - 1);
 
@@ -99,7 +102,7 @@ public class MoveExecutorService {
         currentGameState.setRemis(historyGameState.isRemis());
         currentGameState.setRemisReason(historyGameState.getRemisReason());
         currentGameState.setPromotion(history.isMoveType().equals(MoveType.PROMOTION));
-        currentGameState.setCastling(history.isMoveType().equals(MoveType.CASTLING));
+        currentGameState.setCastling(historyGameState.isCastling());
     }
 
     private void executePromotion() {
@@ -136,10 +139,25 @@ public class MoveExecutorService {
 
     }
 
-    private void executeCastling(Field sourceField) {
+    private void executeCastling(Field sourceField, Field targetField) {
+
 
         //exchange on top
         if (sourceField.getHorizontalNumber() == 1) {
+//            Field oldKingField = boardService.getField(new String[]{"e", "1"});
+//            Field oldRookField = boardService.getField(new String[]{"h", "1"});
+//
+//            king = oldKingField.getFigure();
+//            rook = oldRookField.getFigure();
+//
+//            Field newKingField = boardService.getField(new String[]{"g", "1"});
+//            Field newRookField = boardService.getField(new String[]{"f", "1"});
+//
+//            oldKingField.setFigure(null);
+//            oldRookField.setFigure(null);
+//
+//            newKingField.setFigure(king);
+//            newRookField.setFigure(rook);
         }
 
         //exchange at bottom
@@ -148,22 +166,35 @@ public class MoveExecutorService {
             Field oldKingField = boardService.getField(new String[]{"e", "8"});
             Field oldRookField = boardService.getField(new String[]{"h", "8"});
 
-//            Figure king = oldKingField.getFigure();
-//            Figure rook = oldRookField.getFigure();
+            Figure king = oldKingField.getFigure();
+            Figure rook = oldRookField.getFigure();
 
             Field newKingField = boardService.getField(new String[]{"g", "8"});
             Field newRookField = boardService.getField(new String[]{"f", "8"});
 
-//            oldKingField.setFigure(null);
-//            oldRookField.setFigure(null);
-//
-//            newKingField.setFigure(king);
-//            newRookField.setFigure(rook);
+            newKingField.setFigure(king);
+            newRookField.setFigure(rook);
+
+            oldRookField.setFigure(null);
+            oldKingField.setFigure(null);
 
             Board board = gameService.getCurrentBoard();
 
+            //set last played
+            board.setLastPlayed(king.getFigureColor());
+
+            //create history entry
+            GameState historyGameState = gameService.getCopyGameState();
+            History history = new History(sourceField, targetField, king, rook, MoveType.CASTLING, historyGameState);
+            board.addMoveToHistory(history);
+
+
+//            //TODO better handling
+            gameService.getCurrentGameState().setCastling(false);
 
         }
+
+
     }
 
     private void revertCastling(History history) {

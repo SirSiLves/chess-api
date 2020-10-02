@@ -119,6 +119,10 @@ public class ValidateService {
                 validation.setState(false);
                 validation.setText(RULE_TEXTS.get(11));
 
+                //reset state, cause its a wrong castling move
+                GameState gameState = gameService.getCurrentGameState();
+                gameState.setCastling(false);
+
                 return validation;
             }
         }

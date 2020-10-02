@@ -5,7 +5,6 @@ import me.rsls.chessapi.model.validation.ValidFields;
 import me.rsls.chessapi.model.validation.Validation;
 import me.rsls.chessapi.service.BoardService;
 import me.rsls.chessapi.service.GameService;
-import me.rsls.chessapi.service.MoveExecutorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +45,9 @@ public class CastlingService {
             if (validation == null) {
                 return false;
             } else if (targetX - sourceX == -2) {
-                return validateQueenSideCastling(sourceField, targetField, kingValidFields);
+                return validateQueenSideCastling(sourceField);
             } else {
-                return validateKingSideCastling(sourceField, targetField, kingValidFields);
+                return validateKingSideCastling(sourceField);
             }
 
         } else {
@@ -62,48 +61,47 @@ public class CastlingService {
                 && targetField.getFigure() == null;
     }
 
-    private boolean validateKingSideCastling(Field sourceField, Field targetField, ValidFields validFields) {
-
-        //exchange on top
-        if (sourceField.getHorizontalNumber() == 1) {
+    private boolean validateCheckWay(String firstColumn, String secondColumn, String rowNumber, Field sourceField) {
+        Field f = boardService.getField(new String[]{firstColumn, rowNumber});
+        if (this.validateCheck(sourceField, f)) {
+            return false;
         }
 
-        //exchange at bottom
-        else if (sourceField.getHorizontalNumber() == 8) {
-
-            Field f8 = boardService.getField(new String[]{"f", "8"});
-
-            GameState gameState = new GameState();
-            checkService.validateCheck(sourceField, f8, gameState);
-
-            if (gameState.isCheck()) {
-                return false;
-            }
-
-            Field g8 = boardService.getField(new String[]{"g", "8"});
-            checkService.validateCheck(sourceField, g8, gameState);
-
-            if (gameState.isCheck()) {
-                return false;
-            }
-
-        }
-
-        return true;
+        Field s = boardService.getField(new String[]{secondColumn, rowNumber});
+        return !this.validateCheck(sourceField, s);
     }
 
-    private boolean validateQueenSideCastling(Field sourceField, Field targetField, ValidFields validFields) {
-        //validate on top
+    private boolean validateCheck(Field sourceField, Field wayField) {
+        GameState gameState = new GameState();
+        checkService.validateCheck(sourceField, wayField, gameState);
+
+        return gameState.isCheck();
+    }
+
+    private boolean validateKingSideCastling(Field sourceField) {
+        //exchange on top
         if (sourceField.getHorizontalNumber() == 1) {
-
+            return this.validateCheckWay("f", "g", "1", sourceField);
         }
-        //validate at bottom
+        //exchange at bottom
         else if (sourceField.getHorizontalNumber() == 8) {
-
+            return this.validateCheckWay("f", "g", "8", sourceField);
         }
 
+        return false;
+    }
 
-        return true;
+    private boolean validateQueenSideCastling(Field sourceField) {
+        //exchange on top
+        if (sourceField.getHorizontalNumber() == 1) {
+            return this.validateCheckWay("d", "c", "1", sourceField);
+        }
+        //exchange at bottom
+        else if (sourceField.getHorizontalNumber() == 8) {
+            return this.validateCheckWay("d", "c", "8", sourceField);
+        }
+
+        return false;
     }
 
 

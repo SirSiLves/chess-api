@@ -2,7 +2,6 @@ package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.model.*;
 import me.rsls.chessapi.model.Color;
-import me.rsls.chessapi.service.validation.CastlingService;
 import me.rsls.chessapi.service.validation.PawnPromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ public class MoveExecutorService {
 
     @Autowired
     private PawnPromotionService pawnPromotionService;
-
 
 
     public void executeMove(Field sourceField, Field targetField, boolean isTestMove) {
@@ -140,61 +138,69 @@ public class MoveExecutorService {
     }
 
     private void executeCastling(Field sourceField, Field targetField) {
-
+        int sourceX = BoardService.VERTICAL_DESIGNATION.indexOf(sourceField.getVertical());
+        int targetX = BoardService.VERTICAL_DESIGNATION.indexOf(targetField.getVertical());
+        int sourceY = sourceField.getHorizontalNumber();
+        int targetY = targetField.getHorizontalNumber();
 
         //exchange on top
-        if (sourceField.getHorizontalNumber() == 1) {
-//            Field oldKingField = boardService.getField(new String[]{"e", "1"});
-//            Field oldRookField = boardService.getField(new String[]{"h", "1"});
-//
-//            king = oldKingField.getFigure();
-//            rook = oldRookField.getFigure();
-//
-//            Field newKingField = boardService.getField(new String[]{"g", "1"});
-//            Field newRookField = boardService.getField(new String[]{"f", "1"});
-//
-//            oldKingField.setFigure(null);
-//            oldRookField.setFigure(null);
-//
-//            newKingField.setFigure(king);
-//            newRookField.setFigure(rook);
+        if (sourceY == 1 && targetY == 1) {
+            if (targetX - sourceX == -2) {
+                //execute left
+                this.exchangeCastlingField(sourceField, targetField,
+                        "1", "a", "c", "d");
+            } else {
+                //execute right
+                this.exchangeCastlingField(sourceField, targetField,
+                        "1", "h", "g", "f");
+            }
         }
 
         //exchange at bottom
-        else if (sourceField.getHorizontalNumber() == 8) {
-
-            Field oldKingField = boardService.getField(new String[]{"e", "8"});
-            Field oldRookField = boardService.getField(new String[]{"h", "8"});
-
-            Figure king = oldKingField.getFigure();
-            Figure rook = oldRookField.getFigure();
-
-            Field newKingField = boardService.getField(new String[]{"g", "8"});
-            Field newRookField = boardService.getField(new String[]{"f", "8"});
-
-            newKingField.setFigure(king);
-            newRookField.setFigure(rook);
-
-            oldRookField.setFigure(null);
-            oldKingField.setFigure(null);
-
-            Board board = gameService.getCurrentBoard();
-
-            //set last played
-            board.setLastPlayed(king.getFigureColor());
-
-            //create history entry
-            GameState historyGameState = gameService.getCopyGameState();
-            History history = new History(sourceField, targetField, king, rook, MoveType.CASTLING, historyGameState);
-            board.addMoveToHistory(history);
-
-
-//            //TODO better handling
-            gameService.getCurrentGameState().setCastling(false);
-
+        else if (sourceY == 8 && targetY == 8) {
+            if (targetX - sourceX == -2) {
+                //execute left
+                this.exchangeCastlingField(sourceField, targetField,
+                        "8", "a", "c", "d");
+            } else {
+                //execute right
+                this.exchangeCastlingField(sourceField, targetField,
+                        "8", "h", "g", "f");
+            }
         }
+    }
 
+    private void exchangeCastlingField(Field sourceField, Field targetField,
+                                       String rowNumber, String oldRookColumn,
+                                       String newKingColumn, String newRookColumn) {
 
+        Field oldKingField = boardService.getField(new String[]{"e", rowNumber});
+        Field oldRookField = boardService.getField(new String[]{oldRookColumn, rowNumber});
+
+        Figure king = oldKingField.getFigure();
+        Figure rook = oldRookField.getFigure();
+
+        Field newKingField = boardService.getField(new String[]{newKingColumn, rowNumber});
+        Field newRookField = boardService.getField(new String[]{newRookColumn, rowNumber});
+
+        newKingField.setFigure(king);
+        newRookField.setFigure(rook);
+
+        oldRookField.setFigure(null);
+        oldKingField.setFigure(null);
+
+        Board board = gameService.getCurrentBoard();
+
+        //set last played
+        board.setLastPlayed(king.getFigureColor());
+
+        //create history entry
+        GameState historyGameState = gameService.getCopyGameState();
+        History history = new History(sourceField, targetField, king, rook, MoveType.CASTLING, historyGameState);
+        board.addMoveToHistory(history);
+
+        //TODO better handling
+        gameService.getCurrentGameState().setCastling(false);
     }
 
     private void revertCastling(History history) {

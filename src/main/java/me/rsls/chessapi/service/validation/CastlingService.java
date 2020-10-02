@@ -81,12 +81,12 @@ public class CastlingService {
     private boolean validateKingSideCastling(Field sourceField) {
         //exchange on top
         if (sourceField.getHorizontalNumber() == 1) {
-            if(isMoved("1", "h")) return false;
+            if (isMoved("1", "h")) return false;
             return this.validateCheckWay("f", "g", "1", sourceField);
         }
         //exchange at bottom
         else if (sourceField.getHorizontalNumber() == 8) {
-            if(isMoved("8", "h")) return false;
+            if (isMoved("8", "h")) return false;
             return this.validateCheckWay("f", "g", "8", sourceField);
         }
 
@@ -96,12 +96,12 @@ public class CastlingService {
     private boolean validateQueenSideCastling(Field sourceField) {
         //exchange on top
         if (sourceField.getHorizontalNumber() == 1) {
-            if(isMoved("1", "a")) return false;
+            if (isMoved("1", "a")) return false;
             return this.validateCheckWay("d", "c", "1", sourceField);
         }
         //exchange at bottom
         else if (sourceField.getHorizontalNumber() == 8) {
-            if(isMoved("8", "a")) return false;
+            if (isMoved("8", "a")) return false;
             return this.validateCheckWay("d", "c", "8", sourceField);
         }
 
@@ -109,6 +109,7 @@ public class CastlingService {
     }
 
     private boolean isMoved(String rowNumber, String rookColumn) {
+
         Figure king = boardService.getField(new String[]{"e", rowNumber}).getFigure();
         Figure rook = boardService.getField(new String[]{rookColumn, rowNumber}).getFigure();
 
@@ -117,7 +118,7 @@ public class CastlingService {
         for (History history : board.getMoveHistory().values()) {
             Figure movedFigure = history.getMovedFigure();
 
-            if (movedFigure.equals(king) || movedFigure.equals(rook)) {
+            if (movedFigure.equals(king) || movedFigure.equals(rook) || rook == null) {
                 return true;
             }
         }

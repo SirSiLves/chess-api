@@ -179,18 +179,13 @@ public class MoveExecutorService {
         //set last played
         board.setLastPlayed(king.getFigureColor());
 
+        //castling done, reset state
+        gameService.getCurrentGameState().setCastling(false);
+
         //create history entry
         GameState historyGameState = gameService.getCopyGameState();
         History history = new History(sourceField, targetField, king, rook, MoveType.CASTLING, historyGameState);
         board.addMoveToHistory(history);
-
-        //castling done, reset state
-        gameService.getCurrentGameState().setCastling(false);
     }
-
-    private void revertCastling(History history) {
-
-    }
-
 
 }

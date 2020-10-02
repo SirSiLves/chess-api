@@ -79,14 +79,11 @@ public class BotService {
         ArrayList<Rating> ratedList = new ArrayList<>();
 
         for (Figure figure : botFigures) {
-
             List<Field> possibleFields = validateService.getAllValidFields(figure, true);
+
             for (Field targetField : possibleFields) {
-
                 Field sourceField = figureService.getFigureField(figure);
-
                 int worthLevel = this.getWorthLevel(targetField);
-
                 ratedList.add(new Rating(sourceField, targetField, worthLevel));
             }
         }
@@ -109,19 +106,24 @@ public class BotService {
     }
 
     private void executeBotMove(Field sourceField, Field targetField) {
+        this.printBoteMove(sourceField, targetField);
 
-        //Validate one last, to retrieve the check state
-        Validation validation = validateService.validateMove(sourceField, targetField);
-        if (validation.isState()) {
-            this.printBoteMove(sourceField, targetField);
+        moveExecutorService.executeMove(sourceField, targetField, false);
+        this.handlePawn(targetField);
 
-            moveExecutorService.executeMove(sourceField, targetField, false);
-
-            this.handlePawn(targetField);
-            this.handleCastling();
-        } else {
-            throw new RuntimeException("Something went wrong with the bot handling!");
-        }
+//        //Validate one last, to retrieve the check state
+//        Validation validation = validateService.validateMove(sourceField, targetField);
+//
+//        if (validation.isState()) {
+//            this.printBoteMove(sourceField, targetField);
+//            this.handleCastling();
+//
+//            moveExecutorService.executeMove(sourceField, targetField, false);
+//
+//            this.handlePawn(targetField);
+//        } else {
+//            throw new RuntimeException("Something went wrong with the bot handling!");
+//        }
 
     }
 

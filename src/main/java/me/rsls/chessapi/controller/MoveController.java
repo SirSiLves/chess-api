@@ -38,8 +38,8 @@ public class MoveController {
         return new ResponseEntity<>(validation, HttpStatus.OK);
     }
 
-    //TODO GET?
 
+    //TODO POST?
     @RequestMapping(value = "doBotMove", method = RequestMethod.GET)
     public ResponseEntity<String> doBotMove() {
         System.out.println("DO BOT MOVE");

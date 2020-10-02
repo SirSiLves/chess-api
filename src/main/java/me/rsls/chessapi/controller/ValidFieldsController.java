@@ -2,15 +2,14 @@ package me.rsls.chessapi.controller;
 
 import me.rsls.chessapi.model.ClickedField;
 import me.rsls.chessapi.model.Field;
-import me.rsls.chessapi.model.validation.ValidFields;
 import me.rsls.chessapi.service.GameService;
-import me.rsls.chessapi.service.validation.ValidFieldService;
+import me.rsls.chessapi.service.validation.ValidateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 
 @RestController
@@ -18,20 +17,20 @@ import java.util.Set;
 public class ValidFieldsController {
 
     @Autowired
-    private ValidFieldService validFieldService;
+    private GameService gameService;
 
     @Autowired
-    private GameService gameService;
+    private ValidateService validateService;
 
     //TODO POST?
 
     @RequestMapping(value = "getFields", method = RequestMethod.POST)
-    public ResponseEntity<Set<Field>> getValidFields(@RequestBody ClickedField clickedField) {
+    public ResponseEntity<List<Field>> getValidFields(@RequestBody ClickedField clickedField) {
 
         Field sourceField = gameService.getCurrentBoard().getField(clickedField.getSourceField());
-        ValidFields validFields = validFieldService.validateFields(sourceField, sourceField.getFigure());
+        List<Field> possibleFieldList = validateService.getAllValidFields(sourceField.getFigure());
 
-        return new ResponseEntity<>(validFields.getFieldList().keySet(), HttpStatus.OK);
+        return new ResponseEntity<>(possibleFieldList, HttpStatus.OK);
     }
 
 }

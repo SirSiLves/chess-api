@@ -365,5 +365,32 @@ public class CastlingTest extends ChessApiApplicationTests {
 
     }
 
+    @Test
+    public void testWrongCastling() {
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "8"}, new String[]{"h", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "1"}, new String[]{"a", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"e", "7"}, new String[]{"e", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"h", "2"}, new String[]{"h", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "8"}, new String[]{"a", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "2"}, new String[]{"a", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"d", "8"}, new String[]{"f", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "2"}, new String[]{"g", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"d", "7"}, new String[]{"d", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"h", "1"}, new String[]{"h", "2"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "8"}, new String[]{"g", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "1"}, new String[]{"f", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "8"}, new String[]{"c", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "3"}, new String[]{"e", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"a", "8"}, new String[]{"b", "8"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"e", "5"}, new String[]{"g", "4"}).isState());
+
+
+        Field kingField = boardService.getField(new String[]{"e", "8"});
+        Field rookField = boardService.getField(new String[]{"b", "8"});
+
+        assertEquals(kingField.getFigure().getFigureType(), FigureType.KING);
+        assertEquals(rookField.getFigure().getFigureType(), FigureType.ROOK);
+    }
+
 
 }

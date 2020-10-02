@@ -80,16 +80,14 @@ public class BotService {
 
         for (Figure figure : botFigures) {
 
-            Field sourceField = figureService.getFigureField(figure);
-            ValidFields validFields = validFieldService.validateFields(sourceField, figure);
+            List<Field> possibleFields = validateService.getAllValidFields(figure);
+            for(Field targetField : possibleFields) {
 
-            for (Field targetField : validFields.getFieldList().keySet()) {
-                Validation validation = validateService.validateMove(sourceField, targetField);
+                Field sourceField = figureService.getFigureField(figure);
 
-                if (validation.isState()) {
-                    int worthLevel = this.getWorthLevel(targetField);
-                    ratedList.add(new Rating(sourceField, targetField, worthLevel));
-                }
+                int worthLevel = this.getWorthLevel(targetField);
+
+                ratedList.add(new Rating(sourceField, targetField, worthLevel));
             }
         }
 

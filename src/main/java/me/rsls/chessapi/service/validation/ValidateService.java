@@ -3,11 +3,14 @@ package me.rsls.chessapi.service.validation;
 
 import me.rsls.chessapi.model.*;
 import me.rsls.chessapi.model.validation.*;
+import me.rsls.chessapi.service.FigureService;
 import me.rsls.chessapi.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -30,6 +33,9 @@ public class ValidateService {
 
     @Autowired
     private CastlingService castlingService;
+
+    @Autowired
+    private FigureService figureService;
 
 
     private static final Map<Integer, String> RULE_TEXTS = new HashMap<>() {
@@ -202,6 +208,25 @@ public class ValidateService {
             validation.setText(RULE_TEXTS.get(4));
         }
         return validation;
+    }
+
+
+    public List<Field> getAllValidFields(Figure figure) {
+
+        ArrayList<Field> validatedFields = new ArrayList<>();
+
+        Field validateField = figureService.getFigureField(figure);
+        ValidFields validFields = validFieldService.validateFields(validateField, figure);
+
+        for (Field targetField : validFields.getFieldList().keySet()) {
+            Validation validation = this.validateMove(validateField, targetField);
+
+            if (validation.isState()) {
+                validatedFields.add(targetField);
+            }
+        }
+
+        return validatedFields;
     }
 
 

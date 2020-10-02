@@ -199,7 +199,7 @@ public class MoveExecutorService {
         History history = new History(sourceField, targetField, king, rook, MoveType.CASTLING, historyGameState);
         board.addMoveToHistory(history);
 
-        //TODO better handling
+        //castling done, reset state
         gameService.getCurrentGameState().setCastling(false);
     }
 

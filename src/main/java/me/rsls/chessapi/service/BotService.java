@@ -116,11 +116,20 @@ public class BotService {
         Validation validation = validateService.validateMove(sourceField, targetField);
         if (validation.isState()) {
             moveExecutorService.executeMove(sourceField, targetField, false);
+
+            this.handlePawn(targetField);
+            this.handleCastling();
+            this.printBoteMove(sourceField, targetField);
         } else {
             throw new RuntimeException("Something went wrong with the bot handling!");
         }
 
-        this.handlePawn(targetField);
+    }
+
+    private void handleCastling() {
+        //if castling was a possible field, reset state
+        GameState gameState = gameService.getCurrentGameState();
+        gameState.setCastling(false);
     }
 
     private void handlePawn(Field targetField) {
@@ -130,6 +139,13 @@ public class BotService {
             SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
             pawnPromotionService.promotePawn(selectedFigure);
         }
+    }
+
+    private void printBoteMove(Field sourceField, Field targetField) {
+        System.out.println("####################################");
+        System.out.println(Arrays.toString(sourceField.getFieldDesignation()));
+        System.out.println(Arrays.toString(targetField.getFieldDesignation()));
+        System.out.println("####################################");
     }
 
 }

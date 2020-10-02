@@ -76,7 +76,6 @@ public class ValidateKing implements IValidate {
         Color figureColor = sourceField.getFigure().getFigureColor();
 
         boolean isKingMoved = false;
-        boolean isRookMoved = false;
 
         for (History history : board.getMoveHistory().values()) {
             Figure movedFigure = history.getMovedFigure();
@@ -85,17 +84,14 @@ public class ValidateKing implements IValidate {
 
                 FigureType tempFigureType = movedFigure.getFigureType();
 
-                if (tempFigureType.equals(FigureType.ROOK)) {
-                    isRookMoved = true;
-                    break;
-                } else if (tempFigureType.equals(FigureType.KING)) {
+                if (tempFigureType.equals(FigureType.KING)) {
                     isKingMoved = true;
                     break;
                 }
             }
         }
 
-        return isKingMoved || isRookMoved;
+        return isKingMoved;
     }
 
     private boolean checkDestroy() {

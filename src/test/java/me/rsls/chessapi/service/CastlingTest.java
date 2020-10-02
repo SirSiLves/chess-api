@@ -392,5 +392,21 @@ public class CastlingTest extends ChessApiApplicationTests {
         assertEquals(rookField.getFigure().getFigureType(), FigureType.ROOK);
     }
 
+    @Test
+    public void testCastlingWhileAlreadyCheckState() {
+        assertTrue(handleMoveService.handleMove(new String[]{"d", "7"}, new String[]{"d", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "2"}, new String[]{"c", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "7"}, new String[]{"f", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"d", "1"}, new String[]{"b", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "8"}, new String[]{"h", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "3"}, new String[]{"c", "2"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "7"}, new String[]{"g", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "2"}, new String[]{"b", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "8"}, new String[]{"g", "7"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"b", "3"}, new String[]{"a", "4"}).isState());
+
+        //King is already in check, its not allowed to move
+        assertFalse(handleMoveService.handleMove(new String[]{"e", "8"}, new String[]{"g", "8"}).isState());
+    }
 
 }

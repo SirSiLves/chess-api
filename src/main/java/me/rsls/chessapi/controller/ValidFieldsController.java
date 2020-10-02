@@ -28,7 +28,7 @@ public class ValidFieldsController {
     public ResponseEntity<List<Field>> getValidFields(@RequestBody ClickedField clickedField) {
 
         Field sourceField = gameService.getCurrentBoard().getField(clickedField.getSourceField());
-        List<Field> possibleFieldList = validateService.getAllValidFields(sourceField.getFigure());
+        List<Field> possibleFieldList = validateService.getAllValidFields(sourceField.getFigure(), true);
 
         return new ResponseEntity<>(possibleFieldList, HttpStatus.OK);
     }

@@ -1,9 +1,6 @@
 package me.rsls.chessapi.service;
 
-import me.rsls.chessapi.model.Board;
-import me.rsls.chessapi.model.Game;
-import me.rsls.chessapi.model.GameState;
-import me.rsls.chessapi.model.Player;
+import me.rsls.chessapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,5 +62,25 @@ public class GameService {
         historyGameState.setCastling(this.getCurrentGameState().isCastling());
 
         return historyGameState;
+    }
+
+    public void revertGameState() {
+        Board board = this.getCurrentBoard();
+        History history = board.getMoveHistory().get(board.getMoveHistory().size() - 1);
+
+        GameState currentGameState = this.getCurrentGameState();
+        if(history != null) {
+            GameState historyGameState = history.getGameState();
+
+            currentGameState.setCheck(historyGameState.isCheck());
+            currentGameState.setDoubleCheck(historyGameState.isDoubleCheck());
+            currentGameState.setCheckColor(historyGameState.getCheckColor());
+            currentGameState.setCheckMate(historyGameState.isCheckMate());
+            currentGameState.setWinner(historyGameState.getWinner());
+            currentGameState.setRemis(historyGameState.isRemis());
+            currentGameState.setRemisReason(historyGameState.getRemisReason());
+            currentGameState.setPromotion(history.isMoveType().equals(MoveType.PROMOTION));
+            currentGameState.setCastling(historyGameState.isCastling());
+        }
     }
 }

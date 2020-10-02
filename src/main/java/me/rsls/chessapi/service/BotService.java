@@ -80,8 +80,8 @@ public class BotService {
 
         for (Figure figure : botFigures) {
 
-            List<Field> possibleFields = validateService.getAllValidFields(figure);
-            for(Field targetField : possibleFields) {
+            List<Field> possibleFields = validateService.getAllValidFields(figure, true);
+            for (Field targetField : possibleFields) {
 
                 Field sourceField = figureService.getFigureField(figure);
 
@@ -113,11 +113,12 @@ public class BotService {
         //Validate one last, to retrieve the check state
         Validation validation = validateService.validateMove(sourceField, targetField);
         if (validation.isState()) {
+            this.printBoteMove(sourceField, targetField);
+
             moveExecutorService.executeMove(sourceField, targetField, false);
 
             this.handlePawn(targetField);
             this.handleCastling();
-            this.printBoteMove(sourceField, targetField);
         } else {
             throw new RuntimeException("Something went wrong with the bot handling!");
         }
@@ -131,8 +132,8 @@ public class BotService {
     }
 
     private void handlePawn(Field targetField) {
-        if (targetField.getFigure().getFigureType().equals(FigureType.PAWN) &&
-                (targetField.getHorizontalNumber() == 1 || targetField.getHorizontalNumber() == 8)) {
+        if ((targetField.getHorizontalNumber() == 1 || targetField.getHorizontalNumber() == 8) &&
+                (targetField.getFigure().getFigureType().equals(FigureType.PAWN))) {
 
             SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
             pawnPromotionService.promotePawn(selectedFigure);

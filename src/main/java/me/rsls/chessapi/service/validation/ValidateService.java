@@ -211,7 +211,7 @@ public class ValidateService {
     }
 
 
-    public List<Field> getAllValidFields(Figure figure) {
+    public List<Field> getAllValidFields(Figure figure, boolean isTestMove) {
 
         ArrayList<Field> validatedFields = new ArrayList<>();
 
@@ -225,6 +225,12 @@ public class ValidateService {
                 validatedFields.add(targetField);
             }
         }
+
+        if(isTestMove) {
+            //reset all states after temp validation
+            gameService.revertGameState();
+        }
+
 
         return validatedFields;
     }

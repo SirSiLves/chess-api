@@ -78,7 +78,7 @@ public class MoveExecutorService {
         lastSourceField.setFigure(movedFigure);
 
         //revert game state
-        this.revertGameState(lastHistory);
+        gameService.revertGameState();
 
         //delete last entry in history
         board.getMoveHistory().entrySet().removeIf(m -> m.getValue().equals(lastHistory));
@@ -86,21 +86,6 @@ public class MoveExecutorService {
         //set last played
         if (movedFigure.getFigureColor().equals(Color.BLACK)) board.setLastPlayed(Color.WHITE);
         else board.setLastPlayed(Color.BLACK);
-    }
-
-    private void revertGameState(History history) {
-        GameState currentGameState = gameService.getCurrentGameState();
-        GameState historyGameState = history.getGameState();
-
-        currentGameState.setCheck(historyGameState.isCheck());
-        currentGameState.setDoubleCheck(historyGameState.isDoubleCheck());
-        currentGameState.setCheckColor(historyGameState.getCheckColor());
-        currentGameState.setCheckMate(historyGameState.isCheckMate());
-        currentGameState.setWinner(historyGameState.getWinner());
-        currentGameState.setRemis(historyGameState.isRemis());
-        currentGameState.setRemisReason(historyGameState.getRemisReason());
-        currentGameState.setPromotion(history.isMoveType().equals(MoveType.PROMOTION));
-        currentGameState.setCastling(historyGameState.isCastling());
     }
 
     private void executePromotion() {

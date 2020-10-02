@@ -25,6 +25,10 @@ public class CastlingService {
 
 
     public boolean validateCastling(Field sourceField, Field targetField) {
+        GameState gameState = gameService.getCurrentGameState();
+
+        //its not allowed if king is already in check state
+        if(gameState.isCheck()) return false;
 
         int sourceX = BoardService.VERTICAL_DESIGNATION.indexOf(sourceField.getVertical());
         int targetX = BoardService.VERTICAL_DESIGNATION.indexOf(targetField.getVertical());
@@ -35,7 +39,6 @@ public class CastlingService {
         if (this.isCastlingMove(sourceX, targetX, sourceY, targetY, targetField)) {
 
             //set castling state to know which move should be executed later
-            GameState gameState = gameService.getCurrentGameState();
             gameState.setCastling(true);
 
             //castling field must in the valid field list

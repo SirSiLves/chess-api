@@ -79,8 +79,11 @@ public class GameService {
             currentGameState.setWinner(historyGameState.getWinner());
             currentGameState.setRemis(historyGameState.isRemis());
             currentGameState.setRemisReason(historyGameState.getRemisReason());
-            currentGameState.setPromotion(history.isMoveType().equals(MoveType.PROMOTION));
+            currentGameState.setPromotion(historyGameState.isPromoted());
             currentGameState.setCastling(historyGameState.isCastling());
+        }
+        else{
+            board.setLastPlayed(null);
         }
     }
 }

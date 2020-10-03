@@ -25,9 +25,6 @@ public class BotService {
     private MoveExecutorService moveExecutorService;
 
     @Autowired
-    private ValidFieldService validFieldService;
-
-    @Autowired
     private FigureService figureService;
 
     @Autowired
@@ -46,7 +43,7 @@ public class BotService {
 
     public void handleBotMove() {
         GameState gameState = gameService.getCurrentGameState();
-        if (!(gameState.isCheckMate() || gameState.isRemis())) {
+        if (!(gameState.isCheckMate() || gameState.isRemis()) ||gameState.isCastling() || gameState.isPromoted()) {
 
             List<Rating> ratedList = this.getFilteredRatingList();
 

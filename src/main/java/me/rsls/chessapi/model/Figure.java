@@ -3,7 +3,7 @@ package me.rsls.chessapi.model;
 public class Figure {
 
     private final FigureType figureType;
-    private final Color figureColor;
+    private Color figureColor;
 
     private boolean isAlive;
 
@@ -27,6 +27,10 @@ public class Figure {
 
     public Color getFigureColor() {
         return figureColor;
+    }
+
+    public void setFigureColor(Color figureColor) {
+        this.figureColor = figureColor;
     }
 }
 

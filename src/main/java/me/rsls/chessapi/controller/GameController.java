@@ -35,4 +35,18 @@ public class GameController {
 
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "switchPlayer", method = RequestMethod.POST)
+    public ResponseEntity<Boolean> switchPlayer() {
+
+        Game game = gameService.getGamePicture();
+
+        if (game == null) {
+            initializeService.initializeGame();
+        }
+
+        gameService.switchPlayer();
+
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
 }

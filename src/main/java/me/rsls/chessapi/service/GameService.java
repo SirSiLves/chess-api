@@ -29,7 +29,7 @@ public class GameService {
         Game tempGame = null;
 
         for (Game g : gameArrayList) {
-            if (g.getPlayer().getSessionId().equals(player.getSessionId())) {
+            if (player != null && g.getPlayer().getSessionId().equals(player.getSessionId())) {
                 if(tempGame == null || (g.getCreateDate().compareTo(tempGame.getCreateDate()) > 0)){
                     tempGame = g;
                 }
@@ -85,5 +85,20 @@ public class GameService {
         else{
             board.setLastPlayed(null);
         }
+    }
+
+    public void switchPlayer() {
+        Board board = this.getCurrentBoard();
+
+        board.getFigureArrayList().forEach( f -> {
+            if(f.getFigureColor().equals(Color.BLACK)) {
+                f.setFigureColor(Color.WHITE);
+                System.out.println("CHANGED color");
+            }
+            else if(f.getFigureColor().equals(Color.WHITE)) {
+                f.setFigureColor(Color.BLACK);
+                System.out.println("CHANGED color");
+            }
+        });
     }
 }

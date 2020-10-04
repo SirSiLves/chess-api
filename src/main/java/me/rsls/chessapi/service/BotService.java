@@ -45,6 +45,13 @@ public class BotService {
         GameState gameState = gameService.getCurrentGameState();
         if (!(gameState.isCheckMate() || gameState.isRemis()) ||gameState.isCastling() || gameState.isPromoted()) {
 
+            //if bot starts, set last played
+            Board board = gameService.getCurrentBoard();;
+            if(board.getMoveHistory().size() == 0) {
+                board.setLastPlayed(Color.BLACK);
+            }
+
+
             List<Rating> ratedList = this.getFilteredRatingList();
 
             Random rnd = new Random();

@@ -32,8 +32,8 @@ public class ValidatePawn implements IValidate {
         int targetNumber = targetField.getHorizontalNumber();
 
         if (board.getLastPlayed() == null
-                || (sourceField.getFigure().getFigureColor().equals(Color.BLACK) && targetNumber - sourceNumber > 0)
-                || (sourceField.getFigure().getFigureColor().equals(Color.WHITE) && sourceNumber - targetNumber > 0)) {
+                || (sourceField.getFigure().getFigureColor().equals(Color.WHITE) && targetNumber - sourceNumber > 0)
+                || (sourceField.getFigure().getFigureColor().equals(Color.BLACK) && sourceNumber - targetNumber > 0)) {
 
             if (targetField.getFigure() != null
                     && Math.abs(targetNumber - sourceNumber) == 1) {
@@ -67,11 +67,11 @@ public class ValidatePawn implements IValidate {
                     && targetField.getFigure() == null) {
 
                 // check if a figure is between
-                if (sourceField.getFigure().getFigureColor().equals(Color.WHITE)
+                if (sourceField.getFigure().getFigureColor().equals(Color.BLACK)
                         && board.getFieldFromMatrix(sourceField.getVertical(), sourceNumber - 1).getFigure() == null) {
 
                     this.isValid = true;
-                } else if (sourceField.getFigure().getFigureColor().equals(Color.BLACK)
+                } else if (sourceField.getFigure().getFigureColor().equals(Color.WHITE)
                         && board.getFieldFromMatrix(sourceField.getVertical(), targetNumber - 1).getFigure() == null) {
 
                     this.isValid = true;

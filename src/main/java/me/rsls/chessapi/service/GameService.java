@@ -87,18 +87,17 @@ public class GameService {
         }
     }
 
-    public void switchPlayer() {
-        Board board = this.getCurrentBoard();
-
-        board.getFigureArrayList().forEach( f -> {
-            if(f.getFigureColor().equals(Color.BLACK)) {
-                f.setFigureColor(Color.WHITE);
-                System.out.println("CHANGED color");
-            }
-            else if(f.getFigureColor().equals(Color.WHITE)) {
-                f.setFigureColor(Color.BLACK);
-                System.out.println("CHANGED color");
-            }
-        });
-    }
+//    public void switchPlayer() {
+//        Board board = this.getCurrentBoard();
+//
+//        board.getFigureArrayList().forEach( f -> {
+//            if(f.getFigureColor().equals(Color.BLACK)) {
+//                f.setFigureColor(Color.WHITE);
+//            }
+//            else if(f.getFigureColor().equals(Color.WHITE)) {
+//                f.setFigureColor(Color.BLACK);
+//            }
+//        });
+//
+//    }
 }

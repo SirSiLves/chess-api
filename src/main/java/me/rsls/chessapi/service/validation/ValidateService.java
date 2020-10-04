@@ -65,8 +65,10 @@ public class ValidateService {
             return validation;
         }
 
-        //wrong turn
-        if (sourceField.getFigure().getFigureColor().equals(board.getLastPlayed())) {
+        //wrong turn, white needs to start
+        if (sourceField.getFigure().getFigureColor().equals(board.getLastPlayed()) ||
+                (!sourceField.getFigure().getFigureColor().equals(Color.WHITE))
+                        && board.getMoveHistory().size() == 0) {
             validation.setText(RULE_TEXTS.get(3));
             validation.setState(false);
             return validation;
@@ -223,7 +225,7 @@ public class ValidateService {
             }
         }
 
-        if(isTestMove) {
+        if (isTestMove) {
             //reset all states after temp validation
             gameService.revertGameState();
         }

@@ -39,8 +39,7 @@ public class MoveController {
     }
 
 
-    //TODO POST?
-    @RequestMapping(value = "doBotMove", method = RequestMethod.GET)
+    @RequestMapping(value = "doBotMove", method = RequestMethod.POST)
     public ResponseEntity<String> doBotMove() {
         System.out.println("DO BOT MOVE");
 

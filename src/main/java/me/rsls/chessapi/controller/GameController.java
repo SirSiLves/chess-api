@@ -24,9 +24,9 @@ public class GameController {
 
     @RequestMapping(value = "getGamePicture", method = RequestMethod.GET)
     public ResponseEntity<Game> getGamePicture() {
-        Game game = gameService.getGamePicture();
-
         System.out.println("GET GAME PICTURE");
+
+        Game game = gameService.getGamePicture();
 
         if (game == null) {
             initializeService.initializeGame();
@@ -36,17 +36,12 @@ public class GameController {
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "switchPlayer", method = RequestMethod.POST)
-    public ResponseEntity<Boolean> switchPlayer() {
-
-        Game game = gameService.getGamePicture();
-
-        if (game == null) {
-            initializeService.initializeGame();
-        }
-
-        gameService.switchPlayer();
-
-        return new ResponseEntity<>(true, HttpStatus.OK);
-    }
+//    @RequestMapping(value = "switchPlayer", method = RequestMethod.POST)
+//    public ResponseEntity<Boolean> switchPlayer() {
+//        System.out.println("SWITCH PLAYER");
+//
+//        gameService.switchPlayer();
+//
+//        return new ResponseEntity<>(true, HttpStatus.OK);
+//    }
 }

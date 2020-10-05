@@ -38,6 +38,8 @@ public class PawnPromotionService {
         GameState historyGameState = gameService.getCopyGameState();
         History history = new History(borderPawnField, borderPawnField, newFigure, oldPawn, MoveType.PROMOTION, historyGameState);
         board.addMoveToHistory(history);
+
+        board.setLastPlayed(newFigure.getFigureColor());
     }
 
     private Field getBorderPawnField() {

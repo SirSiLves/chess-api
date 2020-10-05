@@ -37,18 +37,18 @@ public class PawnPromotionTest extends ChessApiApplicationTests {
     public void testPawnChange() {
         GameState gameState = gameService.getCurrentGameState();
 
-        assertTrue(handleMoveService.handleMove(new String[]{"g", "7"}, new String[]{"g", "5"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"h", "2"}, new String[]{"h", "4"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"g", "5"}, new String[]{"h", "4"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"g", "2"}, new String[]{"g", "3"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"h", "4"}, new String[]{"g", "3"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"h", "1"}, new String[]{"h", "2"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"g", "3"}, new String[]{"h", "2"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"f", "2"}, new String[]{"f", "3"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "2"}, new String[]{"g", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"h", "7"}, new String[]{"h", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "4"}, new String[]{"h", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "7"}, new String[]{"g", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"h", "5"}, new String[]{"g", "6"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"h", "8"}, new String[]{"h", "7"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"g", "6"}, new String[]{"h", "7"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"f", "7"}, new String[]{"f", "6"}).isState());
 
         assertFalse(gameState.isPromoted());
 
-        assertTrue(handleMoveService.handleMove(new String[]{"h", "2"}, new String[]{"g", "1"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"h", "7"}, new String[]{"g", "8"}).isState());
 
         assertTrue(gameState.isPromoted());
 
@@ -62,8 +62,8 @@ public class PawnPromotionTest extends ChessApiApplicationTests {
         assertFalse(gameState.isPromoted());
 
         //allowed to move, pawn has been replaced
-        assertTrue(handleMoveService.handleMove(new String[]{"f", "3"}, new String[]{"f", "4"}).isState());
-        assertTrue(handleMoveService.handleMove(new String[]{"g", "1"}, new String[]{"g", "4"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"c", "7"}, new String[]{"c", "5"}).isState());
+        assertTrue(handleMoveService.handleMove(new String[]{"e", "2"}, new String[]{"e", "4"}).isState());
     }
 
     @Test
@@ -150,9 +150,6 @@ public class PawnPromotionTest extends ChessApiApplicationTests {
 
 //        SelectedFigure selectedFigure = new SelectedFigure(FigureType.QUEEN);
 //        pawnPromotionService.changePawn(selectedFigure);
-
-
-
 
     }
 

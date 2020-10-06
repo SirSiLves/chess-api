@@ -1,10 +1,8 @@
 package me.rsls.chessapi.service;
 
 import me.rsls.chessapi.model.*;
-import me.rsls.chessapi.model.validation.ValidFields;
 import me.rsls.chessapi.model.validation.Validation;
 import me.rsls.chessapi.service.validation.PawnPromotionService;
-import me.rsls.chessapi.service.validation.ValidFieldService;
 import me.rsls.chessapi.service.validation.ValidateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,22 +110,19 @@ public class BotService {
     private void executeBotMove(Field sourceField, Field targetField) {
         this.printBoteMove(sourceField, targetField);
 
-        moveExecutorService.executeMove(sourceField, targetField, false);
-        this.handlePawn(targetField);
+        //Validate one last, to retrieve the check states
+        Validation validation = validateService.validateMove(sourceField, targetField);
 
-//        //Validate one last, to retrieve the check state
-//        Validation validation = validateService.validateMove(sourceField, targetField);
-//
-//        if (validation.isState()) {
-//            this.printBoteMove(sourceField, targetField);
+        if (validation.isState()) {
+            this.printBoteMove(sourceField, targetField);
 //            this.handleCastling();
-//
-//            moveExecutorService.executeMove(sourceField, targetField, false);
-//
-//            this.handlePawn(targetField);
-//        } else {
-//            throw new RuntimeException("Something went wrong with the bot handling!");
-//        }
+
+            moveExecutorService.executeMove(sourceField, targetField, false);
+
+            this.handlePawn(targetField);
+        } else {
+            throw new RuntimeException("Something went wrong with the bot handling!");
+        }
 
     }
 

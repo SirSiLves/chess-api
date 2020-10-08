@@ -28,11 +28,13 @@ public class ValidFieldsController {
     public ResponseEntity<List<Field>> getValidFields(@RequestBody ClickedField clickedField) {
         System.out.println("GET VALID FIELDS");
 
+        if(gameService.getGamePicture() != null) {
+            Field sourceField = gameService.getCurrentBoard().getField(clickedField.getSourceField());
+            List<Field> possibleFieldList = validateService.getAllValidFields(sourceField.getFigure(), true);
+            return new ResponseEntity<>(possibleFieldList, HttpStatus.OK);
+        }
 
-        Field sourceField = gameService.getCurrentBoard().getField(clickedField.getSourceField());
-        List<Field> possibleFieldList = validateService.getAllValidFields(sourceField.getFigure(), true);
-
-        return new ResponseEntity<>(possibleFieldList, HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
 }

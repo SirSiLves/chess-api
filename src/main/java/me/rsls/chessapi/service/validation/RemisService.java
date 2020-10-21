@@ -141,6 +141,7 @@ public class RemisService {
     }
 
     private boolean fiftyMoveRule(Board board) {
+        //TODO its not counting correctly
         int historySize = board.getMoveHistory().size();
 
         int fiftyCount = 0;

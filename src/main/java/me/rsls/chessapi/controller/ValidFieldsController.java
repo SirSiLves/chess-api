@@ -26,8 +26,6 @@ public class ValidFieldsController {
 
     @RequestMapping(value = "getFields", method = RequestMethod.POST)
     public ResponseEntity<List<Field>> getValidFields(@RequestBody ClickedField clickedField) {
-        System.out.println("GET VALID FIELDS");
-
         if(gameService.getGamePicture() != null) {
             Field sourceField = gameService.getCurrentBoard().getField(clickedField.getSourceField());
             List<Field> possibleFieldList = validateService.getAllValidFields(sourceField.getFigure(), true);

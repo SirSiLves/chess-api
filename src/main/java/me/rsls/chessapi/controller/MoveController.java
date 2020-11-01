@@ -32,8 +32,6 @@ public class MoveController {
 
     @RequestMapping(value = "doMove", method = RequestMethod.POST)
     public ResponseEntity<Validation> doMove(@RequestBody ClickedFields clickedFields) {
-        System.out.println("DO MOVE");
-
         Validation validation = handleMoveService.handleMove(clickedFields.getSourceField(), clickedFields.getTargetField());
         return new ResponseEntity<>(validation, HttpStatus.OK);
     }
@@ -41,8 +39,6 @@ public class MoveController {
 
     @RequestMapping(value = "doBotMove", method = RequestMethod.POST)
     public ResponseEntity<String> doBotMove() {
-        System.out.println("DO BOT MOVE");
-
         botService.handleBotMove();
         return new ResponseEntity<>("Bot move executed.", HttpStatus.OK);
     }

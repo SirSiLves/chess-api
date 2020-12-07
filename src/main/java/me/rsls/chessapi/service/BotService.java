@@ -39,28 +39,43 @@ public class BotService {
         }
     };
 
-    public void handleBotMove() {
-        GameState gameState = gameService.getCurrentGameState();
-        if (!(gameState.isCheckMate() || gameState.isRemis()) ||gameState.isCastling() || gameState.isPromoted()) {
 
-            //if bot starts, set last played
-            Board board = gameService.getCurrentBoard();;
-            if(board.getMoveHistory().size() == 0) {
-                board.setLastPlayed(Color.BLACK);
+    public void handleBotMove() {
+
+        if (!this.isGameOver()) {
+
+            List<Rating> ratedList = this.getRatingList();
+            Rating bestRated = new Rating(null, null, -9999);
+
+            for (Rating rated : ratedList) {
+                this.executeBotMove(rated, true);
+
+                List<Rating> secondRatingList = this.getFilteredRatingList();
+                Rating secondBest = secondRatingList.get(0);
+
+                if(rated.getRatingValue() - secondBest.getRatingValue() >= bestRated.getRatingValue()) {
+                    bestRated = rated;
+                }
+
+                this.moveExecutorService.revertLastMove(true);
             }
 
-
-            List<Rating> ratedList = this.getFilteredRatingList();
-
-            Random rnd = new Random();
-            int position = Math.abs(rnd.nextInt(ratedList.size()));
-
-            Field sourceField = ratedList.get(position).getSourceField();
-            Field targetField = ratedList.get(position).getTargetField();
-
-            this.executeBotMove(sourceField, targetField);
+            this.executeBotMove(bestRated, false);
         }
 
+    }
+
+    private Rating minMaxCalculation(boolean maximizing, int depth) {
+        List<Rating> ratedList = this.getRatingList();
+
+
+        return null;
+    }
+
+
+    private boolean isGameOver() {
+        GameState gameState = gameService.getCurrentGameState();
+        return (gameState.isCheckMate() || gameState.isRemis()) || gameState.isCastling() || gameState.isPromoted();
     }
 
     private List<Rating> getFilteredRatingList() {
@@ -74,7 +89,6 @@ public class BotService {
                 .filter(r -> r.getRatingValue() >= bestRate.getRatingValue())
                 .collect(Collectors.toList());
     }
-
 
     private ArrayList<Rating> getRatingList() {
         List<Figure> botFigures = figureService.getAtTurnFigures();
@@ -107,19 +121,19 @@ public class BotService {
         }
     }
 
-    private void executeBotMove(Field sourceField, Field targetField) {
-        this.printBoteMove(sourceField, targetField);
+    private void executeBotMove(Rating rating, boolean isTestMove) {
+//        this.printBoteMove(sourceField, targetField);
 
         //Validate one last, to retrieve the check states
-        Validation validation = validateService.validateMove(sourceField, targetField);
+        Validation validation = validateService.validateMove(rating.getSourceField(), rating.getTargetField());
 
         if (validation.isState()) {
-            this.printBoteMove(sourceField, targetField);
-//            this.handleCastling();
+//            this.printBoteMove(sourceField, targetField);
 
-            moveExecutorService.executeMove(sourceField, targetField, false);
+            moveExecutorService.executeMove(rating.getSourceField(), rating.getTargetField(), isTestMove);
+            this.handlePawn(rating.getTargetField());
 
-            this.handlePawn(targetField);
+
         } else {
             throw new RuntimeException("Something went wrong with the bot handling!");
         }

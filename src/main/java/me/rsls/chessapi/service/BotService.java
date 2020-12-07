@@ -45,6 +45,8 @@ public class BotService {
         if (!this.isGameOver()) {
 
             List<Rating> ratedList = this.getRatingList();
+            Collections.shuffle(ratedList);
+
             Rating bestRated = new Rating(null, null, -9999);
 
             for (Rating rated : ratedList) {
@@ -53,7 +55,7 @@ public class BotService {
                 List<Rating> secondRatingList = this.getFilteredRatingList();
                 Rating secondBest = secondRatingList.get(0);
 
-                if(rated.getRatingValue() - secondBest.getRatingValue() >= bestRated.getRatingValue()) {
+                if(rated.getRatingValue() - secondBest.getRatingValue() > bestRated.getRatingValue()) {
                     bestRated = rated;
                 }
 

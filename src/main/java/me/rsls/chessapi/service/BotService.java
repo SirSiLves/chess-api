@@ -47,31 +47,74 @@ public class BotService {
             List<Rating> ratedList = this.getRatingList();
             Collections.shuffle(ratedList);
 
-            Rating bestRated = new Rating(null, null, -9999);
+            Rating initialRating = new Rating(null, null, -9999);
 
-            for (Rating rated : ratedList) {
-                this.executeBotMove(rated, true);
+            Rating bestRated = this.minmaxCalculation(initialRating, 3, true);
 
-                List<Rating> secondRatingList = this.getFilteredRatingList();
-                Rating secondBest = secondRatingList.get(0);
-
-                if(rated.getRatingValue() - secondBest.getRatingValue() > bestRated.getRatingValue()) {
-                    bestRated = rated;
-                }
-
-                this.moveExecutorService.revertLastMove(true);
-            }
+//            for (Rating rated : ratedList) {
+//                this.executeBotMove(rated, true);
+//
+//                if (this.isGameOver()) {
+//                    bestRated = rated;
+//                    this.moveExecutorService.revertLastMove(true);
+//                    break;
+//
+//                } else {
+//                    List<Rating> secondRatingList = this.getFilteredRatingList();
+//                    Rating secondBest = secondRatingList.get(0);
+//
+//                    if (rated.getRatingValue() - secondBest.getRatingValue() > bestRated.getRatingValue()) {
+//                        bestRated = rated;
+//                    }
+//                    this.moveExecutorService.revertLastMove(true);
+//                }
+//            }
 
             this.executeBotMove(bestRated, false);
         }
 
     }
 
-    private Rating minMaxCalculation(boolean maximizing, int depth) {
+    private Rating minmaxCalculation(Rating bestRated, int depth, boolean maximizing) {
+
         List<Rating> ratedList = this.getRatingList();
+        Collections.shuffle(ratedList);
+        depth--;
 
+        for (Rating rated : ratedList) {
+            this.executeBotMove(rated, true);
 
-        return null;
+            if (this.isGameOver() || depth <= 0) {
+                bestRated = rated;
+                this.moveExecutorService.revertLastMove(true);
+                break;
+
+            } else {
+
+//                List<Rating> secondRatingList = this.getFilteredRatingList();
+
+                if (maximizing) {
+                    Rating initialRated = new Rating(null, null, -9999);
+                    Rating nextBestRated = this.minmaxCalculation(initialRated, depth - 1, true);
+
+                    if (rated.getRatingValue() - nextBestRated.getRatingValue() > bestRated.getRatingValue()) {
+                        bestRated = rated;
+                    }
+                } else {
+                    Rating initialRated = new Rating(null, null, 9999);
+                    Rating nextBestRated = this.minmaxCalculation(initialRated, depth - 1, false);
+
+                    if (rated.getRatingValue() + nextBestRated.getRatingValue() > bestRated.getRatingValue()) {
+                        bestRated = rated;
+                    }
+                }
+
+                this.moveExecutorService.revertLastMove(true);
+            }
+
+        }
+
+        return bestRated;
     }
 
 
